@@ -1,0 +1,53 @@
+.player {
+    width: 50px;
+    height: 50px;
+    background-color: blue;
+    border-radius: 50%;
+    position: absolute;
+    top: 100px;
+    left: 100px;
+    transition: transform 0s; /* Sin transición para rotación */
+  }
+  
+  .weapon {
+    width: 10px;
+    height: 60px; /* Mayor altura para que sobresalga del círculo */
+    background-color: red;
+    position: absolute;
+    top: -50px; /* Ajustado para sobresalir del círculo */
+    left: 20px; /* Centrando horizontalmente */
+    border-radius: 5px;
+    transform-origin: bottom center;
+  }
+  
+  .attack.weapon {
+    animation: attack-animation 0.5s ease-in-out;
+  }
+  
+@keyframes attack-animation {
+    0% {
+      transform: rotate(0deg);
+    }
+    40% {
+      transform: rotate(-60deg);
+    }
+    60% {
+      transform: rotate(70deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+  
+  /* Estilo para el "after" que indica la dirección */
+  .player::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    opacity: 0.5;
+    width: 50px;
+    height: 100px; /* Largo de la dirección */
+    background-color: yellow; /* Color de la dirección */
+    bottom: 100%; /* Posicionada arriba del arma */
+  }
+  
