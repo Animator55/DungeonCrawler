@@ -2,13 +2,13 @@
 import React, { useEffect, useRef } from 'react';
 import '../assets/enemy.css';
 
-const Enemy: React.FC= () => {
+const Enemy: React.FC = () => {
   const enemyRef = useRef<HTMLDivElement>(null);
-  const speed = 0.01; // Velocidad del enemigo
+  const speed = 0.001; // Velocidad del enemigo
 
   useEffect(() => {
     const interval = setInterval(() => {
-        let player = document.querySelector(".player") as HTMLDivElement
+      let player = document.querySelector(".player") as HTMLDivElement
       if (!player || !enemyRef.current) return;
 
       const playerRect = player.style;
@@ -34,7 +34,7 @@ const Enemy: React.FC= () => {
     }, 2); // Actualizar cada 100ms
 
     return () => clearInterval(interval); // Limpiar el intervalo
-  }, );
+  },);
 
   return (
     <div
