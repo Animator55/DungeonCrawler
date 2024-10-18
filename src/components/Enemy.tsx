@@ -1,55 +1,69 @@
-// Enemy.tsx
-import React, { useEffect, useRef } from 'react';
-import '../assets/enemy.css';
+import React, { useEffect, useRef, useState } from 'react';
 
-const Enemy: React.FC = () => {
+type EnemyProps = {
+  playerElement: HTMLElement | null;
+  removeEnemy: (enemyId: string) => void;
+  id: string;
+};
+
+const Enemy: React.FC<EnemyProps> = ({ playerElement, removeEnemy, id }) => {
   const enemyRef = useRef<HTMLDivElement>(null);
-  const speed = 0.001; // Velocidad del enemigo
+  const [health, setHealth] = useState(50);  // Vida del enemigo
 
   useEffect(() => {
+    const enemy = enemyRef.current;
+    if (!enemy || !playerElement) return;
+
     const interval = setInterval(() => {
-      let player = document.querySelector(".player") as HTMLDivElement
-      if (!player || !enemyRef.current) return;
+      const playerStyle = window.getComputedStyle(playerElement);
+      const playerX = parseFloat(playerStyle.left);
+      const playerY = parseFloat(playerStyle.top);
 
-      const playerRect = player.style;
-      const enemyRect = enemyRef.current.style;
+      const enemyStyle = window.getComputedStyle(enemy);
+      const enemyX = parseFloat(enemyStyle.left);
+      const enemyY = parseFloat(enemyStyle.top);
 
-      // Obtener la posición del jugador
-      const playerX = parseFloat(playerRect.left);
-      const playerY = parseFloat(playerRect.top);
+      // Movimiento del enemigo hacia el jugador
+      const dx = playerX - enemyX;
+      const dy = playerY - enemyY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
 
-      // Calcular la dirección hacia el jugador
-      const dx = playerX - parseFloat(enemyRect.left);
-      const dy = playerY - parseFloat(enemyRect.top);
-      const distance = Math.sqrt(dx * dx + dy * dy);
-
-      if (distance > 1) { // Asegúrate de que no esté demasiado cerca
-        const moveX = (dx * speed);
-        const moveY = (dy * speed);
-
-        // Mover al enemigo
-        enemyRef.current.style.left = `${parseFloat(enemyRect.left) + moveX}px`;
-        enemyRef.current.style.top = `${parseFloat(enemyRect.top) + moveY}px`;
+      const speed = 2;  // Velocidad del enemigo
+      if (dist > 0) {
+        enemy.style.left = `${enemyX + (dx / dist) * speed}px`;
+        enemy.style.top = `${enemyY + (dy / dist) * speed}px`;
       }
-    }, 2); // Actualizar cada 100ms
 
-    return () => clearInterval(interval); // Limpiar el intervalo
-  },);
+    }, 1000 / 60);  // 60fps
+
+    return () => clearInterval(interval);
+  }, [playerElement]);
+
+  const handlePlayerHit = () => {
+    // Implementar la lógica para atacar al jugador
+  };
+
+  const handleStunned = () => {
+    // Aturdimiento del enemigo
+    if (enemyRef.current) {
+      enemyRef.current.classList.add('stunned');
+      setTimeout(() => {
+        if (enemyRef.current) {
+          enemyRef.current.classList.remove('stunned');
+        }
+      }, 500);
+    }
+  };
 
   return (
-    <div
-      ref={enemyRef}
-      className="enemy"
-      style={{
-        position: 'absolute',
-        left: '200px', // Posición inicial
-        top: '200px',  // Posición inicial
-        width: '40px',
-        height: '40px',
-        backgroundColor: 'red',
-        borderRadius: '50%',
-      }}
-    />
+    <div 
+      ref={enemyRef} 
+      className="enemy" 
+      style={{ position: 'absolute', left: '30%', top: '30%' }} 
+      data-health={health}  // Vida como dataset
+    >
+      Enemy {id}
+    </div>
   );
 };
 

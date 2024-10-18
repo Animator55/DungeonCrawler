@@ -1,0 +1,110 @@
+/* Estilos generales del cuerpo */
+body {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0; /* Fondo claro para destacar los elementos */
+  }
+  
+  /* Estilos del contenedor de la habitación */
+  .room {
+    position: relative;
+    width: 500px;
+    height: 500px;
+    border: 2px solid #333; /* Borde oscuro para delimitar la habitación */
+    background-color: #ffffff; /* Fondo blanco para la habitación */
+  }
+  
+  /* Estilos del jugador */
+  .player {
+    width: 50px;
+    height: 50px;
+    background: blue; /* Color azul para el jugador */
+    position: absolute;
+    transition: left 0.1s, top 0.1s; /* Transiciones suaves para movimiento */
+    border-radius: 5px; /* Bordes redondeados para el jugador */
+  }
+  
+  /* Estilos de los enemigos */
+  .enemy {
+    width: 30px;
+    height: 30px;
+    background: red; /* Color rojo para los enemigos */
+    position: absolute;
+    border-radius: 5px; /* Bordes redondeados para los enemigos */
+    transition: transform 0.1s; /* Transiciones suaves para movimiento */
+  }
+  
+  .enemy2 {
+    width: 30px;
+    height: 30px;
+    background: green; /* Color verde para el segundo tipo de enemigo */
+    position: absolute;
+    border-radius: 5px; /* Bordes redondeados para el enemigo 2 */
+    transition: transform 0.1s; /* Transiciones suaves para movimiento */
+  }
+  
+  /* Estilos de la espada del jugador */
+  .sword {
+    width: 5px;
+    height: 20px;
+    background: gold; /* Color dorado para la espada */
+    position: absolute;
+    left: 20px; /* Ajustar la posición de la espada en el jugador */
+    top: 15px;
+    transform-origin: top; /* El origen de rotación será la parte superior de la espada */
+    transition: transform 0.2s; /* Transiciones suaves para el swing */
+  }
+  
+  /* Animación de swing de la espada */
+  .sword.swing {
+    animation: swing-animation 0.5s forwards; /* Aplicar animación al hacer clic */
+  }
+  
+  @keyframes swing-animation {
+    0% {
+      transform: rotate(0deg);
+    }
+    50% {
+      transform: rotate(-45deg); /* Movimiento hacia un lado */
+    }
+    100% {
+      transform: rotate(0deg); /* Regresar a la posición original */
+    }
+  }
+  
+  /* Efecto de aturdimiento de los enemigos */
+  .stunned {
+    opacity: 0.5; /* Reducir opacidad al estar aturdido */
+  }
+  
+  /* Estilos de los cofres */
+  .chest {
+    width: 40px;
+    height: 40px;
+    background: brown; /* Color marrón para el cofre */
+    position: absolute;
+    border-radius: 5px; /* Bordes redondeados para el cofre */
+    left: 200px; /* Ajustar la posición del cofre */
+    top: 200px;
+    display: flex; /* Flexbox para centrar el texto dentro del cofre */
+    justify-content: center;
+    align-items: center;
+    color: white; /* Texto blanco dentro del cofre */
+  }
+  
+  /* Estilos de las puertas */
+  .door {
+    width: 20px; /* Ancho de las puertas */
+    height: 50px; /* Alto de las puertas */
+    background: gray; /* Color gris para las puertas */
+    position: absolute;
+    border-radius: 3px; /* Bordes redondeados para las puertas */
+  }
+  
+  .door:hover {
+    background: darkgray; /* Color más oscuro al pasar el ratón */
+  }
+  

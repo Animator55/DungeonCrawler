@@ -1,128 +1,87 @@
-import React, { useEffect, useState } from 'react';
-import '../assets/player.css';
+import React, { useRef, useEffect, useState } from 'react';
 
-const Player: React.FC = () => {
-  const [speed] = useState(2); // Velocidad base
-  const [direction, setDirection] = useState(0); // Dirección en grados
-  const position = { x: 100, y: 100 }; // Posición inicial del jugador
+type PlayerProps = {
+  removeEnemy: (enemyId: string) => void;  // Heredado de Room para eliminar enemigos.
+};
 
-  const keysPressed: Record<string, boolean> = {
-    ArrowUp: false,
-    ArrowDown: false,
-    ArrowLeft: false,
-    ArrowRight: false,
-    w: false,
-    s: false,
-    a: false,
-    d: false,
-  };
+const Player: React.FC<PlayerProps> = ({ removeEnemy }) => {
+  const playerRef = useRef<HTMLDivElement>(null);
+  const swordRef = useRef<HTMLDivElement>(null);
+  const [health, setHealth] = useState(100); // Vida del jugador
 
-  // Función para mover al jugador
-  const movePlayer = (dx: number, dy: number) => {
-    const roomElement = document.getElementById('room');
-    if (roomElement) {
-      const rect = roomElement.getBoundingClientRect();
-      const newX = position.x + dx * speed;
-      const newY = position.y + dy * speed;
-
-      // Verificar colisiones con las paredes
-      if (
-        newX >= rect.left &&
-        newX + 50 <= rect.right && // Asumiendo el ancho del jugador es 50
-        newY >= rect.top &&
-        newY + 50 <= rect.bottom // Asumiendo la altura del jugador es 50
-      ) {
-        position.x = newX;
-        position.y = newY;
-      }
-
-      const playerElement = document.getElementById('player');
-      if (playerElement) {
-        playerElement.style.left = `${position.x}px`;
-        playerElement.style.top = `${position.y}px`;
-      }
-    }
-  };
-
-  // Función para manejar el movimiento del jugador
-  const handleMovement = () => {
-    let dx = 0;
-    let dy = 0;
-
-    // Controlar múltiples direcciones simultáneas
-    if (keysPressed.ArrowUp || keysPressed.w) dy -= 1;
-    if (keysPressed.ArrowDown || keysPressed.s) dy += 1;
-    if (keysPressed.ArrowLeft || keysPressed.a) dx -= 1;
-    if (keysPressed.ArrowRight || keysPressed.d) dx += 1;
-
-    // Mover el jugador si alguna tecla está presionada
-    if (dx !== 0 || dy !== 0) {
-      movePlayer(dx, dy);
-    }
-  };
-
-  // Función para calcular la dirección hacia el mouse
-  const handleMouseMove = (e: MouseEvent) => {
-    const playerElement = document.getElementById('player');
-    if (playerElement) {
-      const rect = playerElement.getBoundingClientRect();
-      const playerCenterX = rect.left + rect.width / 2;
-      const playerCenterY = rect.top + rect.height / 2;
-
-      // Calcular la dirección hacia el mouse
-      const dx = e.clientX - playerCenterX;
-      const dy = e.clientY - playerCenterY;
-      const angle = Math.atan2(dy, dx) * (180 / Math.PI) + 90; // Ajuste aquí
-
-      setDirection(angle);
-
-      // Actualizar el estilo del jugador para que apunte en la dirección correcta
-      playerElement.style.transform = `rotate(${angle}deg)`;
-    }
-  };
-
-  // Eventos de teclado para controlar el movimiento
-  const handleKeyDown = (e: KeyboardEvent) => {
-    keysPressed[e.key] = true;
-  };
-
-  const handleKeyUp = (e: KeyboardEvent) => {
-    keysPressed[e.key] = false;
-  };
-
-  // Manejador del clic para el ataque
-  const handleMouseDown = () => {
-    const weaponElement = document.getElementById('weapon');
-    if (weaponElement && !weaponElement.classList.contains("attack")) {
-      weaponElement.classList.add('attack');
-      setTimeout(() => {
-        weaponElement.classList.remove('attack');
-      }, 500); // Duración de la animación de ataque
-    }
-  };
-
-  // Añadir y remover los event listeners para teclas y mouse
+  // Movimiento suave
   useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
-    window.addEventListener('mousedown', handleMouseDown);
-    window.addEventListener('mousemove', handleMouseMove);
+    const handleMovement = (e: KeyboardEvent) => {
+      const player = playerRef.current;
+      if (player) {
+        const style = window.getComputedStyle(player);
+        const left = parseFloat(style.left);
+        const top = parseFloat(style.top);
 
-    // Movimiento continuo basado en teclas
-    const movementInterval = setInterval(handleMovement, 20);
-
+        switch (e.key) {
+          case 'w':
+            player.style.top = `${top - 5}px`;
+            break;
+          case 's':
+            player.style.top = `${top + 5}px`;
+            break;
+          case 'a':
+            player.style.left = `${left - 5}px`;
+            break;
+          case 'd':
+            player.style.left = `${left + 5}px`;
+            break;
+        }
+      }
+    };
+    window.addEventListener('keydown', handleMovement);
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keyup', handleKeyUp);
-      window.removeEventListener('mousedown', handleMouseDown);
-      window.removeEventListener('mousemove', handleMouseMove);
-      clearInterval(movementInterval);
+      window.removeEventListener('keydown', handleMovement);
     };
   }, []);
 
+  // Rotación basada en el mouse
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const player = playerRef.current;
+      if (player) {
+        const playerRect = player.getBoundingClientRect();
+        const centerX = playerRect.left + playerRect.width / 2;
+        const centerY = playerRect.top + playerRect.height / 2;
+        const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * (180 / Math.PI);
+        player.style.rotate = `${angle}deg`;
+      }
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
+
+  // Ataque con click izquierdo
+  const handleAttack = () => {
+    const sword = swordRef.current;
+    if (sword) {
+      sword.classList.add('swing');
+      setTimeout(() => sword.classList.remove('swing'), 500); // Animación de swing
+    }
+  };
+
+  const handleRightClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    // Implementar la lógica para cambiar de sala o interactuar
+  };
+
   return (
-    <div id="player" className="player" style={{width: 50, height: 50}}>
-      <div id="weapon" className="weapon"></div>
+    <div 
+      ref={playerRef} 
+      className="player" 
+      style={{ position: 'absolute', left: '50%', top: '50%' }} 
+      onClick={handleAttack}
+      onContextMenu={handleRightClick}
+      data-health={health}  // Vida como dataset
+    >
+      <div className="sword" ref={swordRef}></div>
     </div>
   );
 };

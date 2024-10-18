@@ -1,6 +1,5 @@
-import { useState } from 'react'
-import Player from './components/Player'
-import Room from './components/Room'
+import Room from "./components/Room";
+import "./assets/styles.css"
 
 export default function App() {
 
