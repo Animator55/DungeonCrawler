@@ -2,12 +2,13 @@ import React from 'react'
 import generateDungeonStructure from '../logic/generateDungeonStructure'
 import { DungeonRoom, router } from '../vite-env'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArchive, faBox, faDoorClosed, faPersonWalkingArrowRight, faShop, faStairs, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { faArchive, faBox, faDoorClosed, faExpand, faPersonWalkingArrowRight, faShop, faStairs, faUser, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { RankColorSelector } from '../logic/rankColorSelector'
 import { iconSelectorObj } from '../logic/iconSelectorObj'
 import ShopPage from './ShopPage'
 import Dice from './Dice'
 import ChestPage from './ChestPage'
+import { pickPuzzle } from '../logic/pickPuzzle'
 
 type Props = {
     rank: string
@@ -23,6 +24,11 @@ type HotBarType = {
 }
 
 export default function DungeonPlay({ rank, theme, setPage }: Props) {
+    const fullscreen = () => {
+        let elem = document.getElementById('main')
+        if (!elem) return
+        if (elem.requestFullscreen) elem.requestFullscreen()
+    }
     const [dungeon, setDungeon] = React.useState<DungeonRoom[][] | undefined>()
     const [room, setCurrentRoom] = React.useState<number>(0)
     const [floor, setFloor] = React.useState(0)
@@ -114,43 +120,74 @@ export default function DungeonPlay({ rank, theme, setPage }: Props) {
         }
     }
 
-    const show = (e: React.MouseEvent) => {
+    const show = (e?: React.MouseEvent) => {
         let section = document.getElementById("event-show") as HTMLDivElement
         if (!section) return
         let bool = section.style.opacity === "1"
-        e.currentTarget.textContent = !bool ? "Hide" : "Show"
+        if (e) e.currentTarget.textContent = !bool ? "Hide" : "Show"
         section.style.opacity = bool ? "0" : "1"
         section.style.pointerEvents = bool ? "none" : "all"
     }
 
     const Puzzle = () => {
         if (!dungeon || dungeon[floor][room].puzzle === undefined) return
+        let answ1 = dungeon[floor][room].puzzle.answer
+        let answ2 = ""
+        let answ3 = ""
+        if(answ1 !== ""){
+            while (answ2 === "" || answ2 === answ1) {
+                answ2 = pickPuzzle(rank).answer
+            }
+            while (answ3 === "" || answ3 === answ1 || answ3 === answ2) {
+                answ3 = pickPuzzle(rank).answer
+            }
+        }
+        let answers = [answ1, answ2, answ3].sort(() => Math.random() - 0.5)
+
         return <section id='event-show' style={{ opacity: 1 }}>
             <h5>Puzzle!</h5>
             <p onClick={() => { setInspect(inspect === 0 ? undefined : 0) }}>{dungeon[floor][room].puzzle.question}</p>
-            {inspect === 0 && <p>{dungeon[floor][room].puzzle.answer}</p>}
+            {answers.map(el => {
+                return <button
+                    key={Math.random()}
+                    onClick={() => {
+                        if (el === answ1) show()
+                    }}
+                >
+                    {el}
+                </button>
+            })}
         </section>
     }
     const Enemies = () => {
         if (!dungeon || dungeon[floor][room].enemys.length === 0) return
         return <section id='event-show' className='fade-event'>
-            <Dice confirm={(val: string) => { killEnemies() }} />
             <h5>Enemy!</h5>
-            {dungeon[floor][room].enemys.map((el, i) => {
-                let bool = inspect === i
-                return <div
-                    className={bool ? 'enemy-show selected' : 'enemy-show'}
-                    key={Math.random()}
-                    onClick={() => { setInspect(bool ? undefined : i) }}
-                    style={el.ghost && !bool ? { color: "#444", background: "black" } : {}}
-                >
-                    <div>
+            <div className='fight-list'>
+                {dungeon[floor][room].enemys.map((el, i) => {
+                    let bool = inspect === i
+                    return <div
+                        className={bool ? 'fight-show selected' : 'fight-show'}
+                        key={Math.random()}
+                        onClick={(e)=>{
+                            let target = e.target as HTMLDivElement
+                            if(target) {
+                                target.classList.toggle("view")
+                                setTimeout(()=>{
+                                    target.classList.toggle("view")
+                                }, 2000)
+                            }
+                        }}
+                        style={el.ghost && !bool ? { color: "#444", background: "black" } : {}}
+                    >
+                        <FontAwesomeIcon icon={faUser} />
                         {el.icon && <FontAwesomeIcon icon={iconSelectorObj[el.icon]} />}
-                        <p>{el.name}</p>
+                        <p className='name'>{el.name}</p>
+                        <p className='enemy-power'>20</p>
                     </div>
-                    {bool && <p>{el.description}</p>}
-                </div>
-            })}
+                })}
+            </div>
+            <Dice confirm={(val: string) => { killEnemies() }} />
         </section>
     }
 
@@ -224,10 +261,13 @@ export default function DungeonPlay({ rank, theme, setPage }: Props) {
         <button className='end-dungeon' onClick={endDungeon}>
             <FontAwesomeIcon icon={faPersonWalkingArrowRight} />
         </button>
+        <button className="fullscreen" onClick={() => { fullscreen() }}>
+            <FontAwesomeIcon icon={faExpand} />
+        </button>
         <h3>{dungeon[floor][room].room}</h3>
         <img alt={dungeon[floor][room].room} src={dungeon[floor][room].image} />
         {(dungeon[floor][room].puzzle !== undefined) &&
-            <button className='show-event' onClick={show}>Hide</button>} 
+            <button className='show-event' onClick={show}>Hide</button>}
         <Puzzle />
         <Enemies />
         <div className='buttons'>

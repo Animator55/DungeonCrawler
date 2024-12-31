@@ -53,7 +53,7 @@ export default function App() {
       dungeon: <DungeonPlay setPage={setPage} rank={rank} theme={theme} />
   }
 
-  return <main>
+  return <main id="main">
     {pages[page]}
   </main>
 }

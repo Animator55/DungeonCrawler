@@ -2,6 +2,10 @@ body {
     --cbackground: #242424;
     background-color: var(--cbackground);
     margin: 0;
+    height: 100dvh;
+    max-height: 100dvh;
+    position: relative;
+    padding: 0;
 }
 
 select {
@@ -126,6 +130,14 @@ button:active {
     background-color: transparent;
     font-size: 1.2rem;
 }
+.fullscreen {
+    position: absolute;
+    z-index: 2;
+    right: .5rem;
+    top: 3.5rem;
+    background-color: transparent;
+    font-size: 1.2rem;
+}
 
 .router {
     position: absolute;
@@ -199,7 +211,7 @@ button:active {
     padding: 0 1rem;
 }
 
-.enemy-show>div>p {
+.enemy-show p {
     margin: 0;
 }
 
@@ -208,10 +220,6 @@ button:active {
     gap: 1rem;
     align-items: center;
     padding: 0.5rem 1rem;
-}
-
-.enemy-show.selected>p {
-    background-color: rgba(255, 255, 255, 0.137);
 }
 
 .enemy-show>p {
@@ -262,7 +270,7 @@ button:active {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    position: fixed;
+    position: absolute;
     bottom: 6rem;
     width: 90%;
     z-index: 1;
@@ -281,7 +289,7 @@ button:active {
 }
 
 .refresh-shop {
-    position: fixed;
+    position: absolute;
     z-index: 1;
     right: 1rem;
     top: 1rem;
@@ -291,7 +299,7 @@ button:active {
 }
 
 .force-luck {
-    position: fixed;
+    position: absolute;
     z-index: 1;
     left: 1rem;
     top: 1rem;
@@ -305,7 +313,7 @@ button:active {
 /**/
 
 .hot-bar {
-    position: fixed;
+    position: absolute;
     bottom: 0.5rem;
     left: 5%;
     width: 90%;
@@ -325,7 +333,7 @@ button:active {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    position: fixed;
+    position: absolute;
     top: 4.5rem;
     width: 75%;
     z-index: 1;
@@ -406,4 +414,80 @@ animation: fade-to-left 1.5s 0.6s infinite ease-in-out;
     opacity: 0;
     font-size: 1.7rem;
     animation: fade-up 300ms 0.3s forwards;
+}
+
+
+
+
+.fight-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin-bottom: 3rem;
+}
+
+.fight-show {
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.fight-show * {
+    pointer-events: none;
+}
+.fight-show>svg:first-child {
+    width: 3rem;
+    height: 3rem;
+}
+.fight-show>svg:nth-child(2) {
+    right: -1.5rem;
+    top: 0rem;
+    font-size: 2rem;
+}
+.fight-show>:not(svg:first-child) {
+    position: absolute;
+}
+.fight-show>.enemy-power {
+    right: -1.5rem;
+    background: black;
+    bottom: -.5rem;
+    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.fight-show>.name {
+    background-color: black;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 5px;
+    top: -3rem;
+    width: max-content;
+    opacity: 0;
+}
+.fight-show.view .name {
+    animation: show-name 2s forwards;
+}
+@keyframes show-name {
+    0%, 100% {
+        opacity: 0;
+        top: 0;
+    }
+    20%,90% {
+        opacity: 1;
+        top: -3rem;
+    }
+}
+
+.fight-show>p {
+    margin: 0;
+}
+
+.fight-show>div {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.5rem 1rem;
 }
