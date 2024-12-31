@@ -1,0 +1,409 @@
+body {
+    --cbackground: #242424;
+    background-color: var(--cbackground);
+    margin: 0;
+}
+
+select {
+    width: 90%;
+    margin: 0.5rem auto;
+    font-size: 1rem;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+}
+
+:root {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+    color-scheme: light dark;
+    color: #ffffffde;
+}
+
+*::-webkit-scrollbar {
+    display: none;
+}
+
+main {
+    height: 100dvh;
+    max-height: 100dvh;
+}
+
+button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    padding: .6em 1.2em;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    background-color: #1a1a1a;
+    cursor: pointer;
+    transition: border-color .25s;
+}
+
+button:active {
+    border-color: white;
+}
+
+
+
+
+@keyframes fade-to-right {
+    0% {
+        opacity: 0;
+        left: -1rem;
+    }
+
+    50% {
+        opacity: 1;
+        left: 0;
+    }
+}
+
+@keyframes fade-to-left {
+    0% {
+        opacity: 0;
+        right: -1rem;
+    }
+
+    50% {
+        opacity: 1;
+        right: 0;
+    }
+}
+
+@keyframes fade-up {
+    from {
+        opacity: 0;
+        bottom: -1rem;
+    }
+
+    to {
+        bottom: 0;
+        opacity: 1;
+    }
+}
+
+
+.dungeon-gen {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 1rem;
+    align-items: center;
+}
+
+.start-dungeon {
+    margin: 1rem 1rem 2rem;
+    width: 70%;
+    justify-content: center;
+}
+
+.delete-dungeon,
+.main-dungeon-button {
+    justify-content: center;
+    width: 70%;
+    margin: auto 1rem 2rem;
+}
+
+.dungeon-play {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.end-dungeon {
+    position: absolute;
+    z-index: 2;
+    right: .5rem;
+    top: .5rem;
+    background-color: transparent;
+    font-size: 1.2rem;
+}
+
+.router {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 2;
+    left: 0rem;
+    top: .5rem;
+    background-color: transparent;
+    font-size: 1rem;
+}
+
+.router button {
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 1rem;
+}
+
+.router button p {
+    margin: 0;
+}
+
+.dungeon-play h3 {
+    position: absolute;
+    padding: 1rem;
+    top: 0;
+    text-align: center;
+    margin: 0;
+    z-index: 1;
+    width: 100%;
+    background: linear-gradient(180deg, black -11%, rgba(0, 0, 0, 0.4) 80%, transparent 90%);
+}
+
+.dungeon-play section {
+    position: absolute;
+    padding: 10rem 1rem;
+    bottom: 0;
+    text-align: center;
+    margin: 0;
+    z-index: 1;
+    width: 100%;
+    transition: opacity 300ms;
+    background: linear-gradient(0deg, black -11%, rgba(0, 0, 0, 0.8) 80%, transparent 90%);
+}
+
+.dungeon-play img {
+    margin-top: 5rem;
+    position: relative;
+    /* opacity: 0; */
+    width: 100dvw;
+    /* animation: fade-up 300ms .2s forwards; */
+    image-rendering: pixelated;
+}
+
+.fade-event {
+    opacity: 0;
+    animation: fade-up 300ms .5s forwards;
+}
+
+.dungeon-play .show-event {
+    z-index: 2;
+    position: absolute;
+    opacity: 0.5;
+}
+
+.enemy-show>* {
+    padding: 0 1rem;
+}
+
+.enemy-show>div>p {
+    margin: 0;
+}
+
+.enemy-show>div {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.5rem 1rem;
+}
+
+.enemy-show.selected>p {
+    background-color: rgba(255, 255, 255, 0.137);
+}
+
+.enemy-show>p {
+    margin: 0;
+    font-size: small;
+    text-align: left;
+    margin: 0 1rem 0.5rem 2rem;
+    border-radius: 5px;
+    padding: 0.5rem;
+}
+
+.dungeon-play .buttons {
+    position: absolute;
+    display: flex;
+    flex-direction: column-reverse;
+    bottom: 0rem;
+    background: linear-gradient(0deg, black -11%, rgba(0, 0, 0, 0.4) 80%, transparent 90%);
+    width: 100%;
+    padding: 2rem;
+    padding-bottom: 4.5rem;
+}
+
+.dungeon-play .buttons button {
+    display: flex;
+    align-items: center;
+    background-color: transparent;
+    width: 100%;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(45deg, rgba(0, 0, 0, 0.664), transparent);
+}
+
+
+/**/
+
+
+.shop-page {
+    position: relative;
+    height: 100%;
+}
+
+.shop-page>img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+}
+
+.shop-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    position: fixed;
+    bottom: 6rem;
+    width: 90%;
+    z-index: 1;
+}
+
+.shop-content .enemy-show {
+    background-color: rgba(0, 0, 0, 0.878);
+    border-radius: 5px;
+}
+
+.coins-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto !important;
+}
+
+.refresh-shop {
+    position: fixed;
+    z-index: 1;
+    right: 1rem;
+    top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem
+}
+
+.force-luck {
+    position: fixed;
+    z-index: 1;
+    left: 1rem;
+    top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem
+}
+
+
+
+/**/
+
+.hot-bar {
+    position: fixed;
+    bottom: 0.5rem;
+    left: 5%;
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.hot-bar>button.active {
+    box-shadow: 0 0 5px rgb(236, 236, 230);
+    color: black;
+    border: 3px solid;
+}
+
+
+
+.inspect-div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    position: fixed;
+    top: 4.5rem;
+    width: 75%;
+    z-index: 1;
+    background-color: rgb(54, 50, 50);
+    padding: 5%;
+    left: 7.5%;
+    animation: fade-up-loot 300ms forwards;
+}
+
+@keyframes fade-up-loot {
+    from {
+        opacity: 0;
+        top: 6rem;
+        scale: 0;
+    }
+    to {
+        scale: 1;
+        top: 4.5rem;
+        scale: 1;
+    }
+}
+
+.inspect-div button {
+    padding: 1rem;
+    margin-right: auto;
+}
+
+.inspect-div .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 4px solid white;
+    border-radius: 5px;
+    font-size: 30vw;
+    padding: 1rem;
+}
+
+.inspect-div .inspect-title {
+    position: relative;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: space-between;
+}
+
+.inspect-div .inspect-title>svg {
+    position: relative;
+    opacity: 0;
+    font-size: 1.5rem;
+    animation: fade-to-right 1.5s 0.6s infinite ease-in-out;
+}
+
+.inspect-div .inspect-title > svg:last-child { 
+animation: fade-to-left 1.5s 0.6s infinite ease-in-out;
+}
+
+.inspect-div p {
+    background: rgba(0, 0, 0, 0.432);
+    border-radius: 0 0 5px 5px;
+    padding: 1rem;
+    position: relative;
+    margin: 0;
+    opacity: 0;
+    animation: fade-up 300ms 0.6s forwards;
+}
+
+.inspect-div hr {
+    margin: 0rem;
+    width: 100%;
+}
+
+.inspect-div .inspect-title>h3 {
+    background-color: rgb(54, 54, 54);
+    border-radius: 5px;
+    padding: 0.5rem;
+    position: relative;
+    background: none;
+    opacity: 0;
+    font-size: 1.7rem;
+    animation: fade-up 300ms 0.3s forwards;
+}
