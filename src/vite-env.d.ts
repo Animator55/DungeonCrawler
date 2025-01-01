@@ -9,6 +9,7 @@ type enemyType = {
     name: string
     description: string
     ghost?: boolean,
+    power: number
 }
 
 export type DungeonRoom = {
@@ -17,6 +18,7 @@ export type DungeonRoom = {
     room: string
     puzzle?: {question: string, answer: string}
     items?: any[]
+    itemPicked?: boolean
     enemys: enemyType[] 
     routes: {
         roomToMoveIndex: number
