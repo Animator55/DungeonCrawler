@@ -28,12 +28,10 @@ export default function Fight({ enemies, player, killEnemy,setLife }: Props) {
         if (!dice) return
         let calc=calculateTotal(enemies[enemySelected].power, player)
         let rand = Math.random()
-        if (rand <= calc) console.log("win",rand, calc)
-            else setLife(calc)
-        
-        if(rand <= calc)setTimeout(()=>{
+        if (rand <= calc) setTimeout(()=>{
             killEnemy(enemySelected)
         }, 600)
+        else setLife(calc)
     }
 
     React.useEffect(() => {
