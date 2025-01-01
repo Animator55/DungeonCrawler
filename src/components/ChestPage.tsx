@@ -1,33 +1,37 @@
 import React from 'react'
-import { generateArtifact, generatePickUp } from '../logic/generateArtifact'
+import { generateArtifact } from '../logic/generateArtifact'
 import { RankColorSelector } from '../logic/rankColorSelector'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { iconSelectorObj } from '../logic/iconSelectorObj'
-import { faArrowLeft, faCaretLeft, faCaretRight, faCheck, faCoins, faRotate, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft, faCaretLeft, faCaretRight} from '@fortawesome/free-solid-svg-icons'
 import ChestImg from "../assets/images/Chest.png"
 import RewardImg from "../assets/images/Reward.png"
-import { router } from '../vite-env'
 import Dice from './Dice'
 
-type Props = { 
+type Props = {
     setCurrentRoom: Function
+    openChest: Function
     pickItem: Function
-     returnIndex: number
-     reward: boolean
-     }
+    returnIndex: number
+    reward: boolean
+    itemPicked: boolean | undefined
+    dropData: any | undefined
+}
 
-export default function ChestPage({ reward,setCurrentRoom, returnIndex, pickItem }: Props) {
-    const [drop, setDrop] = React.useState<any | undefined>(undefined)
-    const [luck, forceLuck] = React.useState<boolean>(false)
+export default function ChestPage({ reward, setCurrentRoom, returnIndex, dropData, itemPicked, pickItem,openChest }: Props) {
+    const [drop, setDrop] = React.useState<any | undefined>(dropData)
+    // const [luck, forceLuck] = React.useState<boolean>(false)
+    const luck = false
 
 
-    const generate = (val: string)=>{
+    const generate = (val: string) => {
         let number: number = parseInt(val)
-        let result= undefined
-        if(number === 1)result = generateArtifact("B")
-        else if(number === 20)result = generateArtifact("S")
+        let result = undefined
+        if (number === 1) result = generateArtifact("B")
+        else if (number === 20) result = generateArtifact("S")
         else result = generateArtifact("A")
 
+        openChest(result)
         setDrop(result)
     }
 
@@ -40,7 +44,7 @@ export default function ChestPage({ reward,setCurrentRoom, returnIndex, pickItem
             <FontAwesomeIcon icon={faArrowLeft} />
             Volver
         </button>
-        <img alt={"shop"} src={reward ? RewardImg:ChestImg} />
+        <img alt={"shop"} src={reward ? RewardImg : ChestImg} />
         <div className='shop-content'>
             {drop ? <div className='inspect-div'
                 style={{ color: RankColorSelector[drop.rank!] }}>
@@ -55,10 +59,10 @@ export default function ChestPage({ reward,setCurrentRoom, returnIndex, pickItem
                 </div>
                 <hr></hr>
                 <p>{drop.description}</p>
-                <button onClick={()=>{pickItem(drop)}}>Pick</button>
+                <button onClick={() => { pickItem(drop) }}>Pick</button>
             </div>
-            :
-                <Dice confirm={(val:string)=>{generate(val)}}/>
+                :
+                !itemPicked && <Dice confirm={(val: string) => { generate(val) }} />
             }
         </div>
     </>

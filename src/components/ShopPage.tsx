@@ -1,48 +1,27 @@
 import React from 'react'
-import { generateArtifact, generatePickUp } from '../logic/generateArtifact'
 import { RankColorSelector } from '../logic/rankColorSelector'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { iconSelectorObj } from '../logic/iconSelectorObj'
-import { faArrowLeft, faCoins, faRotate  } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft, faCoins  } from '@fortawesome/free-solid-svg-icons'
 import ShopImg from "../assets/images/Shop.png"
 import { router } from '../vite-env'
 
-type Props = {setCurrentRoom: Function, returnIndex: number}
+type Props = {setCurrentRoom: Function, returnIndex: number, items: any[] | undefined}
 
-const generateShop = (luck: boolean) => {
-    let amount = luck ? 3 : Math.floor(Math.random() * 3) + 1
-    let list = []
-    while (amount > 0) {
-        amount--
-        let rank = Math.floor(Math.random()*5)
-        const ranks = [
-            "D", "C","B", "A", "S"
-        ]
-        list.push(generateArtifact(ranks[rank]))
-    }
-    let amountPick = luck ? 3 : Math.floor(Math.random() * 3) + 1
-    while (amountPick > 0) {
-        amountPick--
-        list.push(generatePickUp())
-    }
-    window.localStorage.setItem("DnD-shop", JSON.stringify(list))
-
-    return list
-}
-
-export default function ShopPage({setCurrentRoom, returnIndex }: Props) {    
-    const [currentShop, setCurrentShop] = React.useState<any[] | undefined>(undefined)
+export default function ShopPage({setCurrentRoom, returnIndex,items}: Props) {    
+    // const [currentShop, setCurrentShop] = React.useState<any[] | undefined>(items)
     const [inspect, setInspect] = React.useState<number | undefined>(undefined)
-    const [luck, forceLuck] = React.useState<boolean>(false)
+    // const [luck, forceLuck] = React.useState<boolean>(false)
+    const luck = false
     
-    React.useEffect(()=>{
-        if(currentShop) return
-        let stor = window.localStorage.getItem("DnD-shop")
-        if(stor === null || stor === undefined) return 
-        let parsed = JSON.parse(stor)
+    // React.useEffect(()=>{
+    //     if(currentShop) return
+    //     let stor = window.localStorage.getItem("DnD-shop")
+    //     if(stor === null || stor === undefined) return 
+    //     let parsed = JSON.parse(stor)
 
-        setCurrentShop(parsed)
-    }, [])
+    //     setCurrentShop(parsed)
+    // }, [])
 
     const prices: router = {
         "PickUps": "5",
@@ -54,10 +33,10 @@ export default function ShopPage({setCurrentRoom, returnIndex }: Props) {
     }
 
     return <>
-        <button className='refresh-shop' onClick={()=>{setCurrentShop(generateShop(luck))}}>
+        {/* <button className='refresh-shop' onClick={()=>{setCurrentShop(generateShop(luck))}}>
             <FontAwesomeIcon icon={faRotate}/>
             Reroll
-        </button>
+        </button> */}
         {/* <button 
             className='force-luck' 
             onClick={()=>{forceLuck(!luck)}}
@@ -76,7 +55,7 @@ export default function ShopPage({setCurrentRoom, returnIndex }: Props) {
         </button>
         <img alt={"shop"} src={ShopImg} />
         <div className='shop-content'>
-            {currentShop && currentShop.map((el, i) => {
+            {items && items.map((el, i) => {
                 let bool = inspect === i
                 return <div
                     className={bool ? 'enemy-show selected' : 'enemy-show'}

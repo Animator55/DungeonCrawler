@@ -1,7 +1,6 @@
 import { DungeonRoom, router } from "../vite-env"
 
 import ChestImg from "../assets/images/Chest.png"
-import ShopImg from "../assets/images/Shop.png"
 import StairsImg from "../assets/images/Stairs.png"
 import StairsUpImg from "../assets/images/StairsUp.png"
 import BifurcationImg from "../assets/images/Bifurcation.png"
@@ -34,6 +33,7 @@ export const RoomRouter: router = {
 
 
 function Entrance(theme: string) {
+    console.log(theme)
     let room: DungeonRoom = {
         _id: `${Math.random() * Math.random()}`,
         image: StairsImg,
@@ -44,6 +44,7 @@ function Entrance(theme: string) {
     return room
 }
 function Stairs(theme: string) {
+    console.log(theme)
     let room: DungeonRoom = {
         _id: `${Math.random() * Math.random()}`,
         image: StairsImg,
@@ -54,6 +55,7 @@ function Stairs(theme: string) {
     return room
 }
 function StairsUp(theme: string) {
+    console.log(theme)
     let room: DungeonRoom = {
         _id: `${Math.random() * Math.random()}`,
         image: StairsUpImg,
@@ -64,6 +66,7 @@ function StairsUp(theme: string) {
     return room
 }
 function Hall(theme: string) {
+    console.log(theme)
     let room: DungeonRoom = {
         _id: `${Math.random() * Math.random()}`,
         image: HallImg,
@@ -74,6 +77,7 @@ function Hall(theme: string) {
     return room
 }
 function Bifurcation(theme: string) {
+    console.log(theme)
     let room: DungeonRoom = {
         _id: `${Math.random() * Math.random()}`,
         image: BifurcationImg,
@@ -84,6 +88,7 @@ function Bifurcation(theme: string) {
     return room
 }
 function Trifurcation(theme: string) {
+    console.log(theme)
     let room: DungeonRoom = {
         _id: `${Math.random() * Math.random()}`,
         image: TrifurcationImg,
@@ -94,6 +99,7 @@ function Trifurcation(theme: string) {
     return room
 }
 function SmallRoom(theme: string) {
+    console.log(theme)
     let room: DungeonRoom = {
         _id: `${Math.random() * Math.random()}`,
         image: SmallRoomImg,
@@ -104,6 +110,7 @@ function SmallRoom(theme: string) {
     return room
 }
 function BigRoom(theme: string) {
+    console.log(theme)
     let room: DungeonRoom = {
         _id: `${Math.random() * Math.random()}`,
         image: BigRoomImg,
@@ -195,6 +202,7 @@ function BigRoomEnd(theme: string) {
     return room
 }
 function Door(theme: string) {
+    console.log(theme)
     let room: DungeonRoom = {
         _id: `${Math.random() * Math.random()}`,
         image: DoorImg,
@@ -206,6 +214,7 @@ function Door(theme: string) {
     return room
 }
 function Boss(theme: string) {
+    console.log(theme)
     let room: DungeonRoom = {
         _id: `${Math.random() * Math.random()}`,
         image: BossImg,
@@ -216,6 +225,7 @@ function Boss(theme: string) {
     return room
 }
 function Reward(theme: string) {
+    console.log(theme)
     let room: DungeonRoom = {
         _id: `${Math.random() * Math.random()}`,
         image: RewardImg,
@@ -226,6 +236,7 @@ function Reward(theme: string) {
     return room
 }
 function Chest(theme: string) {
+    console.log(theme)
     let room: DungeonRoom = {
         _id: `${Math.random() * Math.random()}`,
         image: ChestImg,
@@ -236,6 +247,7 @@ function Chest(theme: string) {
     return room
 }
 function ChestEspecial(theme: string) {
+    console.log(theme)
     let room: DungeonRoom = {
         _id: `${Math.random() * Math.random()}`,
         image: ChestImg,
@@ -246,6 +258,7 @@ function ChestEspecial(theme: string) {
     return room
 }
 function Shop(theme: string) {
+    console.log(theme)
     let room: DungeonRoom = {
         image: "",
         _id: `${Math.random() * Math.random()}`,

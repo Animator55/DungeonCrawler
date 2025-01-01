@@ -1,6 +1,7 @@
 import { RoomRouter } from "../components/Rooms"
 import { dungeonEnemies } from "../default/dungeonEnemies"
 import { DungeonRoom, router } from "../vite-env"
+import { generateShop } from "./generateShop"
 import { pickPuzzle } from "./pickPuzzle"
 
 const floorsNumber: router = {
@@ -165,7 +166,13 @@ export default function generateDungeonStructure(rank: string, theme: string) {
         else if (end === "Tienda") {
             result.push({
             ...RoomRouter[end](theme),
-            items: [],
+            items: generateShop(false),
+            routes: [{ roomToMoveIndex: result.length - 1, direction: "Atras" }]
+        })}
+        else if (end === "Cofre") {
+            result.push({
+            ...RoomRouter[end](theme),
+            itemPicked: false,
             routes: [{ roomToMoveIndex: result.length - 1, direction: "Atras" }]
         })}
         else result.push({ ...RoomRouter[end](theme), routes: [{ roomToMoveIndex: result.length - 1, direction: "Atras" }] })
