@@ -3,9 +3,11 @@ import "../assets/dice.scss"
 
 type Props = {
     confirm: Function
+    overwriteCalc?: Function
+    disabled?: boolean
 }
 
-export default function Dice({ confirm }: Props) {
+export default function Dice({ overwriteCalc,confirm, disabled }: Props) {
     // Variables globales con tipado
     React.useEffect(() => {
         const die = document.querySelector<HTMLDivElement>('.die');
@@ -14,15 +16,6 @@ export default function Dice({ confirm }: Props) {
         let lastFace: number | undefined;
         let timeoutId: ReturnType<typeof setTimeout>;
         const animationDuration: number = 3000;
-
-        // Función para manejar clics en los enlaces
-        document.querySelectorAll<HTMLAnchorElement>('ul > li > a').forEach(link => {
-            link.addEventListener('click', event => {
-                event.preventDefault();
-                reset();
-                rollTo(link.getAttribute('href') || '');
-            });
-        });
 
         // Función para generar una cara aleatoria
         function randomFace(): number {
@@ -45,36 +38,29 @@ export default function Dice({ confirm }: Props) {
 
             if (die) {
                 die.setAttribute('data-face', face);
+                if(overwriteCalc) overwriteCalc(parseInt(face))
                 setTimeout(() => {
                     confirm(face)
                 }, 1000)
             }
         }
 
-        // Función para reiniciar el estado del dado
-        function reset(): void {
-            if (die) {
-                die.removeAttribute('data-face');
-                die.classList.remove('rolling');
-            }
-        }
-
         // Manejar clics en el botón de aleatorización y el dado
-        document.querySelectorAll<HTMLElement>('.randomize, .die').forEach(element => {
-            element.addEventListener('click', event => {
-                event.preventDefault();
-                if (die) {
-                    die.classList.add('rolling');
-                }
-                clearTimeout(timeoutId);
+        let dieEl = document.querySelector<HTMLElement>('.die')
+        if(dieEl) dieEl.addEventListener('click', event => {
+            if (disabled) return
+            event.preventDefault();
+            if (die) {
+                die.classList.add('rolling');
+            }
+            clearTimeout(timeoutId);
 
-                timeoutId = setTimeout(() => {
-                    if (die) {
-                        die.classList.remove('rolling');
-                    }
-                    rollTo(randomFace().toString());
-                }, animationDuration);
-            });
+            timeoutId = setTimeout(() => {
+                if (die) {
+                    die.classList.remove('rolling');
+                }
+                rollTo(randomFace().toString());
+            }, animationDuration);
         });
     })
 

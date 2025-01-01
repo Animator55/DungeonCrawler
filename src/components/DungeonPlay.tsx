@@ -2,13 +2,13 @@ import React from 'react'
 import generateDungeonStructure from '../logic/generateDungeonStructure'
 import { DungeonRoom, router } from '../vite-env'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArchive, faBox, faDoorClosed, faExpand, faPersonWalkingArrowRight, faShop, faStairs, faUser, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { faArchive, faBomb, faBox, faCoins, faDoorClosed, faExpand, faKey, faPersonWalkingArrowRight, faShop, faStairs, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { RankColorSelector } from '../logic/rankColorSelector'
 import { iconSelectorObj } from '../logic/iconSelectorObj'
 import ShopPage from './ShopPage'
-import Dice from './Dice'
 import ChestPage from './ChestPage'
 import { pickPuzzle } from '../logic/pickPuzzle'
+import Fight from './Fight'
 
 type Props = {
     rank: string
@@ -33,16 +33,25 @@ export default function DungeonPlay({ rank, theme, setPage }: Props) {
     const [room, setCurrentRoom] = React.useState<number>(0)
     const [floor, setFloor] = React.useState(0)
     const [inspect, setInspect] = React.useState<number | undefined>()
-    const [refresh, setRefresh] = React.useState(false)
+
+    const [life, setLife]= React.useState(100)
     const [items, setItems] = React.useState<HotBarType>({
         artifacts: [
-            { rank: "C", name: "Espada de Llamas Eternas", description: "Una espada que arde con fuego inextinguible.", active: true },
-            { rank: "D", name: "Escudo de Resistencia", description: "Un escudo que proporciona una bonificación adicional a la resistencia contra ciertos tipos de daño.", active: false },
+            { rank: "C", name: "Espada de Llamas Eternas", description: "Una espada que arde con fuego inextinguible.", active: true, durability: 10 },
+            { rank: "D", name: "Escudo de Resistencia", description: "Un escudo que proporciona una bonificación adicional a la resistencia contra ciertos tipos de daño.", active: false, durability: 8 },
         ],
         coins: 0,
         keys: 0,
         bombs: 0,
     })
+    const calculateArtifactPower = () => {
+        let total = 0
+        for (let i = 0; i < items.artifacts.length; i++) {
+            if (items.artifacts[i].active) total += 9
+        }
+        return total
+    }
+    const power = 1 + calculateArtifactPower()
 
     const [specialRooms, setSpecials] = React.useState<{ index: number; room: string; }[] | undefined>()
 
@@ -74,6 +83,9 @@ export default function DungeonPlay({ rank, theme, setPage }: Props) {
         if (!dungeon) return
         let storage = JSON.stringify({ dungeon, room, floor })
         window.localStorage.setItem("Dungeon-Crawler-2", storage)
+
+        let event = document.getElementById("event-show")
+        if (event) event.classList.add("fade-event")
     }, [room])
 
     const specialRoomsArray = ["Puerta",
@@ -100,24 +112,52 @@ export default function DungeonPlay({ rank, theme, setPage }: Props) {
         })
     }
 
-    const killEnemies = () => {
-        let stor = window.localStorage.getItem("Dungeon-Crawler-2")
-        if (stor !== undefined && stor !== null && stor !== "") {
-            let obj: DungeonRoom[][] = JSON.parse(stor).dungeon
-            console.log(obj, floor, room)
-            let newObj = { ...obj[floor][room], enemys: [] }
-            let newFloor = obj[floor].map((el, i) => {
-                if (i === room) return newObj
-                else return el
+    const changeRoom = (newObj: DungeonRoom) => {
+        if (!dungeon) return
+        let obj: DungeonRoom[][] = dungeon
+        let newFloor = obj[floor].map((el, i) => {
+            if (i === room) return newObj
+            else return el
+        })
+        let newDungeon = obj.map((el, i) => {
+            if (i === floor) return newFloor
+            else return el
+        })
+        let storage = JSON.stringify({ dungeon: newDungeon, room, floor })
+        window.localStorage.setItem("Dungeon-Crawler-2", storage)
+        setDungeon(newDungeon)
+    }
+    const killEnemy = (index: number) => {
+        if (!dungeon) return
+        let obj: DungeonRoom[][] = dungeon
+        let newObj = {
+            ...obj[floor][room], enemys: obj[floor][room].enemys.filter((el, i) => {
+                if (i !== index) return el
             })
-            let newDungeon = obj.map((el, i) => {
-                if (i === floor) return newFloor
-                else return el
-            })
-            let storage = JSON.stringify({ dungeon: newDungeon, room, floor })
-            window.localStorage.setItem("Dungeon-Crawler-2", storage)
-            setDungeon(newDungeon)
         }
+        changeRoom(newObj)
+        setItems({
+            ...items, artifacts: items.artifacts.map(el => {
+                if (el.active) return { ...el, durability: el.durability - 1 }
+                else return el
+            })
+        })
+    }
+    const lootChest = () => {
+        if (!dungeon) return
+        let obj: DungeonRoom[][] = dungeon
+        let newObj = {
+            ...obj[floor][room], itemPicked: true, items: []
+        }
+        changeRoom(newObj)
+    }
+    const openChest = (item: any) => {
+        if (!dungeon) return
+        let obj: DungeonRoom[][] = dungeon
+        let newObj = {
+            ...obj[floor][room], items: [item]
+        }
+        changeRoom(newObj)
     }
 
     const show = (e?: React.MouseEvent) => {
@@ -134,7 +174,7 @@ export default function DungeonPlay({ rank, theme, setPage }: Props) {
         let answ1 = dungeon[floor][room].puzzle.answer
         let answ2 = ""
         let answ3 = ""
-        if(answ1 !== ""){
+        if (answ1 !== "") {
             while (answ2 === "" || answ2 === answ1) {
                 answ2 = pickPuzzle(rank).answer
             }
@@ -160,35 +200,20 @@ export default function DungeonPlay({ rank, theme, setPage }: Props) {
         </section>
     }
     const Enemies = () => {
+        const damageSelector=(val:number)=>{
+            return 10
+            if(val<7)return 15
+            else if(val===1)return 20
+            else return 5
+        }
+        
         if (!dungeon || dungeon[floor][room].enemys.length === 0) return
-        return <section id='event-show' className='fade-event'>
-            <h5>Enemy!</h5>
-            <div className='fight-list'>
-                {dungeon[floor][room].enemys.map((el, i) => {
-                    let bool = inspect === i
-                    return <div
-                        className={bool ? 'fight-show selected' : 'fight-show'}
-                        key={Math.random()}
-                        onClick={(e)=>{
-                            let target = e.target as HTMLDivElement
-                            if(target) {
-                                target.classList.toggle("view")
-                                setTimeout(()=>{
-                                    target.classList.toggle("view")
-                                }, 2000)
-                            }
-                        }}
-                        style={el.ghost && !bool ? { color: "#444", background: "black" } : {}}
-                    >
-                        <FontAwesomeIcon icon={faUser} />
-                        {el.icon && <FontAwesomeIcon icon={iconSelectorObj[el.icon]} />}
-                        <p className='name'>{el.name}</p>
-                        <p className='enemy-power'>20</p>
-                    </div>
-                })}
-            </div>
-            <Dice confirm={(val: string) => { killEnemies() }} />
-        </section>
+        return <Fight
+            enemies={dungeon[floor][room].enemys}
+            player={power}
+            killEnemy={killEnemy}
+            setLife={(val:number)=>{setLife(life-damageSelector(val))}}
+            />
     }
 
     const RouterSelector: router = {
@@ -236,18 +261,38 @@ export default function DungeonPlay({ rank, theme, setPage }: Props) {
                     })
                 }}>
                 {el && <FontAwesomeIcon icon={iconSelectorObj[el.name.split(" ")[0]]} />}
+                {el && <div className='durability-bar' style={{ width: el.durability * 10 + "%" }}></div>}
             </button>
             )
         }
         return <>
             <div className='hot-bar'>
-                {list}
+                <div className='top-hot-bar'>
+                    <div className='life-container'>
+                        <div className='life-bar' style={{width: life+"%"}}></div>
+                    </div>
+                    <div className='unit'>
+                        <FontAwesomeIcon icon={faCoins}/>
+                        0
+                    </div>
+                    <div className='unit'>
+                        <FontAwesomeIcon icon={faBomb}/>
+                        0
+                    </div>
+                    <div className='unit'>
+                        <FontAwesomeIcon icon={faKey}/>
+                        0
+                    </div>
+                </div>
+                <ul>
+                    {list}
+                </ul>
             </div>
         </>
     }
 
     const normalRoom = dungeon && <>
-        <nav className='router'>
+        {/* <nav className='router'>
             {specialRooms && specialRooms.map(el => {
                 return <button
                     key={Math.random()}
@@ -257,7 +302,7 @@ export default function DungeonPlay({ rank, theme, setPage }: Props) {
                     {<p>{el.index}</p>}
                 </button>
             })}
-        </nav>
+        </nav> */}
         <button className='end-dungeon' onClick={endDungeon}>
             <FontAwesomeIcon icon={faPersonWalkingArrowRight} />
         </button>
@@ -283,24 +328,42 @@ export default function DungeonPlay({ rank, theme, setPage }: Props) {
                 >
                     {icon.value && <FontAwesomeIcon icon={RouterSelector[icon.icon]} />}
                     {button.direction + " (" + button.roomToMoveIndex + ")"}
-                    {button.tag && button.tag.length !== 0 && button.tag.map(tag => {
+                    {/* {button.tag && button.tag.length !== 0 && button.tag.map(tag => {
                         return <React.Fragment key={Math.random()}>
                             <FontAwesomeIcon icon={RouterSelector[tag]} />
                         </React.Fragment>
-                    })}
+                    })} */}
                 </button>
             })}
         </div>
     </>
 
+    React.useEffect(()=>{
+        if(life === 100) return
+        let main = document.getElementById("main")
+        if(main) {
+            main.classList.add("damage")
+            setTimeout(()=>{
+                if(main)main.classList.remove("damage")
+            }, 300)
+        }
+    },[life])
+
     return <section className='dungeon-play' key={Math.random()}>
         {dungeon ? dungeon[floor][room].room === "Shop" ?
-            <ShopPage setCurrentRoom={setCurrentRoom} returnIndex={room - 1} />
+            <ShopPage items={dungeon[floor][room].items} setCurrentRoom={setCurrentRoom} returnIndex={room - 1} />
             :
             dungeon[floor][room].room === "Chest" || dungeon[floor][room].room === "Reward" ?
                 <ChestPage
                     reward={dungeon[floor][room].room === "Reward"}
-                    setCurrentRoom={setCurrentRoom} returnIndex={room - 1} pickItem={pickItem} />
+                    itemPicked={dungeon[floor][room].itemPicked}
+                    setCurrentRoom={setCurrentRoom} returnIndex={room - 1}
+                    dropData={dungeon[floor][room].items ? dungeon[floor][room].items[0] : undefined}
+                    openChest={openChest}
+                    pickItem={(item: any) => {
+                        lootChest()
+                        pickItem(item)
+                    }} />
                 :
                 normalRoom
             : null}
