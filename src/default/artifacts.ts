@@ -2,12 +2,12 @@ import { router } from "../vite-env";
 
 export const artifacts: router = {
     PickUps: [
-        { durability: 10,name: "Corazón", description: "Efecto de healing al usuario." },
-        { durability: 10,name: "Moneda Penny", description: "Valor de una moneda." },
-        { durability: 10,name: "Moneda Nickel", description: "Valor de cinco monedas." },
+        { durability: 10,name: "Corazón", description: "Efecto de healing al usuario.", _id: "heart"},
+        { durability: 10,name: "Moneda Penny", description: "Valor de una moneda." , _id: "coins"},
+        { durability: 10,name: "Moneda Nickel", description: "Valor de cinco monedas."},
         { durability: 10,name: "Moneda Dime", description: "Valor de diez monedas." },
-        { durability: 10,name: "Bomba", description: "Bomba para romper escenario." },
-        { durability: 10,name: "Llave", description: "Llave para abrir puertas." },
+        { durability: 10,name: "Bomba", description: "Bomba para romper escenario.", _id: "bombs" },
+        { durability: 10,name: "Llave", description: "Llave para abrir puertas.", _id: "keys" },
         { durability: 10,name: "Carta The Magician", description: "Redirecciona proyectiles del usuario por una sala." },
         { durability: 10,name: "Carta The Fool", description: "Reestablece los artefactos a los originales de la build." },
         { durability: 10,name: "Carta The Emperor", description: "Teletransportación al jefe, ignorando la puerta, al salir, te devuelve al inicio del suelo." },

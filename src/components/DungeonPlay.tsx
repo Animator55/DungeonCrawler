@@ -10,6 +10,7 @@ import ChestPage from './ChestPage'
 import { pickPuzzle } from '../logic/pickPuzzle'
 import Fight from './Fight'
 import { generateLifeColor } from '../logic/generateLifeColor'
+import {  generatePickUpRoom } from '../logic/generateArtifact'
 
 type Props = {
     theme: string
@@ -21,6 +22,7 @@ type HotBarType = {
     coins: number;
     keys: number;
     bombs: number;
+    [key:string]: any
 }
 
 let rankArray = ["E", "D", "C", "B", "A", "S"]
@@ -35,7 +37,7 @@ export default function DungeonPlay({ theme, setPage }: Props) {
     const [floor, setFloor] = React.useState(0)
     const [inspect, setInspect] = React.useState<number | undefined>()
 
-    const [life, setLife]= React.useState(100)
+    const [life, setLife] = React.useState(100)
     const [items, setItems] = React.useState<HotBarType>({
         artifacts: [
             { rank: "C", name: "Espada de Llamas Eternas", description: "Una espada que arde con fuego inextinguible.", active: true, durability: 100 },
@@ -140,12 +142,26 @@ export default function DungeonPlay({ theme, setPage }: Props) {
             })
         }
         changeRoom(newObj)
-        setItems({
-            ...items, artifacts: items.artifacts.map(el => {
-                if (el.active) return { ...el, durability: el.durability - 1 }
-                else return el
+        let data = {
+            ...items, artifacts: items.artifacts.filter(el => {
+                let newDur = el.durability - 1 <= 0 ? -1 : el.durability - 1
+                if(newDur !== -1) {
+                    if (el.active) return { ...el, durability: el.durability - 1 }
+                    else return el
+                }
             })
-        })
+        }
+        if (newObj.enemys.length === 0) {
+            let amountPick = Math.floor(Math.random() * 3) + 1
+            // luck ? 3 :
+
+            while (amountPick > 0) {
+                amountPick--
+                let item:{_id?:"heart"|"coins"|"bombs"|"keys"} = generatePickUpRoom()
+                if(item._id && item._id !== "heart") data = {...data, [item._id]: data[item._id]+1}
+            }
+        }
+        setItems(data)
     }
     const hitEnemy = (index: number) => {
         if (!dungeon) return
@@ -154,8 +170,8 @@ export default function DungeonPlay({ theme, setPage }: Props) {
             ...obj[floor][room], enemys: obj[floor][room].enemys.map((el, i) => {
                 if (i !== index) return el
                 else {
-                    let result = el.currentHealth! - 4 <0 ? 0 : el.currentHealth! - 4
-                    return {...el, currentHealth: result}
+                    let result = el.currentHealth! - 4 < 0 ? 0 : el.currentHealth! - 4
+                    return { ...el, currentHealth: result }
                 }
             })
         }
@@ -224,21 +240,21 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         </section>
     }
     const Enemies = () => {
-        const damageSelector=(val:number)=>{
+        const damageSelector = (val: number) => {
             return 10
-            if(val<7)return 15
-            else if(val===1)return 20
+            if (val < 7) return 15
+            else if (val === 1) return 20
             else return 5
         }
-        
+
         if (!dungeon || dungeon[floor][room].enemys.length === 0) return
         return <Fight
             enemies={dungeon[floor][room].enemys}
             player={power}
             killEnemy={killEnemy}
             hitEnemy={hitEnemy}
-            setLife={(val:number)=>{setLife(life-damageSelector(val))}}
-            />
+            setLife={(val: number) => { setLife(life - damageSelector(val)) }}
+        />
     }
 
     const RouterSelector: router = {
@@ -296,20 +312,20 @@ export default function DungeonPlay({ theme, setPage }: Props) {
                     <div className='life-container'>
                         <div className='life-bar' style={{
                             backgroundColor: generateLifeColor(life),
-                            width: life+"%"
+                            width: life + "%"
                         }}></div>
                     </div>
                     <div className='unit'>
-                        <FontAwesomeIcon icon={faCoins}/>
-                        0
+                        <FontAwesomeIcon icon={faCoins} />
+                        {items.coins}
                     </div>
                     <div className='unit'>
-                        <FontAwesomeIcon icon={faBomb}/>
-                        0
+                        <FontAwesomeIcon icon={faBomb} />
+                        {items.bombs}
                     </div>
                     <div className='unit'>
-                        <FontAwesomeIcon icon={faKey}/>
-                        0
+                        <FontAwesomeIcon icon={faKey} />
+                        {items.keys}
                     </div>
                 </div>
                 <ul>

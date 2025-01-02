@@ -28,14 +28,6 @@ export default function Dice({ overwriteCalc,confirm, disabled }: Props) {
         function rollTo(face: string): void {
             clearTimeout(timeoutId);
 
-            document.querySelectorAll<HTMLAnchorElement>('ul > li > a').forEach(link => {
-                link.classList.remove('active');
-            });
-            const targetLink = document.querySelector<HTMLAnchorElement>(`[href='${face}']`);
-            if (targetLink) {
-                targetLink.classList.add('active');
-            }
-
             if (die) {
                 die.setAttribute('data-face', face);
                 if(overwriteCalc) overwriteCalc(parseInt(face))
@@ -61,7 +53,7 @@ export default function Dice({ overwriteCalc,confirm, disabled }: Props) {
                 }
                 rollTo(randomFace().toString());
             }, animationDuration);
-        });
+        }, {once: true});
     })
 
     return <>

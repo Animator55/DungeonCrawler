@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { enemyType } from "../vite-env"
-import { faCaretDown, faCaretUp, faUser } from "@fortawesome/free-solid-svg-icons"
+import { faCaretDown, faUser } from "@fortawesome/free-solid-svg-icons"
 import { iconSelectorObj } from "../logic/iconSelectorObj"
 import Dice from "./Dice"
 import React from "react"
@@ -13,6 +13,7 @@ type Props = {
     hitEnemy: Function
     setLife: Function
 }
+let fightActive = false
 
 export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }: Props) {
     const [enemySelected, setSelectedEnemy] = React.useState(0)
@@ -27,11 +28,13 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }:
     }
 
     const fight = () => {
-        if (!dice) return
+        if (!dice || fightActive) return
+        fightActive = true
         let calc = calculateTotal(enemies[enemySelected].power, player)
         let rand = Math.random()
         let list = document.querySelectorAll(".fight-show")
         let enemy = list[enemySelected]
+        console.log("fight", new Date().getTime())
         if (rand <= calc) {
             if (enemy) {
                 enemy.classList.add("got-hit")
@@ -59,16 +62,16 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }:
                 let val = parseFloat(span.style.width.split("%")[0])-10
                 span.style.width = (val)+"%"
                 span.style.backgroundColor = generateLifeColor(val)
-                console.log(span.style.width)
             } 
             setTimeout(() => {
                 setLife(calc)
             }, 1000)
         }
+        fightActive = false
     }
 
     React.useEffect(() => {
-        if (dice) fight()
+        if (dice !== undefined) fight()
     }, [dice])
 
     const overwriteCalc = (diceLocal: number) => {
