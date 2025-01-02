@@ -46,7 +46,7 @@ export default function ChestPage({ reward, setCurrentRoom, returnIndex, dropDat
             <FontAwesomeIcon icon={faArrowLeft} />
             Volver
         </button>
-        <img alt={"shop"} src={reward ? RewardImg : ChestImg} />
+        <img className='back-image' alt={"shop"} src={reward ? RewardImg : ChestImg} />
         <div className='shop-content'>
             {drop ? <div className='inspect-div'
                 style={{ color: RankColorSelector[drop.rank!] }}>

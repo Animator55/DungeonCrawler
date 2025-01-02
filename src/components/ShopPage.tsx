@@ -6,9 +6,9 @@ import { faArrowLeft, faCoins  } from '@fortawesome/free-solid-svg-icons'
 import ShopImg from "../assets/images/Shop.png"
 import { router } from '../vite-env'
 
-type Props = {setCurrentRoom: Function, returnIndex: number, items: any[] | undefined}
+type Props = {setCurrentRoom: Function, returnIndex: number, items: any[] | undefined, buy: Function}
 
-export default function ShopPage({setCurrentRoom, returnIndex,items}: Props) {    
+export default function ShopPage({setCurrentRoom, returnIndex,items, buy}: Props) {    
     // const [currentShop, setCurrentShop] = React.useState<any[] | undefined>(items)
     const [inspect, setInspect] = React.useState<number | undefined>(undefined)
     // const [luck, forceLuck] = React.useState<boolean>(false)
@@ -53,7 +53,7 @@ export default function ShopPage({setCurrentRoom, returnIndex,items}: Props) {
             <FontAwesomeIcon icon={faArrowLeft}/>
             Volver
         </button>
-        <img alt={"shop"} src={ShopImg} />
+        <img className='back-image' alt={"shop"} src={ShopImg} />
         <div className='shop-content'>
             {items && items.map((el, i) => {
                 let bool = inspect === i
@@ -71,7 +71,12 @@ export default function ShopPage({setCurrentRoom, returnIndex,items}: Props) {
                             <FontAwesomeIcon icon={faCoins}/>
                         </p>
                     </div>
-                    {bool && <p>{el.description}</p>}
+                    {bool && <>
+                    <p>{el.description}</p>
+                    <button onClick={()=>{buy(el, prices[el.rank], i)}}>
+                        Buy
+                    </button>
+                    </>}
                 </div>
             })}
         </div>

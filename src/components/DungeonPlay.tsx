@@ -41,12 +41,9 @@ export default function DungeonPlay({ theme, setPage }: Props) {
     const [items, setItems] = React.useState<HotBarType>({
         artifacts: [
             { rank: "C", name: "Espada de Llamas Eternas", description: "Una espada que arde con fuego inextinguible.", active: true, durability: 5 },
-            { rank: "C", name: "Espada de Llamas Eternas", description: "Una espada que arde con fuego inextinguible.", active: true, durability: 5 },
-            { rank: "C", name: "Espada de Llamas Eternas", description: "Una espada que arde con fuego inextinguible.", active: true, durability: 5 },
-            { rank: "C", name: "Espada de Llamas Eternas", description: "Una espada que arde con fuego inextinguible.", active: true, durability: 5 },
             { rank: "D", name: "Escudo de Resistencia", description: "Un escudo que proporciona una bonificación adicional a la resistencia contra ciertos tipos de daño.", active: false, durability: 8 },
         ],
-        coins: 0,
+        coins: 99,
         keys: 0,
         bombs: 0,
     })
@@ -118,6 +115,19 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         })
     }
 
+    const buy = (item: {_id: "bombs"|"keys"|"coins"| "heart", rank:string}, price: string, index: number) => {
+        let priceNum = parseInt(price)
+        if (items.coins < priceNum || (item.rank !== "PickUps" && items.artifacts.length === 5)) return
+        let newItems = {...items, coins: items.coins - priceNum}
+        if (item._id) {
+            if (item._id !== "heart" ) newItems = { ...newItems, [item._id]: newItems[item._id] + 1 }
+            else setLife(100)
+        }
+        else newItems = {...newItems, artifacts: [...newItems.artifacts, { ...item, active: true }]}
+        setItems(newItems)
+        removeItemFromShop(index)
+    }
+
     const changeRoom = (newObj: DungeonRoom) => {
         if (!dungeon) return
         let obj: DungeonRoom[][] = dungeon
@@ -182,6 +192,17 @@ export default function DungeonPlay({ theme, setPage }: Props) {
                 else return el
             })
         })
+    }
+    const removeItemFromShop = (index: number) => {
+        if (!dungeon) return
+        let obj: DungeonRoom[][] = dungeon
+        if(!obj[floor][room].items || obj[floor][room].items.length === 0) return
+        let newObj = {
+            ...obj[floor][room], itemPicked: true, items: obj[floor][room].items?.filter((el, i)=>{
+                if(index !== i) return el
+            })
+        }
+        changeRoom(newObj)
     }
     const lootChest = () => {
         if (!dungeon) return
@@ -381,7 +402,7 @@ export default function DungeonPlay({ theme, setPage }: Props) {
     }
 
     const normalRoom = dungeon && <>
-        <nav className='router'>
+        {/* <nav className='router'>
             {specialRooms && specialRooms.map(el => {
                 return <button
                     key={Math.random()}
@@ -391,7 +412,7 @@ export default function DungeonPlay({ theme, setPage }: Props) {
                     {<p>{el.index}</p>}
                 </button>
             })}
-        </nav>
+        </nav> */}
         <button className='end-dungeon' onClick={endDungeon}>
             <FontAwesomeIcon icon={faPersonWalkingArrowRight} />
         </button>
@@ -399,7 +420,7 @@ export default function DungeonPlay({ theme, setPage }: Props) {
             <FontAwesomeIcon icon={faExpand} />
         </button>
         <h3>{dungeon[floor][room].room}</h3>
-        <img alt={dungeon[floor][room].room} src={dungeon[floor][room].image} />
+        <img className='back-image' alt={dungeon[floor][room].room} src={dungeon[floor][room].image} />
         {(dungeon[floor][room].puzzle !== undefined) &&
             <button className='show-event' onClick={show}>Hide</button>}
         <Puzzle />
@@ -416,25 +437,33 @@ export default function DungeonPlay({ theme, setPage }: Props) {
                     }}
                 >
                     {icon.value && <FontAwesomeIcon icon={RouterSelector[icon.icon]} />}
-                    {button.direction + " (" + button.roomToMoveIndex + ")"}
-                    {button.tag && button.tag.length !== 0 && button.tag.map(tag => {
+                    {button.direction}
+                    {/* + " (" + button.roomToMoveIndex + ")" */}
+                    {/* {button.tag && button.tag.length !== 0 && button.tag.map(tag => {
                         return <React.Fragment key={Math.random()}>
                             <FontAwesomeIcon icon={RouterSelector[tag]} />
                         </React.Fragment>
-                    })}
+                    })} */}
                 </button>
             })}
         </div>
     </>
 
 
+    React.useEffect(() => {
+        if (life <= 0) endDungeon()
+    }, [life])
+
     React.useEffect(()=>{
-        if(life <= 0) endDungeon()
-    },  [life])
+        let img = document.querySelector(".back-image")
+        if(img) img.classList.add("fade-image")
+    }, [room])
 
     return <section className='dungeon-play' key={Math.random()}>
         {dungeon ? dungeon[floor][room].room === "Shop" ?
-            <ShopPage items={dungeon[floor][room].items} setCurrentRoom={setCurrentRoom} returnIndex={room - 1} />
+            <ShopPage 
+                buy={buy} 
+                items={dungeon[floor][room].items} setCurrentRoom={setCurrentRoom} returnIndex={room - 1} />
             :
             dungeon[floor][room].room === "Chest" || dungeon[floor][room].room === "Reward" ?
                 <ChestPage

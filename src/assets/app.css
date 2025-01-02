@@ -217,6 +217,10 @@ button:active {
     /* animation: fade-up 300ms .2s forwards; */
     image-rendering: pixelated;
 }
+.fade-image {
+    opacity: 0;
+    animation: fade-up 300ms .2s forwards;
+}
 
 .fade-event {
     opacity: 0;
