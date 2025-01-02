@@ -4,6 +4,7 @@ import { faCaretDown, faCaretUp, faUser } from "@fortawesome/free-solid-svg-icon
 import { iconSelectorObj } from "../logic/iconSelectorObj"
 import Dice from "./Dice"
 import React from "react"
+import { generateLifeColor } from "../logic/generateLifeColor"
 
 type Props = {
     enemies: enemyType[]
@@ -32,7 +33,14 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }:
         let list = document.querySelectorAll(".fight-show")
         let enemy = list[enemySelected]
         if (rand <= calc) {
-            if (enemy) enemy.classList.add("got-hit")
+            if (enemy) {
+                enemy.classList.add("got-hit")
+                let span = enemy.querySelector(".enemy-health")
+                if(span) {
+                    let bar = span.firstChild as HTMLDivElement
+                    bar.style.width = (((enemies[enemySelected].currentHealth! -4)*100)/enemies[enemySelected].health)+"%"
+                } 
+            }
             setTimeout(() => {
                 hitEnemy(enemySelected)
             }, 1000)
@@ -46,6 +54,13 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }:
                     if (main) main.classList.remove("damage")
                 }, 550)
             }
+            let span = document.querySelector(".life-bar") as HTMLDivElement
+            if(span) {
+                let val = parseFloat(span.style.width.split("%")[0])-10
+                span.style.width = (val)+"%"
+                span.style.backgroundColor = generateLifeColor(val)
+                console.log(span.style.width)
+            } 
             setTimeout(() => {
                 setLife(calc)
             }, 1000)
@@ -62,6 +77,7 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }:
         if (div) {
             div.textContent = `${Math.round(val * 100)}% de Exito`
             div.style.color = diceLocal > 10 ? "green" : diceLocal < 10 ? "red" : ""
+            div.style.scale = "1.1"
         }
     }
 
@@ -106,7 +122,7 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }:
             })}
         </div>
         <div className="fight-state">
-            <p>{Math.round(calculateTotal(enemies[enemySelected].power, player) * 100)}% de Exito</p>
+            {Math.round(calculateTotal(enemies[enemySelected].power, player) * 100)}% de Exito
         </div>
         <Dice
             overwriteCalc={overwriteCalc}

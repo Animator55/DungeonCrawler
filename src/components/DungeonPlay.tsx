@@ -9,6 +9,7 @@ import ShopPage from './ShopPage'
 import ChestPage from './ChestPage'
 import { pickPuzzle } from '../logic/pickPuzzle'
 import Fight from './Fight'
+import { generateLifeColor } from '../logic/generateLifeColor'
 
 type Props = {
     theme: string
@@ -293,7 +294,10 @@ export default function DungeonPlay({ theme, setPage }: Props) {
             <div className='hot-bar'>
                 <div className='top-hot-bar'>
                     <div className='life-container'>
-                        <div className='life-bar' style={{width: life+"%"}}></div>
+                        <div className='life-bar' style={{
+                            backgroundColor: generateLifeColor(life),
+                            width: life+"%"
+                        }}></div>
                     </div>
                     <div className='unit'>
                         <FontAwesomeIcon icon={faCoins}/>

@@ -352,13 +352,16 @@ button:active {
 }
 
 .life-container {
-    background-color: black;
+    background-color: rgb(14, 12, 12);
     padding: .25rem;
     width: 100%;
+    border-radius: 4px;
 }
 .life-bar {
     height: 1rem;
-    background-color: red;
+    border-radius: 4px;
+    background-color: rgb(255, 0, 0);
+    transition: width 550ms 300ms, background-color 550ms 300ms;
 }
 
 .hot-bar {
@@ -385,6 +388,7 @@ button:active {
 .hot-bar ul button {
     position: relative;
     overflow: hidden;
+    border: 3px solid transparent;
 }
 
 .durability-bar {
@@ -490,15 +494,20 @@ animation: fade-to-left 1.5s 0.6s infinite ease-in-out;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    padding: 0 4.5rem;
+    padding: 0 4rem;
     margin-bottom: 3rem;
+}
+
+.fight-state {
+    margin-bottom: 1.5rem;
+    transition: color 200ms, scale 150ms;
 }
 
 .fight-show {
     position: relative;
     display: flex;
     justify-content: center;
-    margin: .7rem 2rem;
+    margin: .7rem 1.5rem;
 }
 
 .fight-show * {
@@ -539,6 +548,7 @@ animation: fade-to-left 1.5s 0.6s infinite ease-in-out;
 .fight-show>.enemy-health > div {
     border-radius: 5px;
     background-color: red;
+    transition: width 450ms 400ms;
 }
 .fight-show>.name {
     background-color: black;
