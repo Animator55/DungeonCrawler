@@ -5,11 +5,14 @@ export type router ={
 }
 
 type enemyType = {
+    health: number
+    currentHealth?: number
     icon?: string
     name: string
     description: string
     ghost?: boolean,
     power: number
+    rank?:string
 }
 
 export type DungeonRoom = {

@@ -11,7 +11,6 @@ import { pickPuzzle } from '../logic/pickPuzzle'
 import Fight from './Fight'
 
 type Props = {
-    rank: string
     theme: string
     setPage: Function
 }
@@ -23,7 +22,8 @@ type HotBarType = {
     bombs: number;
 }
 
-export default function DungeonPlay({ rank, theme, setPage }: Props) {
+let rankArray = ["E", "D", "C", "B", "A", "S"]
+export default function DungeonPlay({ theme, setPage }: Props) {
     const fullscreen = () => {
         let elem = document.getElementById('main')
         if (!elem) return
@@ -37,7 +37,10 @@ export default function DungeonPlay({ rank, theme, setPage }: Props) {
     const [life, setLife]= React.useState(100)
     const [items, setItems] = React.useState<HotBarType>({
         artifacts: [
-            { rank: "C", name: "Espada de Llamas Eternas", description: "Una espada que arde con fuego inextinguible.", active: true, durability: 10 },
+            { rank: "C", name: "Espada de Llamas Eternas", description: "Una espada que arde con fuego inextinguible.", active: true, durability: 100 },
+            { rank: "C", name: "Espada de Llamas Eternas", description: "Una espada que arde con fuego inextinguible.", active: true, durability: 100 },
+            { rank: "C", name: "Espada de Llamas Eternas", description: "Una espada que arde con fuego inextinguible.", active: true, durability: 100 },
+            { rank: "C", name: "Espada de Llamas Eternas", description: "Una espada que arde con fuego inextinguible.", active: true, durability: 100 },
             { rank: "D", name: "Escudo de Resistencia", description: "Un escudo que proporciona una bonificación adicional a la resistencia contra ciertos tipos de daño.", active: false, durability: 8 },
         ],
         coins: 0,
@@ -74,7 +77,7 @@ export default function DungeonPlay({ rank, theme, setPage }: Props) {
                 setCurrentRoom(obj.room)
                 setFloor(obj.floor)
             }
-            else setDungeon(generateDungeonStructure(rank, theme))
+            else setDungeon(generateDungeonStructure(theme))
         }
     }, [])
 
@@ -143,6 +146,26 @@ export default function DungeonPlay({ rank, theme, setPage }: Props) {
             })
         })
     }
+    const hitEnemy = (index: number) => {
+        if (!dungeon) return
+        let obj: DungeonRoom[][] = dungeon
+        let newObj = {
+            ...obj[floor][room], enemys: obj[floor][room].enemys.map((el, i) => {
+                if (i !== index) return el
+                else {
+                    let result = el.currentHealth! - 4 <0 ? 0 : el.currentHealth! - 4
+                    return {...el, currentHealth: result}
+                }
+            })
+        }
+        changeRoom(newObj)
+        setItems({
+            ...items, artifacts: items.artifacts.map(el => {
+                if (el.active) return { ...el, durability: el.durability - 1 }
+                else return el
+            })
+        })
+    }
     const lootChest = () => {
         if (!dungeon) return
         let obj: DungeonRoom[][] = dungeon
@@ -176,10 +199,10 @@ export default function DungeonPlay({ rank, theme, setPage }: Props) {
         let answ3 = ""
         if (answ1 !== "") {
             while (answ2 === "" || answ2 === answ1) {
-                answ2 = pickPuzzle(rank).answer
+                answ2 = pickPuzzle(rankArray[floor]).answer
             }
             while (answ3 === "" || answ3 === answ1 || answ3 === answ2) {
-                answ3 = pickPuzzle(rank).answer
+                answ3 = pickPuzzle(rankArray[floor]).answer
             }
         }
         let answers = [answ1, answ2, answ3].sort(() => Math.random() - 0.5)
@@ -212,6 +235,7 @@ export default function DungeonPlay({ rank, theme, setPage }: Props) {
             enemies={dungeon[floor][room].enemys}
             player={power}
             killEnemy={killEnemy}
+            hitEnemy={hitEnemy}
             setLife={(val:number)=>{setLife(life-damageSelector(val))}}
             />
     }
@@ -292,7 +316,7 @@ export default function DungeonPlay({ rank, theme, setPage }: Props) {
     }
 
     const normalRoom = dungeon && <>
-        {/* <nav className='router'>
+        <nav className='router'>
             {specialRooms && specialRooms.map(el => {
                 return <button
                     key={Math.random()}
@@ -302,7 +326,7 @@ export default function DungeonPlay({ rank, theme, setPage }: Props) {
                     {<p>{el.index}</p>}
                 </button>
             })}
-        </nav> */}
+        </nav>
         <button className='end-dungeon' onClick={endDungeon}>
             <FontAwesomeIcon icon={faPersonWalkingArrowRight} />
         </button>
@@ -328,11 +352,11 @@ export default function DungeonPlay({ rank, theme, setPage }: Props) {
                 >
                     {icon.value && <FontAwesomeIcon icon={RouterSelector[icon.icon]} />}
                     {button.direction + " (" + button.roomToMoveIndex + ")"}
-                    {/* {button.tag && button.tag.length !== 0 && button.tag.map(tag => {
+                    {button.tag && button.tag.length !== 0 && button.tag.map(tag => {
                         return <React.Fragment key={Math.random()}>
                             <FontAwesomeIcon icon={RouterSelector[tag]} />
                         </React.Fragment>
-                    })} */}
+                    })}
                 </button>
             })}
         </div>

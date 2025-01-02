@@ -4,9 +4,6 @@ import { DungeonRoom, router } from "../vite-env"
 import { generateShop } from "./generateShop"
 import { pickPuzzle } from "./pickPuzzle"
 
-const floorsNumber: router = {
-    "E": 1, "D": 1, "C": 1, "B": 2, "A": 2, "S": 3
-}
 const specialRoomsValues: router = {
     "E": 2, "D": 2, "C": 2, "B": 2, "A": 2, "S": 2
 }
@@ -17,7 +14,7 @@ const enemiesEncountersValues: router = {
     "E": 5, "D": 6, "C": 7, "B": 8, "A": 10, "S": 14
 }
 const randomBifurcations: router = {
-    "E": 0, "D": 2, "C": 4, "B": 5, "A": 5, "S": 5
+    "E": 0, "D": 1, "C": 2, "B": 3, "A": 4, "S": 4
 }
 
 const generateEnemies = (rank: string, theme: string, array: DungeonRoom[]) => {
@@ -34,13 +31,20 @@ const generateEnemies = (rank: string, theme: string, array: DungeonRoom[]) => {
     let random = Math.floor(Math.random() * pickableArray.length)
     let roomIndex = pickableArray[random]
 
-    let amount = rank === "S" ? Math.floor(Math.random() * 3) + 3 : Math.floor(Math.random() * 2) + 2
+    let rankAdding = 0
+    if(rank === "D") rankAdding =1 
+    else if(rank === "C") rankAdding =2 
+    else if(rank === "B") rankAdding =2 
+    else if(rank === "A") rankAdding =3 
+    else if(rank === "S") rankAdding =3 
+
+    let amount = rank === "S" ? Math.floor(Math.random() * 3) + rankAdding : Math.floor(Math.random() * 2) + rankAdding
     let enemiesArray = []
     let list = dungeonEnemies[theme][rank]
     for (let i = 0; i < amount; i++) {
         let random = Math.floor(Math.random() * list.length)
         let enemy = list[random]
-        enemiesArray.push(enemy)
+        enemiesArray.push({...enemy, rank: rank, currentHealth: enemy.health})
     }
 
     let result = newArray.map((el, i) => {
@@ -100,16 +104,16 @@ const makeIntersection = (array: DungeonRoom[], end: string, theme: string) => {
 }
 
 
-export default function generateDungeonStructure(rank: string, theme: string) {
+export default function generateDungeonStructure(theme: string) {
 
     let rankArray = ["E", "D", "C", "B", "A", "S"]
-    let floor = floorsNumber[rank]
+    let rank = rankArray[0]
+    let floor = rankArray.length
     // let floor = 1
     let floorLength = floorsLength[rank]
     let specialRooms = specialRoomsValues[rank]
     let enemiesEncounters = enemiesEncountersValues[rank]
     let randomPaths = randomBifurcations[rank]
-    let secBosses = Math.random() > 0.5
 
 
     const generateMainRoute = (begginng: string | undefined, length: number, end: string, prev?: DungeonRoom[], prevEnd?: number) => {
@@ -135,7 +139,12 @@ export default function generateDungeonStructure(rank: string, theme: string) {
             result.push({ ...RoomRouter[roomName](theme), routes: [{ roomToMoveIndex: prevIndex, direction: "Atras" }, { roomToMoveIndex: i + 1, tag: [end], direction: "Adelante" }] })
         }
         if (end === "Boss") {
-            let boss = theme === "FantasmasNoMuertos" ? [dungeonEnemies["Fantasmas"].Boss[rank], dungeonEnemies["NoMuertos"].Boss[rank]] : [dungeonEnemies[theme].Boss[rank]]
+            let enemy = dungeonEnemies[theme].Boss[rank]
+            let boss = theme === "FantasmasNoMuertos" ? [
+                {...dungeonEnemies["Fantasmas"].Boss[rank], rank: rank, currentHealth: dungeonEnemies["Fantasmas"].Boss[rank].health},
+                {...dungeonEnemies["NoMuertos"].Boss[rank], rank: rank,currentHealth: dungeonEnemies["NoMuertos"].Boss[rank].health}] 
+                : 
+            [{...enemy, rank: rank, currentHealth: enemy.health}]
             result.push({
                 ...RoomRouter["Puerta"](theme),
                 puzzle: pickPuzzle(Math.random() > 0.5 ? rank : rank === "E" ? "E" : rankArray[rankArray.indexOf(rank) - 1]),
@@ -148,7 +157,7 @@ export default function generateDungeonStructure(rank: string, theme: string) {
             result.push({ ...RoomRouter["Premio"](theme), routes: [{ roomToMoveIndex: result.length - 1, direction: "Atras" }] })
         }
         else if (end === "Escaleras") {
-            if (rank === "S") {
+            // if (rank === "S") {
                 result.push({
                     ...RoomRouter["Puerta"](theme),
                     puzzle: pickPuzzle(rankArray[rankArray.indexOf(rank)]),
@@ -156,12 +165,11 @@ export default function generateDungeonStructure(rank: string, theme: string) {
                 })
                 result.push({
                     ...RoomRouter["Boss"](theme), routes: [{ roomToMoveIndex: result.length - 1, direction: "Atras" }, { roomToMoveIndex: result.length + 1, direction: "Adelante" }],
-                    enemys: [dungeonEnemies[theme].Boss[secBosses ? "B" : "A"]]
+                    enemys: [{...dungeonEnemies[theme].Boss[rank], rank: rank, currentHealth: dungeonEnemies[theme].Boss[rank].health}]
                 })
-                secBosses = !secBosses
                 result.push({ ...RoomRouter["Escaleras"](theme), routes: [{ roomToMoveIndex: result.length - 1, direction: "Atras" }, { moveFloor: +1, roomToMoveIndex: 0, direction: "Bajar" }] })
-            }
-            else result.push({ ...RoomRouter["Escaleras"](theme), routes: [{ roomToMoveIndex: result.length - 1, direction: "Atras" }, { moveFloor: +1, roomToMoveIndex: 0, direction: "Bajar" }] })
+            // }
+            // else result.push({ ...RoomRouter["Escaleras"](theme), routes: [{ roomToMoveIndex: result.length - 1, direction: "Atras" }, { moveFloor: +1, roomToMoveIndex: 0, direction: "Bajar" }] })
         }
         else if (end === "Tienda") {
             result.push({
@@ -206,7 +214,7 @@ export default function generateDungeonStructure(rank: string, theme: string) {
             if (!conclusion) break
         }
         result.push(floorResult)
+        rank = rankArray[fi+1]
     }
-
     return result
 }

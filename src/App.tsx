@@ -8,10 +8,8 @@ import "./assets/app.css"
 
 export default function App() {
   const [page, setPage] = React.useState("generate")
-  const [rank, setRank] = React.useState("A")
   const [theme, setTheme] = React.useState("Goblins")
 
-  const rankSelector = ["E", "D", "C", "B", "A", "S"]
   const themeSelector = ["Goblins", "FantasmasNoMuertos", "Bestias", "Elementales"]
 
   React.useEffect(() => {
@@ -19,20 +17,15 @@ export default function App() {
       if(stor !== undefined && stor !== null && stor !== "")setPage("dungeon")
   })
 
+  const color = ["C", "S", "B", "A"]
+
   const Generator = () => {
       return <section className='dungeon-gen'
-          style={{background: "linear-gradient(0deg,"+RankColorSelector[rank]+", transparent)"}}
+          style={{background: "linear-gradient(0deg,"+RankColorSelector[color[themeSelector.indexOf(theme)]]+", transparent)"}}
       >
           <header>
               <h3>Dungeon Generator</h3>
           </header>
-          <select value={rank} onChange={(e) => { setRank(e.target.value) }}>
-              {rankSelector.map(el => {
-                  return <option key={Math.random()}>
-                      {el}
-                  </option>
-              })}
-          </select>
           <select value={theme} onChange={(e) => { setTheme(e.target.value) }}>
               {themeSelector.map(el => {
                   return <option key={Math.random()}>
@@ -50,7 +43,7 @@ export default function App() {
   }
   const pages: router = {
       generate: <Generator />,
-      dungeon: <DungeonPlay setPage={setPage} rank={rank} theme={theme} />
+      dungeon: <DungeonPlay setPage={setPage} theme={theme} />
   }
 
   return <main id="main">

@@ -27,9 +27,11 @@ export default function ChestPage({ reward, setCurrentRoom, returnIndex, dropDat
     const generate = (val: string) => {
         let number: number = parseInt(val)
         let result = undefined
-        if (number === 1) result = generateArtifact("B")
+        if (number === 1) result = generateArtifact("D")
         else if (number === 20) result = generateArtifact("S")
-        else result = generateArtifact("A")
+        else if(number >1 &&number < 9)result = generateArtifact("C")
+        else if(number >=9 &&number < 15)result = generateArtifact("B")
+        else if(number >=15 &&number < 20)result = generateArtifact("A")
 
         openChest(result)
         setDrop(result)
