@@ -10,7 +10,7 @@ import ChestPage from './ChestPage'
 import { pickPuzzle } from '../logic/pickPuzzle'
 import Fight from './Fight'
 import { generateLifeColor } from '../logic/generateLifeColor'
-import {  generatePickUpRoom } from '../logic/generateArtifact'
+import { generatePickUpRoom } from '../logic/generateArtifact'
 
 type Props = {
     theme: string
@@ -22,7 +22,7 @@ type HotBarType = {
     coins: number;
     keys: number;
     bombs: number;
-    [key:string]: any
+    [key: string]: any
 }
 
 let rankArray = ["E", "D", "C", "B", "A", "S"]
@@ -40,10 +40,10 @@ export default function DungeonPlay({ theme, setPage }: Props) {
     const [life, setLife] = React.useState(100)
     const [items, setItems] = React.useState<HotBarType>({
         artifacts: [
-            { rank: "C", name: "Espada de Llamas Eternas", description: "Una espada que arde con fuego inextinguible.", active: true, durability: 100 },
-            { rank: "C", name: "Espada de Llamas Eternas", description: "Una espada que arde con fuego inextinguible.", active: true, durability: 100 },
-            { rank: "C", name: "Espada de Llamas Eternas", description: "Una espada que arde con fuego inextinguible.", active: true, durability: 100 },
-            { rank: "C", name: "Espada de Llamas Eternas", description: "Una espada que arde con fuego inextinguible.", active: true, durability: 100 },
+            { rank: "C", name: "Espada de Llamas Eternas", description: "Una espada que arde con fuego inextinguible.", active: true, durability: 5 },
+            { rank: "C", name: "Espada de Llamas Eternas", description: "Una espada que arde con fuego inextinguible.", active: true, durability: 5 },
+            { rank: "C", name: "Espada de Llamas Eternas", description: "Una espada que arde con fuego inextinguible.", active: true, durability: 5 },
+            { rank: "C", name: "Espada de Llamas Eternas", description: "Una espada que arde con fuego inextinguible.", active: true, durability: 5 },
             { rank: "D", name: "Escudo de Resistencia", description: "Un escudo que proporciona una bonificación adicional a la resistencia contra ciertos tipos de daño.", active: false, durability: 8 },
         ],
         coins: 0,
@@ -145,20 +145,20 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         let data = {
             ...items, artifacts: items.artifacts.filter(el => {
                 let newDur = el.durability - 1 <= 0 ? -1 : el.durability - 1
-                if(newDur !== -1) {
+                if (newDur !== -1) {
                     if (el.active) return { ...el, durability: el.durability - 1 }
                     else return el
                 }
             })
         }
         if (newObj.enemys.length === 0) {
-            let amountPick = Math.floor(Math.random() * 3) + 1
+            let amountPick = Math.floor(Math.random() * 3) + 3
             // luck ? 3 :
 
             while (amountPick > 0) {
                 amountPick--
-                let item:{_id?:"heart"|"coins"|"bombs"|"keys"} = generatePickUpRoom()
-                if(item._id && item._id !== "heart") data = {...data, [item._id]: data[item._id]+1}
+                let item: { _id?: "heart" | "coins" | "bombs" | "keys" } = generatePickUpRoom()
+                if (item._id && item._id !== "heart") data = { ...data, [item._id]: data[item._id] + 1 }
             }
         }
         setItems(data)
@@ -285,25 +285,70 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         return result
     }
 
+    let pressTimer: null | number = null;
+    let draggingPhase: boolean = false
+
+    const DragPhase = (index: number) => {
+        pressTimer = setTimeout(() => {
+            let target = document.getElementById("artifact_" + index) as HTMLButtonElement
+            if (!target) return
+            draggingPhase = true
+            target.classList.add("selected")
+            const cancel = (e: TouchEvent) => {
+                DragPhaseCancel()
+                let button = e.target as HTMLButtonElement
+                if (!button) return
+                if (!button.classList.contains("slot-action")) target.classList.remove("selected")
+                document.removeEventListener("touchstart", cancel)
+            }
+            document.addEventListener("touchstart", cancel)
+        }, 400)
+    };
+    const DragPhaseCancel = () => {
+        if (pressTimer !== null) {
+            clearTimeout(pressTimer);
+            draggingPhase = false
+            pressTimer = null;
+        }
+    };
     const HotBar = () => {
         let list = []
         for (let i = 0; i < 5; i++) {
             let el = items.artifacts[i]
-            list.push(<button
-                className={el && el.active ? "active" : ""}
-                style={el ? { borderColor: RankColorSelector[el.rank], color: RankColorSelector[el.rank] } : {}}
-                onClick={() => {
-                    if (!el) return
-                    setItems({
-                        ...items, artifacts: items.artifacts.map((item, j) => {
-                            if (i === j) return { ...item, active: !item.active }
-                            else return item
+            list.push(<div className='slot' key={Math.random()}>
+                <button
+                    id={'artifact_' + i}
+                    className={el && el.active ? "active" : ""}
+                    style={el ? { borderColor: RankColorSelector[el.rank], color: RankColorSelector[el.rank] } : {}}
+                    onTouchStart={() => {
+                        DragPhase(i)
+                    }}
+                    onTouchEnd={() => {
+                        if (!draggingPhase) {
+                            if (!el) return
+                            setItems({
+                                ...items, artifacts: items.artifacts.map((item, j) => {
+                                    if (i === j) return { ...item, active: !item.active }
+                                    else return item
+                                })
+                            })
+                        }
+                        DragPhaseCancel()
+                    }}>
+                    {el && <FontAwesomeIcon icon={iconSelectorObj[el.name.split(" ")[0]]} />}
+                    {el && <div className='durability-bar' style={{ width: el.durability * 10 + "%" }}></div>}
+                </button>
+                {el && <span className='artifact-actions'>
+                    <li className='slot-action'>Info</li>
+                    <li className='slot-action' onClick={() => {
+                        setItems({
+                            ...items, artifacts: items.artifacts.filter((el, j) => {
+                                if (i !== j) return el
+                            })
                         })
-                    })
-                }}>
-                {el && <FontAwesomeIcon icon={iconSelectorObj[el.name.split(" ")[0]]} />}
-                {el && <div className='durability-bar' style={{ width: el.durability * 10 + "%" }}></div>}
-            </button>
+                    }}>Drop</li>
+                </span>}
+            </div>
             )
         }
         return <>
@@ -382,6 +427,10 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         </div>
     </>
 
+
+    React.useEffect(()=>{
+        if(life <= 0) endDungeon()
+    },  [life])
 
     return <section className='dungeon-play' key={Math.random()}>
         {dungeon ? dungeon[floor][room].room === "Shop" ?

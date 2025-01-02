@@ -379,15 +379,39 @@ button:active {
     justify-content: space-between;
 }
 
+
+.hot-bar ul button+.artifact-actions {
+    position: absolute;
+    background-color: black;
+    padding: 0.5rem;
+    border-radius: 5px;
+    top: -5rem;
+    width: 100%;
+    z-index: 5;
+    scale: 0;
+}
+
+.hot-bar ul button.selected+.artifact-actions {
+    scale: 1;
+}
 .hot-bar ul button.active {
     box-shadow: 0 0 5px rgb(236, 236, 230);
     color: black;
     border: 3px solid;
 }
 
+.hot-bar ul .slot {
+    position: relative;
+}
 .hot-bar ul button {
     position: relative;
     overflow: hidden;
+    height: 100%;
+    max-width: 3rem;
+    min-width: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border: 3px solid transparent;
 }
 
