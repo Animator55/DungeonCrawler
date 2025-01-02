@@ -46,12 +46,13 @@ main.damage::after {
     background-color: red;
     pointer-events: none;
     opacity: 0;
-    animation: screen-damage 300ms;
+    z-index: 2;
+    animation: screen-damage 300ms 250ms;
 }
 
 @keyframes screen-damage {
     20% {
-        opacity: 1;
+        opacity: 0.4;
     }
 }
 button {
@@ -497,7 +498,7 @@ animation: fade-to-left 1.5s 0.6s infinite ease-in-out;
     position: relative;
     display: flex;
     justify-content: center;
-    margin: 0 2rem;
+    margin: .7rem 2rem;
 }
 
 .fight-show * {
@@ -511,6 +512,7 @@ animation: fade-to-left 1.5s 0.6s infinite ease-in-out;
     right: -1.5rem;
     top: 0rem;
     font-size: 2rem;
+    transform-origin: bottom left;
 }
 .fight-show>:not(svg:first-child) {
     position: absolute;
@@ -668,5 +670,31 @@ animation: fade-to-left 1.5s 0.6s infinite ease-in-out;
         width: 0;
         top: 100%;
         left: 100%;
+    }
+}
+
+.do-hit {
+    animation: move-enemy 1s forwards;
+}
+
+@keyframes move-enemy {
+    20%, 30% {
+        top: 1rem;
+        scale: 1.2;
+    }
+    0%, 100% {
+        top: 0rem;
+    }
+}
+.do-hit > svg:nth-child(2) {
+    animation: attack-enemy 1s forwards;
+}
+
+@keyframes attack-enemy {
+    30% {
+        rotate: 180deg;
+    }
+    80% {
+        rotate: 0;
     }
 }

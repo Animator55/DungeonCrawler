@@ -29,15 +29,27 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }:
         if (!dice) return
         let calc = calculateTotal(enemies[enemySelected].power, player)
         let rand = Math.random()
+        let list = document.querySelectorAll(".fight-show")
+        let enemy = list[enemySelected]
         if (rand <= calc) {
-            let list = document.querySelectorAll(".fight-show")
-            let enemy = list[enemySelected]
-            if(enemy) enemy.classList.add("got-hit")
+            if (enemy) enemy.classList.add("got-hit")
             setTimeout(() => {
                 hitEnemy(enemySelected)
             }, 1000)
         }
-        else setLife(calc)
+        else {
+            if (enemy) enemy.classList.add("do-hit")
+            let main = document.getElementById("main")
+            if (main) {
+                main.classList.add("damage")
+                setTimeout(() => {
+                    if (main) main.classList.remove("damage")
+                }, 550)
+            }
+            setTimeout(() => {
+                setLife(calc)
+            }, 1000)
+        }
     }
 
     React.useEffect(() => {

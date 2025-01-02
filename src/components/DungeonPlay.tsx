@@ -362,16 +362,6 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         </div>
     </>
 
-    React.useEffect(()=>{
-        if(life === 100) return
-        let main = document.getElementById("main")
-        if(main) {
-            main.classList.add("damage")
-            setTimeout(()=>{
-                if(main)main.classList.remove("damage")
-            }, 300)
-        }
-    },[life])
 
     return <section className='dungeon-play' key={Math.random()}>
         {dungeon ? dungeon[floor][room].room === "Shop" ?
