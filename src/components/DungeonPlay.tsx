@@ -403,7 +403,7 @@ export default function DungeonPlay({ theme, setPage }: Props) {
     }
 
     const normalRoom = dungeon && <>
-        <nav className='router'>
+        {/*<nav className='router'>
             {specialRooms && specialRooms.map(el => {
                 return <button
                     key={Math.random()}
@@ -413,7 +413,7 @@ export default function DungeonPlay({ theme, setPage }: Props) {
                     {<p>{el.index}</p>}
                 </button>
             })}
-        </nav>
+        </nav>*/}
         <button className='end-dungeon' onClick={endDungeon}>
             <FontAwesomeIcon icon={faPersonWalkingArrowRight} />
         </button>
