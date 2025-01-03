@@ -4,61 +4,61 @@ export const dungeonEnemies: router = {
     "Goblins": {
         "E": [
             {
-                health: 10,power:20,
+                health: 5,power:2,
                 name: "Goblin Grunt",
                 description: "Un goblin débil y sin entrenamiento, generalmente armado con una simple daga o garrote.",
                 icon: "Daga"
             },
             {
-                health: 10,power:20,
+                health: 3,power:3,
                 name: "Goblin Scout",
                 description: "Explorador ágil, pero poco hábil en combate. Utiliza un arco corto para atacar a distancia.",
                 icon: "Arco"
             },
             {
-                health: 10,power:20,
+                health: 6,power:4,
                 name: "Goblin Peon",
                 description: "Trabajador goblin que lleva herramientas simples. Puede defenderse con un martillo pequeño.",
                 icon: "Martillo"
             },
             {
-                health: 10,power:20,
+                health: 1,power:1,
                 name: "Kobold Slinger",
                 description: "Un pequeño goblin de la subespecie kobold, usa una honda para lanzar piedras a sus enemigos.",
                 icon: "Arco"
             },
             {
-                health: 10,power:20,
+                health: 3,power:4,
                 name: "Goblin Sneak",
                 description: "Un goblin furtivo que ataca desde las sombras con una pequeña daga envenenada.",
                 icon: "Daga"
             },
             {
-                health: 10,power:20,
+                health: 6,power:3,
                 name: "Goblin Forager",
                 description: "Recolector goblin que defiende sus hallazgos con un palo afilado.",
                 icon: "Espada"
             },
             {
-                health: 10,power:20,
+                health: 5,power:4,
                 name: "Goblin Worker",
                 description: "Trabajador básico que usa un cuchillo desgastado para defenderse.",
                 icon: "Daga"
             },
             {
-                health: 10,power:20,
+                health: 3,power:2,
                 name: "Goblin Slinger",
                 description: "Goblin que utiliza una honda para atacar a distancia, aunque con poca precisión.",
                 icon: "Arco"
             },
             {
-                health: 10,power:20,
+                health: 2,power:3,
                 name: "Goblin Runt",
                 description: "El goblin más pequeño y débil, apenas puede sostener una daga oxidada.",
                 icon: "Daga"
             },
             {
-                health: 10,power:20,
+                health: 4,power:4,
                 name: "Goblin Scavenger",
                 description: "Recolector de desechos que defiende sus tesoros con un cuchillo mellado.",
                 icon: "Daga"
@@ -66,61 +66,61 @@ export const dungeonEnemies: router = {
         ],
         "D": [
             {
-                health: 10,power:20,
+                health: 12,power:10,
                 name: "Goblin Warrior",
                 description: "Combatiente goblin mejor entrenado, equipado con una espada corta y un escudo.",
                 icon: "Escudo"
             },
             {
-                health: 10,power:20,
+                health: 7,power:8,
                 name: "Goblin Archer",
                 description: "Arquero goblin con mejor puntería, armado con un arco largo y flechas de punta de piedra.",
                 icon: "Arco"
             },
             {
-                health: 10,power:20,
+                health: 4,power:11,
                 name: "Goblin Shaman",
                 description: "Hechicero básico que utiliza magia de bajo nivel para dañar o curar. Lleva un bastón rúnico.",
                 icon: "Bastón"
             },
             {
-                health: 10,power:20,
+                health: 5,power:9,
                 name: "Kobold Pyromancer",
                 description: "Un kobold con habilidades en magia de fuego, usa una varita para lanzar pequeñas bolas de fuego.",
                 icon: "Antorcha"
             },
             {
-                health: 10,power:20,
+                health: 7,power:11,
                 name: "Goblin Raider",
                 description: "Asaltante que utiliza una cimitarra para ataques rápidos y letales.",
                 icon: "Espada"
             },
             {
-                health: 10,power:20,
+                health: 4,power:8,
                 name: "Goblin Skirmisher",
                 description: "Combatiente ágil que usa un par de dagas para emboscar a sus enemigos.",
                 icon: "Daga"
             },
             {
-                health: 10,power:20,
+                health: 3,power:13,
                 name: "Goblin Firestarter",
                 description: "Un goblin que usa cócteles molotov improvisados para prender fuego a sus enemigos.",
                 icon: "Antorcha"
             },
             {
-                health: 10,power:20,
+                health: 5,power:10,
                 name: "Goblin Shadowstalker",
                 description: "Asesino goblin que ataca desde las sombras con una hoja afilada.",
                 icon: "Espada"
             },
             {
-                health: 10,power:20,
+                health: 7,power:9,
                 name: "Goblin Ambusher",
                 description: "Goblin que se especializa en emboscadas, utilizando una lanza corta.",
                 icon: "Espada"
             },
             {
-                health: 10,power:20,
+                health: 3,power:15,
                 name: "Goblin Alchemist",
                 description: "Crea pociones y bombas químicas que lanza desde lejos para causar caos en el campo de batalla.",
                 icon: "Poción"
@@ -352,14 +352,14 @@ export const dungeonEnemies: router = {
         ],
         "Boss": {
             "E": {
-                health: 10,power:20,
+                health: 8,power:9,
                 name: "Goblin Boss",
                 description: "El líder de un pequeño grupo de goblins, armado con una espada básica y un escudo. Es más fuerte que los goblins comunes, pero aún es bastante débil comparado con sus superiores.",
                 icon: "Espada"
             },
             "D":
             {
-                health: 10,power:20,
+                health: 12,power:18,
                 name: "Goblin War Chief",
                 description: "Jefe de guerra goblin. Está armado con una maza pesada y lleva una armadura ligera. Es formidable en combate.",
                 icon: "Martillo"

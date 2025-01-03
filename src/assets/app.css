@@ -1,6 +1,6 @@
 body {
-    --cbackground: #242424;
-    background-color: var(--cbackground);
+    /* --cbackground: #242424; */
+    background-color: black;
     margin: 0;
     height: 100dvh;
     max-height: 100dvh;
@@ -11,7 +11,13 @@ body {
     user-select: none;
 }
 
-body:has(.rolling), body:has([data-face]), body:has(.dying) {
+body:has(.rolling), 
+body:has([data-face]), 
+body:has(.dying),
+body:has(.zoom-in-image-room),
+body:has(.zoom-in-left-image-room),
+body:has(.zoom-in-right-image-room),
+body:has(.zoom-out-image-room){
     pointer-events: none;
 }
 
@@ -105,11 +111,12 @@ button:active {
     from {
         opacity: 0;
         bottom: -1rem;
+        pointer-events: none;
     }
-
-    to {
+    100% {
         bottom: 0;
         opacity: 1;
+        pointer-events: all;
     }
 }
 
@@ -217,14 +224,69 @@ button:active {
     /* animation: fade-up 300ms .2s forwards; */
     image-rendering: pixelated;
 }
+
 .fade-image {
     opacity: 0;
     animation: fade-up 300ms .2s forwards;
 }
+.fade-from-left-image{
+    transform-origin: center left;
+}
+.fade-from-right-image{
+    transform-origin: center right;
+}
+.fade-from-left-image,
+.fade-from-right-image,
+.fade-from-front-image {
+    opacity: 0;
+    animation: zoom-out-room-to-1 300ms .2s forwards;
+}
+@keyframes zoom-out-room-to-1 {
+    from {
+        scale: 2;
+        opacity: 0;
+    }
+    to {
+        scale: 1;
+        opacity: 1;
+    }
+}
+.fade-from-back-image {
+    opacity: 0;
+    animation: zoom-in-to-room-to-1 300ms .2 forwards;
+}
+@keyframes zoom-in-to-room-to-1 {
+    from {
+        scale: 0.5;
+        opacity: 0;
+    }
+    to{
+        scale: 1;
+        opacity: 1;
+    }
+}
+.zoom-in-image-room, .zoom-in-left-image-room,.zoom-in-right-image-room {
+    scale: 2;
+    transition: scale 500ms, opacity 300ms;
+    opacity: 0;
+    transform-origin: center center;
+}
+.zoom-in-right-image-room {
+    transform-origin: center right;
+}
+.zoom-in-left-image-room {
+    transform-origin: center left;
+}
+.zoom-out-image-room {
+    scale: .5;
+    opacity: 0;
+    transition: scale 500ms, opacity 300ms;
+    transform-origin: center center;
+}
 
 .fade-event {
     opacity: 0;
-    animation: fade-up 300ms .5s forwards;
+    animation: fade-up 300ms .8s forwards;
 }
 
 .dungeon-play .show-event {

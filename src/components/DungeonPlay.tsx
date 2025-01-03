@@ -26,6 +26,7 @@ type HotBarType = {
 }
 
 let rankArray = ["E", "D", "C", "B", "A", "S"]
+let prevRoom = 0
 export default function DungeonPlay({ theme, setPage }: Props) {
     const fullscreen = () => {
         let elem = document.getElementById('main')
@@ -82,13 +83,13 @@ export default function DungeonPlay({ theme, setPage }: Props) {
     }, [])
 
     React.useEffect(() => {
-        if (inspect !== undefined) setInspect(undefined)
         if (!dungeon) return
+        let event = document.getElementById("event-show")
+        if (event) event.classList.add("fade-event")
+        if (inspect !== undefined) setInspect(undefined)
         let storage = JSON.stringify({ dungeon, room, floor })
         window.localStorage.setItem("Dungeon-Crawler-2", storage)
 
-        let event = document.getElementById("event-show")
-        if (event) event.classList.add("fade-event")
     }, [room])
 
     const specialRoomsArray = ["Puerta",
@@ -115,15 +116,15 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         })
     }
 
-    const buy = (item: {_id: "bombs"|"keys"|"coins"| "heart", rank:string}, price: string, index: number) => {
+    const buy = (item: { _id: "bombs" | "keys" | "coins" | "heart", rank: string }, price: string, index: number) => {
         let priceNum = parseInt(price)
         if (items.coins < priceNum || (item.rank !== "PickUps" && items.artifacts.length === 5)) return
-        let newItems = {...items, coins: items.coins - priceNum}
+        let newItems = { ...items, coins: items.coins - priceNum }
         if (item._id) {
-            if (item._id !== "heart" ) newItems = { ...newItems, [item._id]: newItems[item._id] + 1 }
+            if (item._id !== "heart") newItems = { ...newItems, [item._id]: newItems[item._id] + 1 }
             else setLife(100)
         }
-        else newItems = {...newItems, artifacts: [...newItems.artifacts, { ...item, active: true }]}
+        else newItems = { ...newItems, artifacts: [...newItems.artifacts, { ...item, active: true }] }
         setItems(newItems)
         removeItemFromShop(index)
     }
@@ -196,10 +197,10 @@ export default function DungeonPlay({ theme, setPage }: Props) {
     const removeItemFromShop = (index: number) => {
         if (!dungeon) return
         let obj: DungeonRoom[][] = dungeon
-        if(!obj[floor][room].items || obj[floor][room].items.length === 0) return
+        if (!obj[floor][room].items || obj[floor][room].items.length === 0) return
         let newObj = {
-            ...obj[floor][room], itemPicked: true, items: obj[floor][room].items?.filter((el, i)=>{
-                if(index !== i) return el
+            ...obj[floor][room], itemPicked: true, items: obj[floor][room].items?.filter((el, i) => {
+                if (index !== i) return el
             })
         }
         changeRoom(newObj)
@@ -402,7 +403,7 @@ export default function DungeonPlay({ theme, setPage }: Props) {
     }
 
     const normalRoom = dungeon && <>
-        {/* <nav className='router'>
+        <nav className='router'>
             {specialRooms && specialRooms.map(el => {
                 return <button
                     key={Math.random()}
@@ -412,7 +413,7 @@ export default function DungeonPlay({ theme, setPage }: Props) {
                     {<p>{el.index}</p>}
                 </button>
             })}
-        </nav> */}
+        </nav>
         <button className='end-dungeon' onClick={endDungeon}>
             <FontAwesomeIcon icon={faPersonWalkingArrowRight} />
         </button>
@@ -432,8 +433,28 @@ export default function DungeonPlay({ theme, setPage }: Props) {
                 return <button
                     key={Math.random()}
                     onClick={() => {
-                        if (button.moveFloor) { setFloor(floor + button.moveFloor); setSpecials(undefined) }
-                        setCurrentRoom(button.roomToMoveIndex)
+                        let image = document.querySelector<HTMLImageElement>(".back-image")
+                        if (image) {
+                            image.classList.remove("fade-from-right-image")
+                            image.offsetHeight
+                            image.classList.remove("fade-from-left-image")
+                            image.offsetHeight
+                            image.classList.remove("fade-from-front-image")
+                            image.offsetHeight
+                            image.classList.remove("fade-from-back-image")
+                            image.offsetHeight
+                            let classResult = "zoom-in-image-room"
+                            if (button.direction === "Atras") classResult = "zoom-out-image-room"
+                            else if (button.direction === "Derecha") classResult = "zoom-in-right-image-room"
+                            else if (button.direction === "Izquierda") classResult = "zoom-in-left-image-room"
+                            image.classList.add(classResult)
+                            image.offsetHeight
+                        }
+                        setTimeout(() => {
+                            if (button.moveFloor) { setFloor(floor + button.moveFloor); setSpecials(undefined) }
+                            prevRoom = room
+                            setCurrentRoom(button.roomToMoveIndex)
+                        }, 300)
                     }}
                 >
                     {icon.value && <FontAwesomeIcon icon={RouterSelector[icon.icon]} />}
@@ -454,15 +475,38 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         if (life <= 0) endDungeon()
     }, [life])
 
-    React.useEffect(()=>{
-        let img = document.querySelector(".back-image")
-        if(img) img.classList.add("fade-image")
+
+    React.useEffect(() => {
+        let img = document.querySelector<HTMLImageElement>(".back-image")
+        if (img && dungeon) {
+            img.offsetHeight
+            let prevRoomDir = undefined
+            let routes = dungeon[floor][room].routes
+            for(let i=0;i<routes.length;i++){
+                if(prevRoom === routes[i].roomToMoveIndex) prevRoomDir =routes[i].direction
+            }
+            img.offsetHeight
+            img.classList.remove("zoom-in-image-room")
+            img.offsetHeight
+            img.classList.remove("zoom-in-right-image-room")
+            img.offsetHeight
+            img.classList.remove("zoom-in-left-image-room")
+            img.offsetHeight
+            let classResult = ""
+            if(prevRoomDir === "Izquierda") classResult = "fade-from-left-image"
+            else if(prevRoomDir === "Derecha") classResult = "fade-from-right-image"
+            else if(prevRoomDir === "Adelante") classResult = "fade-from-front-image"
+            else if(prevRoomDir === "Atras") classResult = "fade-image"
+            img.offsetHeight
+            if(classResult!=="")img.classList.add(classResult)
+            img.offsetHeight
+        }
     }, [room])
 
     return <section className='dungeon-play' key={Math.random()}>
         {dungeon ? dungeon[floor][room].room === "Shop" ?
-            <ShopPage 
-                buy={buy} 
+            <ShopPage
+                buy={buy}
                 items={dungeon[floor][room].items} setCurrentRoom={setCurrentRoom} returnIndex={room - 1} />
             :
             dungeon[floor][room].room === "Chest" || dungeon[floor][room].room === "Reward" ?

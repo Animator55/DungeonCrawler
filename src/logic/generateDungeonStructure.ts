@@ -195,7 +195,7 @@ export default function generateDungeonStructure(theme: string) {
         ///main
         let begginng = fi === 0 ? "Entrada" : "EscalerasSubida"
         let end = fi === floor - 1 ? "Boss" : "Escaleras"
-        let prevEnd = floorLength + 1 + 1
+        let prevEnd = floorLength + 1 +1 + 1
         floorResult = generateMainRoute(begginng, floorLength, end, floorResult, fi !== 0 ? result.length !== 0 ? prevEnd : undefined : undefined)
 
         ///specials
