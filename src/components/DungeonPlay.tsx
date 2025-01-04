@@ -29,7 +29,7 @@ type HotBarType = {
 let rankArray = ["E", "D", "C", "B", "A", "S"]
 let prevRoom = 0
 let preventRoomAnimation = false
-let lastAddedItems = []
+// let lastAddedItems = []
 
 export default function DungeonPlay({ theme, setPage }: Props) {
     const fullscreen = () => {

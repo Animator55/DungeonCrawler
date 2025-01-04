@@ -3,7 +3,7 @@ export const calculateXPdrop = (floor: number, room: string) => {
     let addicion = 0
     if (room === "Boss") addicion = 5
 
-    return results[floor]
+    return results[floor] +addicion
 }
 export const calculateXP = (xpTotal: number) => {
     let level, xpForCurrentLevel, xpForNextLevel;
