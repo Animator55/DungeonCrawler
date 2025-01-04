@@ -6,6 +6,7 @@ body {
     max-height: 100dvh;
     position: relative;
     padding: 0;
+    overflow: hidden;
 }
 *{
     user-select: none;
@@ -204,14 +205,14 @@ button:active {
     background: linear-gradient(180deg, black -11%, rgba(0, 0, 0, 0.4) 80%, transparent 90%);
 }
 
-.dungeon-play section {
+.dungeon-play > section {
     position: absolute;
-    padding: 10rem 1rem;
+    padding: 10rem .5rem;
     bottom: 0;
     text-align: center;
     margin: 0;
     z-index: 1;
-    width: 100%;
+    width: calc(100% - 1rem);
     transition: opacity 300ms;
     background: linear-gradient(0deg, black -11%, rgba(0, 0, 0, 0.8) 80%, transparent 90%);
 }
@@ -256,13 +257,13 @@ button:active {
     animation: zoom-in-to-room-to-1 300ms .2 forwards;
 }
 @keyframes zoom-in-to-room-to-1 {
-    from {
+    0% {
         scale: 0.5;
         opacity: 0;
     }
-    to{
-        scale: 1;
-        opacity: 1;
+    100%{
+        scale: 2;
+        opacity: 10;
     }
 }
 .zoom-in-image-room, .zoom-in-left-image-room,.zoom-in-right-image-room {
@@ -317,6 +318,12 @@ button:active {
     margin: 0 1rem 0.5rem 2rem;
     border-radius: 5px;
     padding: 0.5rem;
+}
+
+.puzzle-pop {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
 }
 
 .dungeon-play .buttons {

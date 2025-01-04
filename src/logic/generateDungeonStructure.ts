@@ -119,7 +119,7 @@ export default function generateDungeonStructure(theme: string) {
     const generateMainRoute = (begginng: string | undefined, length: number, end: string, prev?: DungeonRoom[], prevEnd?: number) => {
         let result: DungeonRoom[] = !begginng ?
             prev ? prev : []
-            : prevEnd ? [{ ...RoomRouter[begginng](theme), routes: [{ moveFloor: -1, roomToMoveIndex: prevEnd, direction: "Subir" }, { roomToMoveIndex: 1, direction: "Adelante" }] }]
+            : prevEnd ? [{ ...RoomRouter[begginng](theme), routes: [{ moveFloor: -1, roomToMoveIndex: prevEnd, direction: "Subir" }, { roomToMoveIndex: 1, direction: "Continuar" }] }]
                 : [{ ...RoomRouter[begginng](theme), routes: [{ roomToMoveIndex: 1, direction: "Adelante" }] }]
         let iterations = result.length
 
@@ -195,7 +195,7 @@ export default function generateDungeonStructure(theme: string) {
         ///main
         let begginng = fi === 0 ? "Entrada" : "EscalerasSubida"
         let end = fi === floor - 1 ? "Boss" : "Escaleras"
-        let prevEnd = floorLength + 1 +1 + 1
+        let prevEnd = floorLength + 1 +1 + 1+1
         floorResult = generateMainRoute(begginng, floorLength, end, floorResult, fi !== 0 ? result.length !== 0 ? prevEnd : undefined : undefined)
 
         ///specials

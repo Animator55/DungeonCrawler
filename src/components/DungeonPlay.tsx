@@ -27,6 +27,7 @@ type HotBarType = {
 
 let rankArray = ["E", "D", "C", "B", "A", "S"]
 let prevRoom = 0
+let preventRoomAnimation = false
 export default function DungeonPlay({ theme, setPage }: Props) {
     const fullscreen = () => {
         let elem = document.getElementById('main')
@@ -84,11 +85,10 @@ export default function DungeonPlay({ theme, setPage }: Props) {
 
     React.useEffect(() => {
         if (!dungeon) return
-        let event = document.getElementById("event-show")
-        if (event) event.classList.add("fade-event")
         if (inspect !== undefined) setInspect(undefined)
         let storage = JSON.stringify({ dungeon, room, floor })
         window.localStorage.setItem("Dungeon-Crawler-2", storage)
+        preventRoomAnimation = true
 
     }, [room])
 
@@ -129,18 +129,18 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         removeItemFromShop(index)
     }
 
-    const changeRoom = (newObj: DungeonRoom) => {
+    const changeRoom = (newObj: DungeonRoom, currentRoom: number) => {
         if (!dungeon) return
         let obj: DungeonRoom[][] = dungeon
         let newFloor = obj[floor].map((el, i) => {
-            if (i === room) return newObj
+            if (i === currentRoom) return newObj
             else return el
         })
         let newDungeon = obj.map((el, i) => {
             if (i === floor) return newFloor
             else return el
         })
-        let storage = JSON.stringify({ dungeon: newDungeon, room, floor })
+        let storage = JSON.stringify({ dungeon: newDungeon, currentRoom, floor })
         window.localStorage.setItem("Dungeon-Crawler-2", storage)
         setDungeon(newDungeon)
     }
@@ -152,7 +152,7 @@ export default function DungeonPlay({ theme, setPage }: Props) {
                 if (i !== index) return el
             })
         }
-        changeRoom(newObj)
+        changeRoom(newObj, room)
         let data = {
             ...items, artifacts: items.artifacts.filter(el => {
                 let newDur = el.durability - 1 <= 0 ? -1 : el.durability - 1
@@ -186,7 +186,7 @@ export default function DungeonPlay({ theme, setPage }: Props) {
                 }
             })
         }
-        changeRoom(newObj)
+        changeRoom(newObj, room)
         setItems({
             ...items, artifacts: items.artifacts.map(el => {
                 if (el.active) return { ...el, durability: el.durability - 1 }
@@ -203,7 +203,16 @@ export default function DungeonPlay({ theme, setPage }: Props) {
                 if (index !== i) return el
             })
         }
-        changeRoom(newObj)
+        changeRoom(newObj, room)
+    }
+    const removePuzzle = (currentRoom: number) => {
+        if (!dungeon) return
+        let obj: DungeonRoom[][] = dungeon
+        if (!obj[floor][currentRoom].puzzle) return
+        let newObj = {
+            ...obj[floor][currentRoom], puzzle: undefined
+        }
+        changeRoom(newObj, currentRoom)
     }
     const lootChest = () => {
         if (!dungeon) return
@@ -211,7 +220,7 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         let newObj = {
             ...obj[floor][room], itemPicked: true, items: []
         }
-        changeRoom(newObj)
+        changeRoom(newObj, room)
     }
     const openChest = (item: any) => {
         if (!dungeon) return
@@ -219,8 +228,9 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         let newObj = {
             ...obj[floor][room], items: [item]
         }
-        changeRoom(newObj)
+        changeRoom(newObj, room)
     }
+
 
     const show = (e?: React.MouseEvent) => {
         let section = document.getElementById("event-show") as HTMLDivElement
@@ -229,6 +239,10 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         if (e) e.currentTarget.textContent = !bool ? "Hide" : "Show"
         section.style.opacity = bool ? "0" : "1"
         section.style.pointerEvents = bool ? "none" : "all"
+        let currentRoom = room
+        setTimeout(() => {
+            removePuzzle(currentRoom)
+        }, 300)
     }
 
     const Puzzle = () => {
@@ -246,14 +260,31 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         }
         let answers = [answ1, answ2, answ3].sort(() => Math.random() - 0.5)
 
-        return <section id='event-show' style={{ opacity: 1 }}>
-            <h5>Puzzle!</h5>
+        return <section id='event-show' className='puzzle-pop' style={{ opacity: 1 }}>
             <p onClick={() => { setInspect(inspect === 0 ? undefined : 0) }}>{dungeon[floor][room].puzzle.question}</p>
             {answers.map(el => {
                 return <button
                     key={Math.random()}
                     onClick={() => {
                         if (el === answ1) show()
+                        else {
+                            let main = document.getElementById("main")
+                            if (main) {
+                                main.classList.add("damage")
+                                setTimeout(() => {
+                                    if (main) main.classList.remove("damage")
+                                }, 550)
+                            }
+                            let span = document.querySelector(".life-bar") as HTMLDivElement
+                            if (span) {
+                                let val = parseFloat(span.style.width.split("%")[0]) - 10
+                                span.style.width = (val) + "%"
+                                span.style.backgroundColor = generateLifeColor(val)
+                            }
+                            setTimeout(() => {
+                                setLife(life - 10)
+                            }, 1000)
+                        }
                     }}
                 >
                     {el}
@@ -402,6 +433,18 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         </>
     }
 
+    let prevRoomDir = undefined
+    let routes = dungeon ? dungeon[floor][room].routes : []
+    for (let i = 0; i < routes.length; i++) {
+        if (prevRoom === routes[i].roomToMoveIndex) prevRoomDir = routes[i].direction
+    }
+    let ImgclassResult = ""
+    if (prevRoomDir === "Izquierda") ImgclassResult = "fade-from-left-image"
+    else if (prevRoomDir === "Derecha") ImgclassResult = "fade-from-right-image"
+    else if (prevRoomDir === "Adelante") ImgclassResult = "fade-from-front-image"
+    else if (prevRoomDir === "Atras") ImgclassResult = "fade-image"
+
+    if(preventRoomAnimation) ImgclassResult = ""
     const normalRoom = dungeon && <>
         {/*<nav className='router'>
             {specialRooms && specialRooms.map(el => {
@@ -421,9 +464,7 @@ export default function DungeonPlay({ theme, setPage }: Props) {
             <FontAwesomeIcon icon={faExpand} />
         </button>
         <h3>{dungeon[floor][room].room}</h3>
-        <img className='back-image' alt={dungeon[floor][room].room} src={dungeon[floor][room].image} />
-        {(dungeon[floor][room].puzzle !== undefined) &&
-            <button className='show-event' onClick={show}>Hide</button>}
+        <img className={'back-image ' + ImgclassResult} alt={dungeon[floor][room].room} src={dungeon[floor][room].image} />
         <Puzzle />
         <Enemies />
         <div className='buttons'>
@@ -441,10 +482,10 @@ export default function DungeonPlay({ theme, setPage }: Props) {
                             image.offsetHeight
                             image.classList.remove("fade-from-front-image")
                             image.offsetHeight
-                            image.classList.remove("fade-from-back-image")
+                            image.classList.remove("fade-image")
                             image.offsetHeight
                             let classResult = "zoom-in-image-room"
-                            if (button.direction === "Atras") classResult = "zoom-out-image-room"
+                            if (button.direction === "Atras" || button.direction === "Continuar") classResult = "zoom-out-image-room"
                             else if (button.direction === "Derecha") classResult = "zoom-in-right-image-room"
                             else if (button.direction === "Izquierda") classResult = "zoom-in-left-image-room"
                             image.classList.add(classResult)
@@ -453,6 +494,7 @@ export default function DungeonPlay({ theme, setPage }: Props) {
                         setTimeout(() => {
                             if (button.moveFloor) { setFloor(floor + button.moveFloor); setSpecials(undefined) }
                             prevRoom = room
+                            preventRoomAnimation = false
                             setCurrentRoom(button.roomToMoveIndex)
                         }, 300)
                     }}
@@ -474,34 +516,6 @@ export default function DungeonPlay({ theme, setPage }: Props) {
     React.useEffect(() => {
         if (life <= 0) endDungeon()
     }, [life])
-
-
-    React.useEffect(() => {
-        let img = document.querySelector<HTMLImageElement>(".back-image")
-        if (img && dungeon) {
-            img.offsetHeight
-            let prevRoomDir = undefined
-            let routes = dungeon[floor][room].routes
-            for(let i=0;i<routes.length;i++){
-                if(prevRoom === routes[i].roomToMoveIndex) prevRoomDir =routes[i].direction
-            }
-            img.offsetHeight
-            img.classList.remove("zoom-in-image-room")
-            img.offsetHeight
-            img.classList.remove("zoom-in-right-image-room")
-            img.offsetHeight
-            img.classList.remove("zoom-in-left-image-room")
-            img.offsetHeight
-            let classResult = ""
-            if(prevRoomDir === "Izquierda") classResult = "fade-from-left-image"
-            else if(prevRoomDir === "Derecha") classResult = "fade-from-right-image"
-            else if(prevRoomDir === "Adelante") classResult = "fade-from-front-image"
-            else if(prevRoomDir === "Atras") classResult = "fade-image"
-            img.offsetHeight
-            if(classResult!=="")img.classList.add(classResult)
-            img.offsetHeight
-        }
-    }, [room])
 
     return <section className='dungeon-play' key={Math.random()}>
         {dungeon ? dungeon[floor][room].room === "Shop" ?

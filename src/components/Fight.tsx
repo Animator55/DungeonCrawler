@@ -28,8 +28,7 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }:
     }
 
     const fight = () => {
-        if (!dice || fightActive) return
-        fightActive = true
+        if (!dice ) return
         let calc = calculateTotal(enemies[enemySelected].power, player)
         let rand = Math.random()
         let list = document.querySelectorAll(".fight-show")
@@ -67,10 +66,10 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }:
                 setLife(calc)
             }, 1000)
         }
-        fightActive = false
     }
 
     React.useEffect(() => {
+        fightActive = true
         if (dice !== undefined) fight()
     }, [dice])
 
@@ -95,7 +94,7 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }:
         }
     }, [enemies])
 
-    return <section id='event-show'>
+    return <section id='event-show' className={fightActive ? "" : "fade-event"}>
         <div className='fight-list'>
             {enemies.map((el, i) => {
                 return <div
