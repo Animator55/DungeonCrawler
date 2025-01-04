@@ -394,7 +394,7 @@ button:active {
 }
 
 .force-luck {
-    position: absolute;
+    position: fixed;
     z-index: 1;
     left: 1rem;
     top: 1rem;
@@ -444,7 +444,6 @@ button:active {
     width: 90%;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
     z-index: 1;
 }
 .hot-bar ul {
@@ -486,6 +485,38 @@ button:active {
     align-items: center;
     justify-content: center;
     border: 3px solid transparent;
+}
+
+.hot-bar ul button p {
+    position: absolute;
+    color: white;
+    font-size: .9rem;
+    right: 0.1rem;
+    bottom: 0.1rem;
+    margin: 0;
+}
+
+.xp-zone {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+}
+.xp-container {
+    display: flex;
+    align-items: center;
+    background-color: #1a1a1a;
+    padding: .1rem;
+    height: .3rem;
+    width: 100%;
+    border-radius: 3px;
+}
+.xp-zone p {
+    margin: 0;
+}
+.xp-bar {
+    border-radius: 3px;
+    height: 100%;
+    background-color: rgb(18, 255, 18);
 }
 
 .durability-bar {

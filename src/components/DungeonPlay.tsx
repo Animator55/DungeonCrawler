@@ -11,6 +11,7 @@ import { pickPuzzle } from '../logic/pickPuzzle'
 import Fight from './Fight'
 import { generateLifeColor } from '../logic/generateLifeColor'
 import { generatePickUpRoom } from '../logic/generateArtifact'
+import { calculateXP, calculateXPdrop } from '../logic/calculateXPdrop'
 
 type Props = {
     theme: string
@@ -28,6 +29,8 @@ type HotBarType = {
 let rankArray = ["E", "D", "C", "B", "A", "S"]
 let prevRoom = 0
 let preventRoomAnimation = false
+let lastAddedItems = []
+
 export default function DungeonPlay({ theme, setPage }: Props) {
     const fullscreen = () => {
         let elem = document.getElementById('main')
@@ -41,9 +44,10 @@ export default function DungeonPlay({ theme, setPage }: Props) {
 
     const [life, setLife] = React.useState(100)
     const [items, setItems] = React.useState<HotBarType>({
+        level: 0,
         artifacts: [
-            { rank: "C", name: "Espada de Llamas Eternas", description: "Una espada que arde con fuego inextinguible.", active: true, durability: 5 },
-            { rank: "D", name: "Escudo de Resistencia", description: "Un escudo que proporciona una bonificación adicional a la resistencia contra ciertos tipos de daño.", active: false, durability: 8 },
+            { power: 5,rank: "C", name: "Espada de Llamas Eternas", description: "Una espada que arde con fuego inextinguible.", active: true, durability: 5 },
+            { power: 5,rank: "D", name: "Escudo de Resistencia", description: "Un escudo que proporciona una bonificación adicional a la resistencia contra ciertos tipos de daño.", active: false, durability: 8 },
         ],
         coins: 99,
         keys: 0,
@@ -52,11 +56,11 @@ export default function DungeonPlay({ theme, setPage }: Props) {
     const calculateArtifactPower = () => {
         let total = 0
         for (let i = 0; i < items.artifacts.length; i++) {
-            if (items.artifacts[i].active) total += 9
+            if (items.artifacts[i].active) total += items.artifacts[i].power
         }
         return total
     }
-    const power = 1 + calculateArtifactPower()
+    const power = items.level + calculateArtifactPower()
 
     const [specialRooms, setSpecials] = React.useState<{ index: number; room: string; }[] | undefined>()
 
@@ -78,6 +82,8 @@ export default function DungeonPlay({ theme, setPage }: Props) {
                 setDungeon(obj.dungeon)
                 setCurrentRoom(obj.room)
                 setFloor(obj.floor)
+                setItems(obj.items)
+                setLife(obj.life)
             }
             else setDungeon(generateDungeonStructure(theme))
         }
@@ -86,7 +92,7 @@ export default function DungeonPlay({ theme, setPage }: Props) {
     React.useEffect(() => {
         if (!dungeon) return
         if (inspect !== undefined) setInspect(undefined)
-        let storage = JSON.stringify({ dungeon, room, floor })
+        let storage = JSON.stringify({ dungeon, room, floor, items, life })
         window.localStorage.setItem("Dungeon-Crawler-2", storage)
         preventRoomAnimation = true
 
@@ -140,7 +146,7 @@ export default function DungeonPlay({ theme, setPage }: Props) {
             if (i === floor) return newFloor
             else return el
         })
-        let storage = JSON.stringify({ dungeon: newDungeon, currentRoom, floor })
+        let storage = JSON.stringify({ dungeon: newDungeon, currentRoom, floor, items, life })
         window.localStorage.setItem("Dungeon-Crawler-2", storage)
         setDungeon(newDungeon)
     }
@@ -153,8 +159,11 @@ export default function DungeonPlay({ theme, setPage }: Props) {
             })
         }
         changeRoom(newObj, room)
+        let XP = calculateXPdrop(floor, newObj.room)
         let data = {
-            ...items, artifacts: items.artifacts.filter(el => {
+            ...items,
+            level: items.level + XP,
+            artifacts: items.artifacts.filter(el => {
                 let newDur = el.durability - 1 <= 0 ? -1 : el.durability - 1
                 if (newDur !== -1) {
                     if (el.active) return { ...el, durability: el.durability - 1 }
@@ -230,7 +239,6 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         }
         changeRoom(newObj, room)
     }
-
 
     const show = (e?: React.MouseEvent) => {
         let section = document.getElementById("event-show") as HTMLDivElement
@@ -389,6 +397,7 @@ export default function DungeonPlay({ theme, setPage }: Props) {
                         DragPhaseCancel()
                     }}>
                     {el && <FontAwesomeIcon icon={iconSelectorObj[el.name.split(" ")[0]]} />}
+                    {el && <p>{el.power}</p>}
                     {el && <div className='durability-bar' style={{ width: el.durability * 10 + "%" }}></div>}
                 </button>
                 {el && <span className='artifact-actions'>
@@ -404,6 +413,10 @@ export default function DungeonPlay({ theme, setPage }: Props) {
             </div>
             )
         }
+        let xpResult = calculateXP(items.level)
+        console.log(xpResult)
+        let totalForNext= xpResult.xpForNextLevel - xpResult.xpForCurrentLevel
+        let progressXP = totalForNext - xpResult.remainingXP
         return <>
             <div className='hot-bar'>
                 <div className='top-hot-bar'>
@@ -426,6 +439,16 @@ export default function DungeonPlay({ theme, setPage }: Props) {
                         {items.keys}
                     </div>
                 </div>
+                <div className='xp-zone'>
+                    <p>{xpResult.level}</p>
+                    <div className='xp-container'>
+                        <div className='xp-bar' style={{width: (progressXP*100)/totalForNext+"%"}}>
+                        </div>
+                        <button className="force-luck"   onClick={() => {
+                            setItems({ ...items, level: items.level + 1 })
+                        }}>Add 1 xp</button>
+                    </div>
+                </div>
                 <ul>
                     {list}
                 </ul>
@@ -444,7 +467,7 @@ export default function DungeonPlay({ theme, setPage }: Props) {
     else if (prevRoomDir === "Adelante") ImgclassResult = "fade-from-front-image"
     else if (prevRoomDir === "Atras") ImgclassResult = "fade-image"
 
-    if(preventRoomAnimation) ImgclassResult = ""
+    if (preventRoomAnimation) ImgclassResult = ""
     const normalRoom = dungeon && <>
         {/*<nav className='router'>
             {specialRooms && specialRooms.map(el => {
