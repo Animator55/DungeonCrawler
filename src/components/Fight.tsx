@@ -58,12 +58,15 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }:
             }
             let span = document.querySelector(".life-bar") as HTMLDivElement
             if(span) {
-                let val = parseFloat(span.style.width.split("%")[0])-10
+                let val = parseFloat(span.style.width.split("%")[0])-(10*(enemies[enemySelected].power / player))
                 span.style.width = (val)+"%"
                 span.style.backgroundColor = generateLifeColor(val)
             } 
             setTimeout(() => {
-                setLife(calc)
+                if(!enemy) return
+                setLife(
+                    enemies[enemySelected].power / player
+                )
             }, 1000)
         }
     }

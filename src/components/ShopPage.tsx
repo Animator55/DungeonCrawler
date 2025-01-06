@@ -2,18 +2,18 @@ import React from 'react'
 import { RankColorSelector } from '../logic/rankColorSelector'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { iconSelectorObj } from '../logic/iconSelectorObj'
-import { faArrowLeft, faCoins  } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft, faCoins, faDollarSign } from '@fortawesome/free-solid-svg-icons'
 import ShopImg from "../assets/images/Shop.png"
 import { router } from '../vite-env'
 
-type Props = {setCurrentRoom: Function, returnIndex: number, items: any[] | undefined, buy: Function}
+type Props = { setCurrentRoom: Function, returnIndex: number, items: any[] | undefined, buy: Function }
 
-export default function ShopPage({setCurrentRoom, returnIndex,items, buy}: Props) {    
+export default function ShopPage({ setCurrentRoom, returnIndex, items, buy }: Props) {
     // const [currentShop, setCurrentShop] = React.useState<any[] | undefined>(items)
     const [inspect, setInspect] = React.useState<number | undefined>(undefined)
     // const [luck, forceLuck] = React.useState<boolean>(false)
     const luck = false
-    
+
     // React.useEffect(()=>{
     //     if(currentShop) return
     //     let stor = window.localStorage.getItem("DnD-shop")
@@ -33,10 +33,6 @@ export default function ShopPage({setCurrentRoom, returnIndex,items, buy}: Props
     }
 
     return <>
-        {/* <button className='refresh-shop' onClick={()=>{setCurrentShop(generateShop(luck))}}>
-            <FontAwesomeIcon icon={faRotate}/>
-            Reroll
-        </button> */}
         {/* <button 
             className='force-luck' 
             onClick={()=>{forceLuck(!luck)}}
@@ -45,12 +41,12 @@ export default function ShopPage({setCurrentRoom, returnIndex,items, buy}: Props
             <FontAwesomeIcon icon={luck ? faCheck : faXmark}/>
             Suerte
         </button> */}
-        <button 
-            className='force-luck' 
-            onClick={()=>{setCurrentRoom(returnIndex)}}
-            style={luck ? {background: "#295b28"}:{}}
-            >
-            <FontAwesomeIcon icon={faArrowLeft}/>
+        <button
+            className='force-luck'
+            onClick={() => { setCurrentRoom(returnIndex) }}
+            style={luck ? { background: "#295b28" } : {}}
+        >
+            <FontAwesomeIcon icon={faArrowLeft} />
             Volver
         </button>
         <img className='back-image' alt={"shop"} src={ShopImg} />
@@ -61,21 +57,26 @@ export default function ShopPage({setCurrentRoom, returnIndex,items, buy}: Props
                     className={bool ? 'enemy-show selected' : 'enemy-show'}
                     key={Math.random()}
                     onClick={() => { setInspect(bool ? undefined : i) }}
-                    style={{ color: RankColorSelector[el.rank] }}
+                    style={inspect !== undefined ? { color: RankColorSelector[el.rank], animationDuration: "0ms" } :
+                        {
+                            color: RankColorSelector[el.rank],
+                            animationDelay: i * 100 + "ms"
+                        }}
                 >
                     <div>
                         <FontAwesomeIcon icon={iconSelectorObj[el.name.split(" ")[0]]} />
                         <p>{el.name}</p>
                         <p className='coins-item'>
                             {prices[el.rank]}
-                            <FontAwesomeIcon icon={faCoins}/>
+                            <FontAwesomeIcon icon={faCoins} />
                         </p>
                     </div>
                     {bool && <>
-                    <p>{el.description}</p>
-                    <button onClick={()=>{buy(el, prices[el.rank], i)}}>
-                        Buy
-                    </button>
+                        <p>{el.description}</p>
+                        <button onClick={() => { buy(el, prices[el.rank], i) }}>
+                            <FontAwesomeIcon icon={faDollarSign} />
+                            Buy
+                        </button>
                     </>}
                 </div>
             })}

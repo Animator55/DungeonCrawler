@@ -46,8 +46,8 @@ export default function DungeonPlay({ theme, setPage }: Props) {
     const [items, setItems] = React.useState<HotBarType>({
         level: 0,
         artifacts: [
-            { power: 5,rank: "C", name: "Espada de Llamas Eternas", description: "Una espada que arde con fuego inextinguible.", active: true, durability: 5 },
-            { power: 5,rank: "D", name: "Escudo de Resistencia", description: "Un escudo que proporciona una bonificación adicional a la resistencia contra ciertos tipos de daño.", active: false, durability: 8 },
+            { power: 5, rank: "C", name: "Espada de Llamas Eternas", description: "Una espada que arde con fuego inextinguible.", active: true, durability: 5 },
+            { power: 5, rank: "D", name: "Escudo de Resistencia", description: "Un escudo que proporciona una bonificación adicional a la resistencia contra ciertos tipos de daño.", active: false, durability: 8 },
         ],
         coins: 99,
         keys: 0,
@@ -60,7 +60,8 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         }
         return total
     }
-    const power = items.level + calculateArtifactPower()
+
+    const power = calculateXP(items.level).level + calculateArtifactPower()
 
     const [specialRooms, setSpecials] = React.useState<{ index: number; room: string; }[] | undefined>()
 
@@ -77,22 +78,32 @@ export default function DungeonPlay({ theme, setPage }: Props) {
     React.useEffect(() => {
         if (dungeon === undefined) {
             let stor = window.localStorage.getItem("Dungeon-Crawler-2")
-            if (stor !== undefined && stor !== null && stor !== "") {
+            let dun = window.localStorage.getItem("Dungeon-Crawler-2-Dungeon")
+            if (
+                stor !== undefined && stor !== null && stor !== ""
+                && dun !== undefined && dun !== null && dun !== ""
+            ) {
                 let obj = JSON.parse(stor)
-                setDungeon(obj.dungeon)
+                let dunge = JSON.parse(dun)
+                setDungeon(dunge)
                 setCurrentRoom(obj.room)
                 setFloor(obj.floor)
                 setItems(obj.items)
                 setLife(obj.life)
             }
-            else setDungeon(generateDungeonStructure(theme))
+            else {
+                let dung = generateDungeonStructure(theme)
+                setDungeon(dung)
+                let dungeonStr = JSON.stringify(dung)
+                window.localStorage.setItem("Dungeon-Crawler-2-Dungeon", dungeonStr)
+            }
         }
     }, [])
 
     React.useEffect(() => {
         if (!dungeon) return
         if (inspect !== undefined) setInspect(undefined)
-        let storage = JSON.stringify({ dungeon, room, floor, items, life })
+        let storage = JSON.stringify({ room, floor, items, life })
         window.localStorage.setItem("Dungeon-Crawler-2", storage)
         preventRoomAnimation = true
 
@@ -146,8 +157,10 @@ export default function DungeonPlay({ theme, setPage }: Props) {
             if (i === floor) return newFloor
             else return el
         })
-        let storage = JSON.stringify({ dungeon: newDungeon, currentRoom, floor, items, life })
+        let storage = JSON.stringify({ room: currentRoom, floor, items, life })
+        let dungeonStr = JSON.stringify(newDungeon)
         window.localStorage.setItem("Dungeon-Crawler-2", storage)
+        window.localStorage.setItem("Dungeon-Crawler-2-Dungeon", dungeonStr)
         setDungeon(newDungeon)
     }
     const killEnemy = (index: number) => {
@@ -301,20 +314,13 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         </section>
     }
     const Enemies = () => {
-        const damageSelector = (val: number) => {
-            return 10
-            if (val < 7) return 15
-            else if (val === 1) return 20
-            else return 5
-        }
-
         if (!dungeon || dungeon[floor][room].enemys.length === 0) return
         return <Fight
             enemies={dungeon[floor][room].enemys}
             player={power}
             killEnemy={killEnemy}
             hitEnemy={hitEnemy}
-            setLife={(val: number) => { setLife(life - damageSelector(val)) }}
+            setLife={(val: number) => { setLife(life - 10 * val) }}
         />
     }
 
@@ -414,8 +420,7 @@ export default function DungeonPlay({ theme, setPage }: Props) {
             )
         }
         let xpResult = calculateXP(items.level)
-        console.log(xpResult)
-        let totalForNext= xpResult.xpForNextLevel - xpResult.xpForCurrentLevel
+        let totalForNext = xpResult.xpForNextLevel - xpResult.xpForCurrentLevel
         let progressXP = totalForNext - xpResult.remainingXP
         return <>
             <div className='hot-bar'>
@@ -442,11 +447,8 @@ export default function DungeonPlay({ theme, setPage }: Props) {
                 <div className='xp-zone'>
                     <p>{xpResult.level}</p>
                     <div className='xp-container'>
-                        <div className='xp-bar' style={{width: (progressXP*100)/totalForNext+"%"}}>
+                        <div className='xp-bar' style={{ width: (progressXP * 100) / totalForNext + "%" }}>
                         </div>
-                        <button className="force-luck"   onClick={() => {
-                            setItems({ ...items, level: items.level + 1 })
-                        }}>Add 1 xp</button>
                     </div>
                 </div>
                 <ul>
@@ -480,13 +482,6 @@ export default function DungeonPlay({ theme, setPage }: Props) {
                 </button>
             })}
         </nav>*/}
-        <button className='end-dungeon' onClick={endDungeon}>
-            <FontAwesomeIcon icon={faPersonWalkingArrowRight} />
-        </button>
-        <button className="fullscreen" onClick={() => { fullscreen() }}>
-            <FontAwesomeIcon icon={faExpand} />
-        </button>
-        <h3>{dungeon[floor][room].room}</h3>
         <img className={'back-image ' + ImgclassResult} alt={dungeon[floor][room].room} src={dungeon[floor][room].image} />
         <Puzzle />
         <Enemies />
@@ -541,6 +536,13 @@ export default function DungeonPlay({ theme, setPage }: Props) {
     }, [life])
 
     return <section className='dungeon-play' key={Math.random()}>
+        <button className='end-dungeon' onClick={endDungeon}>
+            <FontAwesomeIcon icon={faPersonWalkingArrowRight} />
+        </button>
+        <button className="fullscreen" onClick={() => { fullscreen() }}>
+            <FontAwesomeIcon icon={faExpand} />
+        </button>
+        <h3>{dungeon && dungeon[floor][room].room}</h3>
         {dungeon ? dungeon[floor][room].room === "Shop" ?
             <ShopPage
                 buy={buy}
