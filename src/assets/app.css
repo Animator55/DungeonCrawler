@@ -452,7 +452,7 @@ button:active {
 
 .hot-bar {
     position: absolute;
-    bottom: 0.5rem;
+    bottom: .5rem;
     left: 5%;
     width: 90%;
     display: flex;
@@ -513,18 +513,21 @@ button:active {
     display: flex;
     align-items: center;
     gap: .7rem;
+    margin-bottom: 0.4rem;
+    padding: 0 0.5rem ;
 }
 .xp-container {
     display: flex;
     align-items: center;
     background-color: #1a1a1a;
     padding: .1rem;
-    height: .3rem;
+    height: .4rem;
     width: 100%;
     border-radius: 3px;
 }
 .xp-zone p {
     margin: 0;
+    font-size: 0.8rem;
 }
 .xp-bar {
     border-radius: 3px;

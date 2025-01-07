@@ -28,7 +28,7 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }:
     }
 
     const fight = () => {
-        if (!dice ) return
+        if (!dice) return
         let calc = calculateTotal(enemies[enemySelected].power, player)
         let rand = Math.random()
         let list = document.querySelectorAll(".fight-show")
@@ -38,35 +38,33 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }:
             if (enemy) {
                 enemy.classList.add("got-hit")
                 let span = enemy.querySelector(".enemy-health")
-                if(span) {
+                if (span) {
                     let bar = span.firstChild as HTMLDivElement
-                    bar.style.width = (((enemies[enemySelected].currentHealth! -4)*100)/enemies[enemySelected].health)+"%"
-                } 
+                    let damageVal = Math.round(4 * (player / enemies[enemySelected].power))
+                    bar.style.width = (enemies[enemySelected].currentHealth! - damageVal < 0 ? 0:((
+                        (enemies[enemySelected].currentHealth! - damageVal)
+                         * 100) 
+                        / enemies[enemySelected].health))+ "%"
+                }
             }
-            setTimeout(() => {
-                hitEnemy(enemySelected)
-            }, 1000)
+            setTimeout(() => hitEnemy(enemySelected), 1000)
         }
         else {
             if (enemy) enemy.classList.add("do-hit")
             let main = document.getElementById("main")
             if (main) {
                 main.classList.add("damage")
-                setTimeout(() => {
-                    if (main) main.classList.remove("damage")
-                }, 550)
+                setTimeout(() => main && main.classList.remove("damage"), 550)
             }
             let span = document.querySelector(".life-bar") as HTMLDivElement
-            if(span) {
-                let val = parseFloat(span.style.width.split("%")[0])-(10*(enemies[enemySelected].power / player))
-                span.style.width = (val)+"%"
+            if (span) {
+                let val = parseFloat(span.style.width.split("%")[0]) - Math.round(10 * (enemies[enemySelected].power / player))
+                span.style.width = (val<0? 0:val) + "%"
                 span.style.backgroundColor = generateLifeColor(val)
-            } 
+            }
             setTimeout(() => {
-                if(!enemy) return
-                setLife(
-                    enemies[enemySelected].power / player
-                )
+                if (!enemy) return
+                setLife(enemies[enemySelected].power / player)
             }, 1000)
         }
     }
@@ -79,21 +77,15 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }:
     const overwriteCalc = (diceLocal: number) => {
         let val = calculateTotal(enemies[enemySelected].power, player, diceLocal)
         let div = document.querySelector<HTMLDivElement>(".fight-state")
-        if (div) {
-            div.textContent = `${Math.round(val * 100)}% de Exito`
-            div.style.color = diceLocal > 10 ? "green" : diceLocal < 10 ? "red" : ""
-            div.style.scale = "1.1"
-        }
+        if (!div) return
+        div.textContent = `${Math.round(val * 100)}% de Exito`
+        div.style.color = diceLocal > 10 ? "green" : diceLocal < 10 ? "red" : ""
+        div.style.scale = "1.1"
     }
 
     React.useEffect(() => {
-        for (let i = 0; i < enemies.length; i++) {
-            if (enemies[i].currentHealth! === 0) {
-                setTimeout(() => {
-                    killEnemy(i)
-                }, 1000)
-                break
-            }
+        for (let i = 0; i < enemies.length; i++) if (enemies[i].currentHealth! === 0) {
+            setTimeout(() => killEnemy(i), 1000); break
         }
     }, [enemies])
 
@@ -101,13 +93,12 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }:
         <div className='fight-list'>
             {enemies.map((el, i) => {
                 return <div
-                    className={el.currentHealth! === 0 ? 'fight-show dying' : enemySelected === i && !dice ? 'fight-show view' : 'fight-show'}
+                    className={el.currentHealth! === 0 ?
+                        'fight-show dying' : enemySelected === i && !dice ? 'fight-show view'
+                            : 'fight-show'}
                     key={Math.random()}
-                    data-taken="4"
-                    onClick={() => {
-                        if (dice || el.currentHealth! === 0) return
-                        setSelectedEnemy(i)
-                    }}
+                    data-taken={`${Math.round(4 * (player / el.power))}`}
+                    onClick={() => (!dice && el.currentHealth! !== 0) && setSelectedEnemy(i)}
                     style={el.currentHealth! === 0 ? { opacity: 0.5 } : {}}
                 >
                     <FontAwesomeIcon icon={faUser} />

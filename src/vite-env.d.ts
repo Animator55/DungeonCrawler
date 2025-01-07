@@ -30,3 +30,12 @@ export type DungeonRoom = {
         direction: string
     }[]
 }
+
+
+export type HotBarType = {
+    artifacts: any[];
+    coins: number;
+    keys: number;
+    bombs: number;
+    [key: string]: any
+}
