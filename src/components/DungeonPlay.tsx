@@ -15,6 +15,7 @@ import moveRoomAnimation from '../functions/moveRoomAnimation'
 import HotBar from './HotBar'
 import { defaultItems } from '../default/defaultItems'
 import { fullscreen } from '../functions/fullscreen'
+import Picked from './Picked'
 
 type Props = {
     theme: string
@@ -22,7 +23,8 @@ type Props = {
 }
 let prevRoom = 0
 let preventRoomAnimation = false
-// let lastAddedItems = []
+let levelUpAlert= false
+let lastAddedItems: any[] = []
 const specialRoomsArray = ["Puerta","Shop","Chest","Chest Especial","Escaleras","Escaleras de Subida"]
 
 export default function DungeonPlay({ theme, setPage }: Props) {
@@ -100,13 +102,18 @@ export default function DungeonPlay({ theme, setPage }: Props) {
                 }
             })
         }
+
+        let forNextLevel = calculateXP(items.level).xpForNextLevel
+        if(items.level + XP >= forNextLevel) levelUpAlert = true
         if (newObj.enemys.length === 0) {
             let amountPick = Math.floor(Math.random() * 3) + 3
             // luck ? 3 :
 
+            lastAddedItems = []
             while (amountPick > 0) {
                 amountPick--
                 let item: { _id?: "heart" | "coins" | "bombs" | "keys" } = generatePickUpRoom()
+                lastAddedItems.push(item)
                 if (item._id && item._id !== "heart") data = { ...data, [item._id]: data[item._id] + 1 }
             }
         }
@@ -229,12 +236,18 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         }
     }, [])
 
+    React.useEffect(()=>{
+        if(levelUpAlert) levelUpAlert = false
+        if(lastAddedItems.length !== 0) lastAddedItems = []
+    }, [items])
+
     React.useEffect(() => {
         if (!dungeon) return
         if (inspect !== undefined) setInspect(undefined)
         let storage = JSON.stringify({ room, floor, items, life })
         window.localStorage.setItem("Dungeon-Crawler-2", storage)
         preventRoomAnimation = true
+        lastAddedItems = []
     }, [room])
 
     React.useEffect(() => {
@@ -251,6 +264,8 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         <button className='end-dungeon' onClick={endDungeon}><FontAwesomeIcon icon={faPersonWalkingArrowRight} /></button>
         <button className="fullscreen" onClick={fullscreen}><FontAwesomeIcon icon={faExpand} /></button>
         <h3>{dungeon && dungeon[floor][room].room}</h3>
+        {levelUpAlert && <i className='level-up'>Level Up!</i>}
+        {lastAddedItems.length !== 0 && <Picked loot={lastAddedItems}/>}
         {dungeon ? dungeon[floor][room].room === "Shop" ?
             <ShopPage buy={buy} items={dungeon[floor][room].items} setCurrentRoom={setCurrentRoom} returnIndex={room - 1} />
             :

@@ -420,6 +420,53 @@ button:active {
 
 /**/
 
+.level-up {
+    position: absolute;
+    z-index: 3;
+    width: 100%;
+    color: rgb(13, 87, 13);
+    text-align: center;
+    opacity: 0;
+    font-size: 1.8rem;
+    padding-bottom: 1.5rem;
+    bottom: 0;
+    padding-top: 1.5rem;
+    background: linear-gradient(0deg, black -11%, rgba(0, 0, 0, 0.8) 90%, transparent);
+    animation: level-up 1s forwards;
+}
+@keyframes level-up {
+    0% {
+        padding-bottom: .5rem;
+        opacity: 0;
+    }
+    20%, 70% {
+        padding-bottom: 2rem;
+        opacity: 1;
+    }
+    100% {opacity: 0;}
+}
+
+.pick-ups {
+    position: absolute;
+    z-index: 1;
+    width: 50%;
+    padding: 1rem;
+    background: #000000c2;
+    animation: fade-out 1s forwards;
+    box-shadow: 0 0 10px rgb(0 0 0);
+}
+@keyframes fade-out {
+    from {opacity: 1}
+    to {opacity: 0}
+}
+
+.pick-ups li {
+    color: green;
+    text-align: center;
+    list-style: none;
+    opacity: 0;
+    animation: fade-up 300ms forwards;
+}
 .top-hot-bar {
     display: flex;
     gap: .7rem;
@@ -573,7 +620,8 @@ button:active {
 
 .inspect-div button {
     padding: 1rem;
-    margin-right: auto;
+    display: flex;
+    justify-content: center;
 }
 
 .inspect-div .icon {

@@ -1,7 +1,7 @@
 export const calculateXPdrop = (floor: number, room: string) => {
     const results = [5, 10, 20, 30, 40, 50]
     let addicion = 0
-    if (room === "Boss") addicion = 5
+    if (room === "Boss") addicion = results[floor]/2
 
     return results[floor] +addicion
 }

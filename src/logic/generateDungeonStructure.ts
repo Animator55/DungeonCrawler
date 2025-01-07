@@ -73,7 +73,7 @@ const makeIntersection = (array: DungeonRoom[], end: string, theme: string) => {
             { roomToMoveIndex: array.length, tag: [end], direction: "" }
         ]
         let sorted = routes.sort(() => Math.random() - 0.5)
-        let directions = ["Izquierda", "Derecha"]
+        let directions = ["Derecha","Izquierda"]
         newRoutes = [
             newArray[index].routes[0],
             ...sorted.map((el, o) => { return { ...el, direction: directions[o] } })
@@ -87,7 +87,7 @@ const makeIntersection = (array: DungeonRoom[], end: string, theme: string) => {
         ]
 
         let sorted = routes.sort(() => Math.random() - 0.5)
-        let directions = ["Izquierda", "Adelante", "Derecha"]
+        let directions = [  "Derecha","Adelante","Izquierda"]
 
         newRoutes = [
             newArray[index].routes[0],
