@@ -104,11 +104,10 @@ const makeIntersection = (array: DungeonRoom[], end: string, theme: string) => {
 }
 
 
-export default function generateDungeonStructure(theme: string) {
+export default function generateDungeonStructure(theme: string, rankIndex: number) {
 
     let rankArray = ["E", "D", "C", "B", "A", "S"]
-    let rank = rankArray[0]
-    let floor = rankArray.length
+    let rank = rankArray[rankIndex]
     // let floor = 1
     let floorLength = floorsLength[rank]
     let specialRooms = specialRoomsValues[rank]
@@ -188,13 +187,14 @@ export default function generateDungeonStructure(theme: string) {
     }
 
 
-    let result: DungeonRoom[][] = []
+    let result: DungeonRoom[] = []
 
-    for (let fi = 0; fi < floor; fi++) {
+    // for (let fi = 0; fi < floor; fi++) {
         let floorResult = undefined
+        let fi = 0
         ///main
         let begginng = fi === 0 ? "Entrada" : "EscalerasSubida"
-        let end = fi === floor - 1 ? "Boss" : "Escaleras"
+        let end = "Escaleras"
         let prevEnd = floorLength + 1 +1 + 1+1
         floorResult = generateMainRoute(begginng, floorLength, end, floorResult, fi !== 0 ? result.length !== 0 ? prevEnd : undefined : undefined)
 
@@ -213,8 +213,8 @@ export default function generateDungeonStructure(theme: string) {
             floorResult = array
             if (!conclusion) break
         }
-        result.push(floorResult)
-        rank = rankArray[fi+1]
-    }
+        result = floorResult
+        // rank = rankArray[fi+1]
+    // }
     return result
 }

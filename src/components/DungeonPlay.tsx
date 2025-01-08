@@ -28,7 +28,7 @@ let lastAddedItems: any[] = []
 const specialRoomsArray = ["Puerta","Shop","Chest","Chest Especial","Escaleras","Escaleras de Subida"]
 
 export default function DungeonPlay({ theme, setPage }: Props) {
-    const [dungeon, setDungeon] = React.useState<DungeonRoom[][] | undefined>()
+    const [dungeon, setDungeon] = React.useState<DungeonRoom[] | undefined>()
     const [room, setCurrentRoom] = React.useState<number>(0)
     const [floor, setFloor] = React.useState(0)
     const [inspect, setInspect] = React.useState<number | undefined>()
@@ -68,24 +68,20 @@ export default function DungeonPlay({ theme, setPage }: Props) {
 
     const changeRoom = (newObj: DungeonRoom, currentRoom: number) => {
         if (!dungeon) return
-        let newFloor = dungeon[floor].map((el, i) => {
+        let newFloor = dungeon.map((el, i) => {
             if (i === currentRoom) return newObj
             else return el
         })
-        let newDungeon = dungeon.map((el, i) => {
-            if (i === floor) return newFloor
-            else return el
-        })
         let storage = JSON.stringify({ room: currentRoom, floor, items, life })
-        let dungeonStr = JSON.stringify(newDungeon)
+        let dungeonStr = JSON.stringify(newFloor)
         window.localStorage.setItem("Dungeon-Crawler-2", storage)
         window.localStorage.setItem("Dungeon-Crawler-2-Dungeon", dungeonStr)
-        setDungeon(newDungeon)
+        setDungeon(newFloor)
     }
     const killEnemy = (index: number) => {
         if (!dungeon) return
         let newObj = {
-            ...dungeon[floor][room], enemys: dungeon[floor][room].enemys.filter((el, i) => {
+            ...dungeon[room], enemys: dungeon[room].enemys.filter((el, i) => {
                 if (i !== index) return el
             })
         }
@@ -122,7 +118,7 @@ export default function DungeonPlay({ theme, setPage }: Props) {
     const hitEnemy = (index: number) => {
         if (!dungeon) return
         let newObj = {
-            ...dungeon[floor][room], enemys: dungeon[floor][room].enemys.map((el, i) => {
+            ...dungeon[room], enemys: dungeon[room].enemys.map((el, i) => {
                 let damageVal = Math.round(4 * (power / el.power))
                 if (i !== index) return el
                 else {
@@ -140,22 +136,22 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         })
     }
     const removeItemFromShop = (index: number) => {
-        if (!dungeon || !dungeon[floor][room].items || dungeon[floor][room].items.length === 0) return
+        if (!dungeon || !dungeon[room].items || dungeon[room].items.length === 0) return
         changeRoom({
-            ...dungeon[floor][room], itemPicked: true, items: dungeon[floor][room].items?.filter((el, i) => {
+            ...dungeon[room], itemPicked: true, items: dungeon[room].items?.filter((el, i) => {
                 if (index !== i) return el
             })
         }, room)
     }
     const removePuzzle = (currentRoom: number) => {
-        if (!dungeon || !dungeon[floor][currentRoom].puzzle) return
-        changeRoom({ ...dungeon[floor][currentRoom], puzzle: undefined }, currentRoom)
+        if (!dungeon || !dungeon[currentRoom].puzzle) return
+        changeRoom({ ...dungeon[currentRoom], puzzle: undefined }, currentRoom)
     }
-    const lootChest = () => dungeon && changeRoom({ ...dungeon[floor][room], itemPicked: true, items: [] }, room)
-    const openChest = (item: any) => dungeon && changeRoom({ ...dungeon[floor][room], items: [item] }, room)
+    const lootChest = () => dungeon && changeRoom({ ...dungeon[room], itemPicked: true, items: [] }, room)
+    const openChest = (item: any) => dungeon && changeRoom({ ...dungeon[room], items: [item] }, room)
 
     let prevRoomDir = undefined
-    let routes = dungeon ? dungeon[floor][room].routes : []
+    let routes = dungeon ? dungeon[room].routes : []
     for (let i = 0; i < routes.length; i++)  if (prevRoom === routes[i].roomToMoveIndex) prevRoomDir = routes[i].direction
     let ImgclassResult = ""
     if (prevRoomDir === "Izquierda") ImgclassResult = "fade-from-left-image"
@@ -165,24 +161,13 @@ export default function DungeonPlay({ theme, setPage }: Props) {
     if (preventRoomAnimation) ImgclassResult = ""
 
     const normalRoom = dungeon && <>
-        {/*<nav className='router'>
-            {specialRooms && specialRooms.map(el => {
-                return <button
-                    key={Math.random()}
-                    onClick={() => { setCurrentRoom(el.index) }}
-                >
-                    <FontAwesomeIcon icon={RouterSelector[el.room]} />
-                    {<p>{el.index}</p>}
-                </button>
-            })}
-        </nav>*/}
-        <img className={'back-image ' + ImgclassResult} alt={dungeon[floor][room].room} src={dungeon[floor][room].image} />
-        {(dungeon && dungeon[floor][room].puzzle) &&
-            <Puzzle puzzle={dungeon[floor][room].puzzle} floor={floor} room={room} removePuzzle={removePuzzle} setLife={() => { setLife(life - 10) }} />}
-        {(dungeon && dungeon[floor][room].enemys.length !== 0) && 
-            <Fight enemies={dungeon[floor][room].enemys} player={power} killEnemy={killEnemy} hitEnemy={hitEnemy} setLife={(val: number) => { setLife(life - Math.round(10 * val)) }} />}
+        <img className={'back-image ' + ImgclassResult} alt={dungeon[room].room} src={dungeon[room].image} />
+        {(dungeon && dungeon[room].puzzle) &&
+            <Puzzle puzzle={dungeon[room].puzzle} floor={floor} room={room} removePuzzle={removePuzzle} setLife={() => { setLife(life - 10) }} />}
+        {(dungeon && dungeon[room].enemys.length !== 0) && 
+            <Fight enemies={dungeon[room].enemys} player={power} killEnemy={killEnemy} hitEnemy={hitEnemy} setLife={(val: number) => { setLife(life - Math.round(10 * val)) }} />}
         <div className='buttons'>
-            {dungeon[floor][room].routes.map(button => {
+            {dungeon[room].routes.map(button => {
                 let icon = checkIfRoomIsSpecial(button.roomToMoveIndex, specialRooms)
 
                 return <button
@@ -190,7 +175,13 @@ export default function DungeonPlay({ theme, setPage }: Props) {
                     onClick={() => {
                         moveRoomAnimation(button)
                         setTimeout(() => {
-                            if (button.moveFloor) { setFloor(floor + button.moveFloor); setSpecials(undefined) }
+                            if (button.moveFloor) { 
+                                window.localStorage.removeItem("Dungeon-Crawler-2-Dungeon")
+                                setFloor(floor + button.moveFloor); 
+                                setSpecials(undefined) 
+                                setDungeon(undefined) 
+                                setCurrentRoom(0)
+                            }
                             prevRoom = room
                             preventRoomAnimation = false
                             setCurrentRoom(button.roomToMoveIndex)
@@ -199,7 +190,6 @@ export default function DungeonPlay({ theme, setPage }: Props) {
                 >
                     {icon.value && <FontAwesomeIcon icon={RouterSelector[icon.icon]} />}
                     {button.direction}
-                    {/* + " (" + button.roomToMoveIndex + ")" */}
                     {/* {button.tag && button.tag.length !== 0 && button.tag.map(tag => {
                         return <React.Fragment key={Math.random()}>
                             <FontAwesomeIcon icon={RouterSelector[tag]} />
@@ -229,12 +219,12 @@ export default function DungeonPlay({ theme, setPage }: Props) {
             setLife(obj.life)
         }
         else {
-            let dung = generateDungeonStructure(theme)
+            let dung = generateDungeonStructure(theme, floor)
             setDungeon(dung)
             let dungeonStr = JSON.stringify(dung)
             window.localStorage.setItem("Dungeon-Crawler-2-Dungeon", dungeonStr)
         }
-    }, [])
+    })
 
     React.useEffect(()=>{
         if(levelUpAlert) levelUpAlert = false
@@ -253,8 +243,8 @@ export default function DungeonPlay({ theme, setPage }: Props) {
     React.useEffect(() => {
         if (specialRooms || !dungeon) return
         let result = []
-        for (let i = 0; i < dungeon[floor].length; i++) {
-            let curr = dungeon[floor][i]
+        for (let i = 0; i < dungeon.length; i++) {
+            let curr = dungeon[i]
             if (specialRoomsArray.includes(curr.room)) result.push({ index: i, room: curr.room })
         }
         setSpecials(result)
@@ -263,18 +253,18 @@ export default function DungeonPlay({ theme, setPage }: Props) {
     return <section className='dungeon-play' key={Math.random()}>
         <button className='end-dungeon' onClick={endDungeon}><FontAwesomeIcon icon={faPersonWalkingArrowRight} /></button>
         <button className="fullscreen" onClick={fullscreen}><FontAwesomeIcon icon={faExpand} /></button>
-        <h3>{dungeon && dungeon[floor][room].room}</h3>
+        <h3>{dungeon && dungeon[room].room}</h3>
         {levelUpAlert && <i className='level-up'>Level Up!</i>}
         {lastAddedItems.length !== 0 && <Picked loot={lastAddedItems}/>}
-        {dungeon ? dungeon[floor][room].room === "Shop" ?
-            <ShopPage buy={buy} items={dungeon[floor][room].items} setCurrentRoom={setCurrentRoom} returnIndex={room - 1} />
+        {dungeon ? dungeon[room].room === "Shop" ?
+            <ShopPage buy={buy} items={dungeon[room].items} setCurrentRoom={setCurrentRoom} returnIndex={room - 1} />
             :
-            dungeon[floor][room].room === "Chest" || dungeon[floor][room].room === "Reward" ?
+            dungeon[room].room === "Chest" || dungeon[room].room === "Reward" ?
                 <ChestPage
-                    reward={dungeon[floor][room].room === "Reward"}
-                    itemPicked={dungeon[floor][room].itemPicked}
+                    reward={dungeon[room].room === "Reward"}
+                    itemPicked={dungeon[room].itemPicked}
                     setCurrentRoom={setCurrentRoom} returnIndex={room - 1}
-                    dropData={dungeon[floor][room].items ? dungeon[floor][room].items[0] : undefined}
+                    dropData={dungeon[room].items ? dungeon[room].items[0] : undefined}
                     openChest={openChest}
                     pickItem={(item: any) => {
                         lootChest()

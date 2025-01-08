@@ -60,7 +60,7 @@ export default function ChestPage({ reward, setCurrentRoom, returnIndex, dropDat
                     <FontAwesomeIcon icon={faCaretLeft} />
                 </div>
                 <hr></hr>
-                <p>{drop.description}</p>
+                {/*<p>{drop.description}</p>*/}
                 <button onClick={() => { pickItem(drop) }}>Pick</button>
             </div>
                 :
