@@ -430,9 +430,10 @@ button:active {
     font-size: 1.8rem;
     padding-bottom: 1.5rem;
     bottom: 0;
+    pointer-events: none;
     padding-top: 1.5rem;
     background: linear-gradient(0deg, black -11%, rgba(0, 0, 0, 0.8) 90%, transparent);
-    animation: level-up 1s forwards;
+    animation: level-up 2s forwards;
 }
 @keyframes level-up {
     0% {
@@ -453,6 +454,7 @@ button:active {
     padding: 1rem;
     background: #000000c2;
     animation: fade-out 1s forwards;
+    pointer-events: none;
     box-shadow: 0 0 10px rgb(0 0 0);
 }
 @keyframes fade-out {
@@ -545,6 +547,18 @@ button:active {
     align-items: center;
     justify-content: center;
     border: 3px solid transparent;
+}
+.hot-bar ul button.artifact-warning {
+    animation: artifact-warning 1s infinite;
+}
+@keyframes artifact-warning {
+    0%,100% {
+        background-color: rgba(180, 17, 17, 0.479);
+    }
+    50% {
+        background-color: transparent;
+    }
+    
 }
 
 .hot-bar ul button p {

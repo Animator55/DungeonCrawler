@@ -37,12 +37,12 @@ export default function DungeonPlay({ theme, setPage }: Props) {
     const [specialRooms, setSpecials] = React.useState<{ index: number; room: string; }[] | undefined>()
     const calculateArtifactPower = () => {
         let total = 0
-        for (let i = 0; i < items.artifacts.length; i++) if (items.artifacts[i].active) total += items.artifacts[i].power
+        console.log()
+        for (let i = 0; i < items.artifacts.length; i++) if (items.artifacts[i]&&items.artifacts[i].active) total += items.artifacts[i].power
         return total
     }
 
     const power = calculateXP(items.level).level + calculateArtifactPower()
-
     const endDungeon = () => {
         setDungeon(undefined)
         setInspect(undefined)
@@ -89,14 +89,7 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         let XP = calculateXPdrop(floor, newObj.room)
         let data = {
             ...items,
-            level: items.level + XP,
-            artifacts: items.artifacts.filter(el => {
-                let newDur = el.durability - 1 <= 0 ? -1 : el.durability - 1
-                if (newDur !== -1) {
-                    if (el.active) return { ...el, durability: el.durability - 1 }
-                    else return el
-                }
-            })
+            level: items.level + XP
         }
 
         let forNextLevel = calculateXP(items.level).xpForNextLevel
@@ -129,9 +122,10 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         }
         changeRoom(newObj, room)
         setItems({
-            ...items, artifacts: items.artifacts.map(el => {
-                if (el.active) return { ...el, durability: el.durability - 1 }
-                else return el
+            ...items, artifacts: items.artifacts.filter(el => {
+                if(!el.active) return el
+                let newDur = el.durability - 1 <= 0 ? -1 : el.durability - 1
+                if (newDur !== -1) return { ...el, durability: newDur }
             })
         })
     }
@@ -190,11 +184,11 @@ export default function DungeonPlay({ theme, setPage }: Props) {
                 >
                     {icon.value && <FontAwesomeIcon icon={RouterSelector[icon.icon]} />}
                     {button.direction}
-                    {/* {button.tag && button.tag.length !== 0 && button.tag.map(tag => {
+                    {button.tag && button.tag.length !== 0 && button.tag.map(tag => {
                         return <React.Fragment key={Math.random()}>
                             <FontAwesomeIcon icon={RouterSelector[tag]} />
                         </React.Fragment>
-                    })} */}
+                    })}
                 </button>
             })}
         </div>

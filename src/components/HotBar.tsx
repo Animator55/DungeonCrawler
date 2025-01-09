@@ -42,10 +42,12 @@ export default function HotBar({items, setItems, life}: Props) {
     let list = []
     for (let i = 0; i < 5; i++) {
         let el = items.artifacts[i]
+        let className = el && el.active ? "active" : ""
+        className += el && el.durability === 1 && el.totalDurability > 1 ? " artifact-warning" : "" 
         list.push(<div className='slot' key={Math.random()}>
             <button
                 id={'artifact_' + i}
-                className={el && el.active ? "active" : ""}
+                className={className}
                 style={el ? { borderColor: RankColorSelector[el.rank], color: RankColorSelector[el.rank] } : {}}
                 onTouchStart={() => {
                     DragPhase(i)
@@ -64,7 +66,7 @@ export default function HotBar({items, setItems, life}: Props) {
                 }}>
                 {el && <FontAwesomeIcon icon={iconSelectorObj[el.name.split(" ")[0]]} />}
                 {el && <p>{el.power}</p>}
-                {el && <div className='durability-bar' style={{ width: el.durability * 10 + "%" }}></div>}
+                {/* {el && <div className='durability-bar' style={{ width: (el.durability *100)/el.totalDurability  + "%" }}></div>} */}
             </button>
             {el && <span className='artifact-actions'>
                 <li className='slot-action'>Info</li>

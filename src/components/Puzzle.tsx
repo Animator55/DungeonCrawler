@@ -32,13 +32,18 @@ export const Puzzle = ({ puzzle, floor, room, setLife, removePuzzle }: Props) =>
         let section = document.getElementById("event-show") as HTMLDivElement
         if (!section) return
         let bool = section.style.opacity === "1"
-        if (e) e.currentTarget.textContent = !bool ? "Hide" : "Show"
-        section.style.opacity = bool ? "0" : "1"
-        section.style.pointerEvents = bool ? "none" : "all"
+        if (e) {
+            let target = e.target as HTMLButtonElement
+            if(target)target.style.background = "#29ff00"
+        }
         let currentRoom = room
+        section.style.pointerEvents = bool ? "none" : "all"
         setTimeout(() => {
-            removePuzzle(currentRoom)
-        }, 300)
+            section.style.opacity = bool ? "0" : "1"
+            setTimeout(() => {
+                removePuzzle(currentRoom)
+            }, 300);
+        },500)
     }
 
     return <section id='event-show' className='puzzle-pop' style={{ opacity: 1 }}>
@@ -46,8 +51,8 @@ export const Puzzle = ({ puzzle, floor, room, setLife, removePuzzle }: Props) =>
         {answers.map(el => {
             return <button
                 key={Math.random()}
-                onClick={() => {
-                    if (el === answ1) show()
+                onClick={(e) => {
+                    if (el === answ1) show(e)
                     else {
                         let main = document.getElementById("main")
                         if (main) {
