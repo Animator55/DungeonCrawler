@@ -41,10 +41,10 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }:
                 if (span) {
                     let bar = span.firstChild as HTMLDivElement
                     let damageVal = Math.round(4 * (player / enemies[enemySelected].power))
-                    bar.style.width = (enemies[enemySelected].currentHealth! - damageVal < 0 ? 0:((
+                    bar.style.width = (enemies[enemySelected].currentHealth! - damageVal < 0 ? 0 : ((
                         (enemies[enemySelected].currentHealth! - damageVal)
-                         * 100) 
-                        / enemies[enemySelected].health))+ "%"
+                        * 100)
+                        / enemies[enemySelected].health)) + "%"
                 }
             }
             setTimeout(() => hitEnemy(enemySelected), 1000)
@@ -59,7 +59,7 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }:
             let span = document.querySelector(".life-bar") as HTMLDivElement
             if (span) {
                 let val = parseFloat(span.style.width.split("%")[0]) - Math.round(10 * (enemies[enemySelected].power / player))
-                span.style.width = (val<0? 0:val) + "%"
+                span.style.width = (val < 0 ? 0 : val) + "%"
                 span.style.backgroundColor = generateLifeColor(val)
             }
             setTimeout(() => {
@@ -120,10 +120,21 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }:
         <div className="fight-state">
             {Math.round(calculateTotal(enemies[enemySelected].power, player) * 100)}% de Exito
         </div>
-        <Dice
-            overwriteCalc={overwriteCalc}
-            confirm={(val: string) => { setDice(parseInt(val)) }}
-            disabled={dice !== undefined}
-        />
+        <div className="dice-container">
+            <button onClick={() => {
+                let dieEl = document.querySelector<HTMLElement>('.die')
+                if (dieEl) dieEl.click()
+            }}>
+                Tirar
+            </button>
+            <Dice
+                overwriteCalc={overwriteCalc}
+                confirm={(val: string) => { setDice(parseInt(val)) }}
+                disabled={dice !== undefined}
+            />
+            <button onClick={() => { setDice(10) }}>
+                No tirar
+            </button>
+        </div>
     </section>
 }

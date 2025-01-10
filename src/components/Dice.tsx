@@ -57,7 +57,7 @@ export default function Dice({ overwriteCalc,confirm, disabled }: Props) {
     })
 
     return <>
-        <div className="content">
+        <div className="content" style={disabled?{opacity: .6}: {}}>
             <div className="die">
                 <figure className="face face-1"></figure>
                 <figure className="face face-2"></figure>
