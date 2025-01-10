@@ -34,7 +34,10 @@ export const Puzzle = ({ puzzle, floor, room, setLife, removePuzzle }: Props) =>
         let bool = section.style.opacity === "1"
         if (e) {
             let target = e.target as HTMLButtonElement
-            if(target)target.style.background = "#29ff00"
+            if(target){
+                target.style.background = "#29ff00"
+                target.style.color = "black"
+            }
         }
         let currentRoom = room
         section.style.pointerEvents = bool ? "none" : "all"

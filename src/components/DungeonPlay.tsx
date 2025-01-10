@@ -37,7 +37,6 @@ export default function DungeonPlay({ theme, setPage }: Props) {
     const [specialRooms, setSpecials] = React.useState<{ index: number; room: string; }[] | undefined>()
     const calculateArtifactPower = () => {
         let total = 0
-        console.log()
         for (let i = 0; i < items.artifacts.length; i++) if (items.artifacts[i]&&items.artifacts[i].active) total += items.artifacts[i].power
         return total
     }
@@ -120,14 +119,18 @@ export default function DungeonPlay({ theme, setPage }: Props) {
                 }
             })
         }
-        changeRoom(newObj, room)
-        setItems({
-            ...items, artifacts: items.artifacts.filter(el => {
+        let val = {
+            ...items, artifacts: items.artifacts.map(el => {
                 if(!el.active) return el
-                let newDur = el.durability - 1 <= 0 ? -1 : el.durability - 1
-                if (newDur !== -1) return { ...el, durability: newDur }
+                let newDur = el.durability - 1 <= 0 ? -1 : (el.durability - 1)
+                if (newDur !== -1) return { ...el, "durability": newDur }
+                else null
             })
-        })
+        }
+        let filtered = {...val, artifacts: val.artifacts.filter(el=>{if(el !== null) return el})}
+        console.log(filtered)
+        setItems(filtered)
+        changeRoom(newObj, room)
     }
     const removeItemFromShop = (index: number) => {
         if (!dungeon || !dungeon[room].items || dungeon[room].items.length === 0) return
@@ -243,6 +246,8 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         }
         setSpecials(result)
     })
+
+    console.log(prevRoomDir)
 
     return <section className='dungeon-play' key={Math.random()}>
         <button className='end-dungeon' onClick={endDungeon}><FontAwesomeIcon icon={faPersonWalkingArrowRight} /></button>

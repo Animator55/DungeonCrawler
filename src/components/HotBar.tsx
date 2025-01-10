@@ -66,7 +66,7 @@ export default function HotBar({items, setItems, life}: Props) {
                 }}>
                 {el && <FontAwesomeIcon icon={iconSelectorObj[el.name.split(" ")[0]]} />}
                 {el && <p>{el.power}</p>}
-                {/* {el && <div className='durability-bar' style={{ width: (el.durability *100)/el.totalDurability  + "%" }}></div>} */}
+                {el && <div className='durability-bar' style={{ width: (el.durability *100)/el.totalDurability  + "%" }}></div>}
             </button>
             {el && <span className='artifact-actions'>
                 <li className='slot-action'>Info</li>
