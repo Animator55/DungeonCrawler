@@ -11,6 +11,9 @@ body {
 *{
     user-select: none;
 }
+*:active {
+    -webkit-tap-highlight-color: transparent;
+}
 
 body:has(.rolling), 
 body:has([data-face]), 
@@ -918,14 +921,20 @@ animation: fade-to-left 1.5s 0.6s infinite ease-in-out;
 
 
 .dice-container {
-    display: flex;
-    align-items: center;
     gap: .5rem;
     width: 90%;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 25% 50% 25%;
+    align-items: center;
     justify-content: center;
 }
 
 .dice-container> button {
-    background-color: black;
-    padding: .8rem;
+    background-color: rgb(36, 36, 36);
+    box-shadow: 0 0 4px rgb(128, 128, 128);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: .8rem 0;
 }

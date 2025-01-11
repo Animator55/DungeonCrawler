@@ -132,7 +132,11 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }:
                 confirm={(val: string) => { setDice(parseInt(val)) }}
                 disabled={dice !== undefined}
             />
-            <button onClick={() => { setDice(10) }}>
+            <button onClick={() => {
+                const die = document.querySelector<HTMLDivElement>('.die');
+                if(die)die.setAttribute('data-face', "10");
+                setDice(10)
+            }}>
                 No tirar
             </button>
         </div>
