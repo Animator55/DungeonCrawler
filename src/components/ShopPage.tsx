@@ -6,9 +6,9 @@ import { faArrowLeft, faCoins, faDollarSign } from '@fortawesome/free-solid-svg-
 import ShopImg from "../assets/images/Shop.png"
 import { router } from '../vite-env'
 
-type Props = { setCurrentRoom: Function, returnIndex: number, items: any[] | undefined, buy: Function }
+type Props = { returnFromRoom: Function, returnIndex: number, items: any[] | undefined, buy: Function }
 
-export default function ShopPage({ setCurrentRoom, returnIndex, items, buy }: Props) {
+export default function ShopPage({ returnFromRoom, returnIndex, items, buy }: Props) {
     // const [currentShop, setCurrentShop] = React.useState<any[] | undefined>(items)
     const [inspect, setInspect] = React.useState<number | undefined>(undefined)
     // const [luck, forceLuck] = React.useState<boolean>(false)
@@ -43,7 +43,7 @@ export default function ShopPage({ setCurrentRoom, returnIndex, items, buy }: Pr
         </button> */}
         <button
             className='force-luck'
-            onClick={() => { setCurrentRoom(returnIndex) }}
+            onClick={() => { returnFromRoom({ roomToMoveIndex: returnIndex, direction: "Atras" })  }}
             style={luck ? { background: "#295b28" } : {}}
         >
             <FontAwesomeIcon icon={faArrowLeft} />

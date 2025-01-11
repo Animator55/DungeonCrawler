@@ -34,10 +34,7 @@ export const Puzzle = ({ puzzle, floor, room, setLife, removePuzzle }: Props) =>
         let bool = section.style.opacity === "1"
         if (e) {
             let target = e.target as HTMLButtonElement
-            if(target){
-                target.style.background = "#29ff00"
-                target.style.color = "black"
-            }
+            if(target)target.style.borderColor = "#29ff00"
         }
         let currentRoom = room
         section.style.pointerEvents = bool ? "none" : "all"
@@ -64,6 +61,8 @@ export const Puzzle = ({ puzzle, floor, room, setLife, removePuzzle }: Props) =>
                                 if (main) main.classList.remove("damage")
                             }, 550)
                         }
+                        let target = e.target as HTMLButtonElement
+                        if(target)target.style.borderColor = "red"
                         let span = document.querySelector(".life-bar") as HTMLDivElement
                         if (span) {
                             let val = parseFloat(span.style.width.split("%")[0]) - 10

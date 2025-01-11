@@ -42,6 +42,9 @@ export default function Dice({ overwriteCalc,confirm, disabled }: Props) {
         if(dieEl) dieEl.addEventListener('click', event => {
             if (disabled) return
             event.preventDefault();
+            document.querySelectorAll<HTMLButtonElement>('.dice-option-button').forEach(option => {
+               option.classList.add("fade-out")
+            });
             if (die) {
                 die.classList.add('rolling');
             }

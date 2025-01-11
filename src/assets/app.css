@@ -44,7 +44,10 @@ select {
 *::-webkit-scrollbar {
     display: none;
 }
-
+.disabled {
+    opacity: 0!important;
+    pointer-events: none!important;
+}
 main {
     height: 100dvh;
     max-height: 100dvh;
@@ -416,7 +419,9 @@ button:active {
     bottom: 6.5rem;
     display: flex;
     align-items: center;
-    gap: 1rem
+    gap: 1rem;
+    width: calc(100% - 2rem);
+    background:linear-gradient(45deg, rgba(0, 0, 0, 0.664), transparent);
 }
 
 
@@ -459,6 +464,9 @@ button:active {
     animation: fade-out 1s forwards;
     pointer-events: none;
     box-shadow: 0 0 10px rgb(0 0 0);
+}
+.fade-out {
+    animation: fade-out 400ms forwards;
 }
 @keyframes fade-out {
     from {opacity: 1}
@@ -543,9 +551,9 @@ button:active {
 .hot-bar ul button {
     position: relative;
     overflow: hidden;
-    height: 100%;
     max-width: 3rem;
     min-width: 3rem;
+    height: 2.5rem;
     display: flex;
     align-items: center;
     justify-content: center;

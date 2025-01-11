@@ -83,12 +83,11 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }:
         div.style.scale = "1.1"
     }
 
-    React.useEffect(() => {
-        for (let i = 0; i < enemies.length; i++) if (enemies[i].currentHealth! === 0) {
-            setTimeout(() => killEnemy(i), 1000); break
-        }
-    }, [enemies])
-
+    let actionClassName = ""
+    for (let i = 0; i < enemies.length; i++) if (enemies[i].currentHealth! === 0) {
+        if(enemies.length === 1) actionClassName = " disabled"
+        setTimeout(() => killEnemy(i), 1000); break
+    }
     return <section id='event-show' className={fightActive ? "" : "fade-event"}>
         <div className='fight-list'>
             {enemies.map((el, i) => {
@@ -121,7 +120,10 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }:
             {Math.round(calculateTotal(enemies[enemySelected].power, player) * 100)}% de Exito
         </div>
         <div className="dice-container">
-            <button onClick={() => {
+            <button className={"dice-option-button"+actionClassName} onClick={() => {
+                document.querySelectorAll<HTMLButtonElement>('.dice-option-button').forEach(option => {
+                   option.classList.add("fade-out")
+                });
                 let dieEl = document.querySelector<HTMLElement>('.die')
                 if (dieEl) dieEl.click()
             }}>
@@ -130,12 +132,17 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }:
             <Dice
                 overwriteCalc={overwriteCalc}
                 confirm={(val: string) => { setDice(parseInt(val)) }}
-                disabled={dice !== undefined}
+                disabled={dice !== undefined || actionClassName !== ""}
             />
-            <button onClick={() => {
+            <button className={"dice-option-button"+actionClassName} onClick={() => {
+                document.querySelectorAll<HTMLButtonElement>('.dice-option-button').forEach(option => {
+                   option.classList.add("fade-out")
+                });
                 const die = document.querySelector<HTMLDivElement>('.die');
                 if(die)die.setAttribute('data-face', "10");
-                setDice(10)
+                setTimeout(()=>{
+                    setDice(10)
+                }, 500)
             }}>
                 No tirar
             </button>

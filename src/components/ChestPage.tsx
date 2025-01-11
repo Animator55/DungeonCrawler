@@ -9,7 +9,7 @@ import RewardImg from "../assets/images/Reward.png"
 import Dice from './Dice'
 
 type Props = {
-    setCurrentRoom: Function
+    returnFromRoom: Function
     openChest: Function
     pickItem: Function
     returnIndex: number
@@ -18,7 +18,7 @@ type Props = {
     dropData: any | undefined
 }
 
-export default function ChestPage({ reward, setCurrentRoom, returnIndex, dropData, itemPicked, pickItem,openChest }: Props) {
+export default function ChestPage({ reward,returnFromRoom, returnIndex, dropData, itemPicked, pickItem,openChest }: Props) {
     const [drop, setDrop] = React.useState<any | undefined>(dropData)
     // const [luck, forceLuck] = React.useState<boolean>(false)
     const luck = false
@@ -40,7 +40,7 @@ export default function ChestPage({ reward, setCurrentRoom, returnIndex, dropDat
     return <>
         <button
             className='force-luck'
-            onClick={() => { setCurrentRoom(returnIndex) }}
+            onClick={() => { returnFromRoom({ roomToMoveIndex: returnIndex, direction: "Atras" }) }}
             style={luck ? { background: "#295b28" } : {}}
         >
             <FontAwesomeIcon icon={faArrowLeft} />

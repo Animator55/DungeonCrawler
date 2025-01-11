@@ -23,9 +23,9 @@ type Props = {
 }
 let prevRoom = 0
 let preventRoomAnimation = false
-let levelUpAlert= false
+let levelUpAlert = false
 let lastAddedItems: any[] = []
-const specialRoomsArray = ["Puerta","Shop","Chest","Chest Especial","Escaleras","Escaleras de Subida"]
+const specialRoomsArray = ["Puerta", "Shop", "Chest", "Chest Especial", "Escaleras", "Escaleras de Subida"]
 
 export default function DungeonPlay({ theme, setPage }: Props) {
     const [dungeon, setDungeon] = React.useState<DungeonRoom[] | undefined>()
@@ -37,7 +37,7 @@ export default function DungeonPlay({ theme, setPage }: Props) {
     const [specialRooms, setSpecials] = React.useState<{ index: number; room: string; }[] | undefined>()
     const calculateArtifactPower = () => {
         let total = 0
-        for (let i = 0; i < items.artifacts.length; i++) if (items.artifacts[i]&&items.artifacts[i].active) total += items.artifacts[i].power
+        for (let i = 0; i < items.artifacts.length; i++) if (items.artifacts[i] && items.artifacts[i].active) total += items.artifacts[i].power
         return total
     }
 
@@ -50,7 +50,7 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         setPage("generate")
         window.localStorage.setItem("Dungeon-Crawler-2", "")
     }
-    const pickItem = (newItem: any) => setItems({ ...items, artifacts: [...items.artifacts, { ...newItem, active: true }] }) 
+    const pickItem = (newItem: any) => setItems({ ...items, artifacts: [...items.artifacts, { ...newItem, active: true }] })
 
     const buy = (item: { _id: "bombs" | "keys" | "coins" | "heart", rank: string }, price: string, index: number) => {
         let priceNum = parseInt(price)
@@ -92,7 +92,7 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         }
 
         let forNextLevel = calculateXP(items.level).xpForNextLevel
-        if(items.level + XP >= forNextLevel) levelUpAlert = true
+        if (items.level + XP >= forNextLevel) levelUpAlert = true
         if (newObj.enemys.length === 0) {
             let amountPick = Math.floor(Math.random() * 3) + 3
             // luck ? 3 :
@@ -121,13 +121,13 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         }
         let val = {
             ...items, artifacts: items.artifacts.map(el => {
-                if(!el.active) return el
+                if (!el.active) return el
                 let newDur = el.durability - 1 <= 0 ? -1 : (el.durability - 1)
                 if (newDur !== -1) return { ...el, "durability": newDur }
                 else null
             })
         }
-        let filtered = {...val, artifacts: val.artifacts.filter(el=>{if(el !== null) return el})}
+        let filtered = { ...val, artifacts: val.artifacts.filter(el => { if (el !== null) return el }) }
         console.log(filtered)
         setItems(filtered)
         changeRoom(newObj, room)
@@ -161,7 +161,7 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         <img className={'back-image ' + ImgclassResult} alt={dungeon[room].room} src={dungeon[room].image} />
         {(dungeon && dungeon[room].puzzle) &&
             <Puzzle puzzle={dungeon[room].puzzle} floor={floor} room={room} removePuzzle={removePuzzle} setLife={() => { setLife(life - 10) }} />}
-        {(dungeon && dungeon[room].enemys.length !== 0) && 
+        {(dungeon && dungeon[room].enemys.length !== 0) &&
             <Fight enemies={dungeon[room].enemys} player={power} killEnemy={killEnemy} hitEnemy={hitEnemy} setLife={(val: number) => { setLife(life - Math.round(10 * val)) }} />}
         <div className='buttons'>
             {dungeon[room].routes.map(button => {
@@ -169,21 +169,7 @@ export default function DungeonPlay({ theme, setPage }: Props) {
 
                 return <button
                     key={Math.random()}
-                    onClick={() => {
-                        moveRoomAnimation(button)
-                        setTimeout(() => {
-                            if (button.moveFloor) { 
-                                window.localStorage.removeItem("Dungeon-Crawler-2-Dungeon")
-                                setFloor(floor + button.moveFloor); 
-                                setSpecials(undefined) 
-                                setDungeon(undefined) 
-                                setCurrentRoom(0)
-                            }
-                            prevRoom = room
-                            preventRoomAnimation = false
-                            setCurrentRoom(button.roomToMoveIndex)
-                        }, 300)
-                    }}
+                    onClick={() => { returnFromRoom(button) }}
                 >
                     {icon.value && <FontAwesomeIcon icon={RouterSelector[icon.icon]} />}
                     {button.direction}
@@ -223,9 +209,9 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         }
     })
 
-    React.useEffect(()=>{
-        if(levelUpAlert) levelUpAlert = false
-        if(lastAddedItems.length !== 0) lastAddedItems = []
+    React.useEffect(() => {
+        if (levelUpAlert) levelUpAlert = false
+        if (lastAddedItems.length !== 0) lastAddedItems = []
     }, [items])
 
     React.useEffect(() => {
@@ -249,29 +235,51 @@ export default function DungeonPlay({ theme, setPage }: Props) {
 
     console.log(prevRoomDir)
 
+    const returnFromRoom = (button: {
+        roomToMoveIndex: number
+        tag?: string[]
+        moveFloor?: number
+        direction: string
+    }) => {
+        moveRoomAnimation(button)
+        setTimeout(() => {
+            if (button.moveFloor) {
+                window.localStorage.removeItem("Dungeon-Crawler-2-Dungeon")
+                setFloor(floor + button.moveFloor);
+                setSpecials(undefined)
+                setDungeon(undefined)
+                setCurrentRoom(0)
+            }
+            prevRoom = room
+            preventRoomAnimation = false
+            setCurrentRoom(button.roomToMoveIndex)
+        }, 300)
+    }
+
     return <section className='dungeon-play' key={Math.random()}>
         <button className='end-dungeon' onClick={endDungeon}><FontAwesomeIcon icon={faPersonWalkingArrowRight} /></button>
         <button className="fullscreen" onClick={fullscreen}><FontAwesomeIcon icon={faExpand} /></button>
         <h3>{dungeon && dungeon[room].room}</h3>
         {levelUpAlert && <i className='level-up'>Level Up!</i>}
-        {lastAddedItems.length !== 0 && <Picked loot={lastAddedItems}/>}
+        {lastAddedItems.length !== 0 && <Picked loot={lastAddedItems} />}
         {dungeon ? dungeon[room].room === "Shop" ?
-            <ShopPage buy={buy} items={dungeon[room].items} setCurrentRoom={setCurrentRoom} returnIndex={room - 1} />
+            <ShopPage buy={buy} items={dungeon[room].items} returnFromRoom={returnFromRoom} returnIndex={room - 1} />
             :
             dungeon[room].room === "Chest" || dungeon[room].room === "Reward" ?
                 <ChestPage
                     reward={dungeon[room].room === "Reward"}
                     itemPicked={dungeon[room].itemPicked}
-                    setCurrentRoom={setCurrentRoom} returnIndex={room - 1}
+                    returnFromRoom={returnFromRoom} returnIndex={room - 1}
                     dropData={dungeon[room].items ? dungeon[room].items[0] : undefined}
                     openChest={openChest}
                     pickItem={(item: any) => {
+                        if (items.artifacts.length === 5) return
                         lootChest()
                         pickItem(item)
                     }} />
                 :
                 normalRoom
             : null}
-        <HotBar items={items} setItems={setItems} life={life}/>
+        <HotBar items={items} setItems={setItems} life={life} />
     </section>
 }
