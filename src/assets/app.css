@@ -503,6 +503,9 @@ button:active {
     width: 100%;
     border-radius: 4px;
 }
+.life-container.life-warning {
+    animation: life-warning 1s infinite;
+}
 .life-bar {
     height: 1rem;
     border-radius: 4px;
@@ -568,6 +571,15 @@ button:active {
     }
     50% {
         background-color: transparent;
+    }
+    
+}
+@keyframes life-warning {
+    0%,100% {
+        background-color: rgba(180, 17, 17, 0.479);
+    }
+    50% {
+        background-color: rgb(14, 12, 12);
     }
     
 }

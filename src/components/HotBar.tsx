@@ -87,7 +87,7 @@ export default function HotBar({items, setItems, life}: Props) {
     return <>
         <div className='hot-bar'>
             <div className='top-hot-bar'>
-                <div className='life-container'>
+                <div className={life <= 10 ? 'life-container life-warning':'life-container'}>
                     <div className='life-bar' style={{
                         backgroundColor: generateLifeColor(life),
                         width: life + "%"
