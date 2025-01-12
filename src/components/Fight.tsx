@@ -5,6 +5,7 @@ import { iconSelectorObj } from "../logic/iconSelectorObj"
 import Dice from "./Dice"
 import React from "react"
 import { generateLifeColor } from "../logic/generateLifeColor"
+import PlaySoundMp3 from "../logic/playSound"
 
 type Props = {
     enemies: enemyType[]
@@ -12,10 +13,11 @@ type Props = {
     killEnemy: Function
     hitEnemy: Function
     setLife: Function
+    isBoss: boolean
 }
 let fightActive = false
 
-export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }: Props) {
+export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife, isBoss }: Props) {
     const [enemySelected, setSelectedEnemy] = React.useState(0)
     const [dice, setDice] = React.useState<number | undefined>(undefined)
 
@@ -32,6 +34,7 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }:
         let calc = calculateTotal(enemies[enemySelected].power, player)
         let rand = Math.random()
         let list = document.querySelectorAll(".fight-show")
+        console.log(enemies)
         let enemy = list[enemySelected]
         console.log("fight", new Date().getTime())
         if (rand <= calc) {
@@ -46,12 +49,15 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }:
                         * 100)
                         / enemies[enemySelected].health)) + "%"
                 }
+                PlaySoundMp3(isBoss ? "boss" : "goblin")
+                PlaySoundMp3(Math.random() > 0.5 ? "attack1" : "attack2")
             }
             setTimeout(() => hitEnemy(enemySelected), 1000)
         }
         else {
             if (enemy) enemy.classList.add("do-hit")
             let main = document.getElementById("main")
+            PlaySoundMp3(isBoss ? "boss" : "goblin")
             if (main) {
                 main.classList.add("damage")
                 setTimeout(() => main && main.classList.remove("damage"), 550)
@@ -62,6 +68,7 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }:
                 span.style.width = (val < 0 ? 0 : val) + "%"
                 span.style.backgroundColor = generateLifeColor(val)
             }
+            PlaySoundMp3("attackPlayer")
             setTimeout(() => {
                 if (!enemy) return
                 setLife(enemies[enemySelected].power / player)
@@ -73,7 +80,6 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }:
         fightActive = true
         if (dice !== undefined) fight()
     }, [dice])
-
     const overwriteCalc = (diceLocal: number) => {
         let val = calculateTotal(enemies[enemySelected].power, player, diceLocal)
         let div = document.querySelector<HTMLDivElement>(".fight-state")
@@ -85,7 +91,8 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }:
 
     let actionClassName = ""
     for (let i = 0; i < enemies.length; i++) if (enemies[i].currentHealth! === 0) {
-        if(enemies.length === 1) actionClassName = " disabled"
+        if (enemies.length === 1) actionClassName = " disabled"
+        PlaySoundMp3("goblinDiying")
         setTimeout(() => killEnemy(i), 1000); break
     }
     return <section id='event-show' className={fightActive ? "" : "fade-event"}>
@@ -120,9 +127,10 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }:
             {Math.round(calculateTotal(enemies[enemySelected].power, player) * 100)}% de Exito
         </div>
         <div className="dice-container">
-            <button className={"dice-option-button"+actionClassName} onClick={() => {
+            <button className={"dice-option-button" + actionClassName} onClick={() => {
+                PlaySoundMp3("routerButton")
                 document.querySelectorAll<HTMLButtonElement>('.dice-option-button').forEach(option => {
-                   option.classList.add("fade-out")
+                    option.classList.add("fade-out")
                 });
                 let dieEl = document.querySelector<HTMLElement>('.die')
                 if (dieEl) dieEl.click()
@@ -134,13 +142,15 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife }:
                 confirm={(val: string) => { setDice(parseInt(val)) }}
                 disabled={dice !== undefined || actionClassName !== ""}
             />
-            <button className={"dice-option-button"+actionClassName} onClick={() => {
+            <button className={"dice-option-button" + actionClassName} onClick={() => {
+                PlaySoundMp3("routerButton")
                 document.querySelectorAll<HTMLButtonElement>('.dice-option-button').forEach(option => {
-                   option.classList.add("fade-out")
+                    option.classList.add("fade-out")
                 });
                 const die = document.querySelector<HTMLDivElement>('.die');
-                if(die)die.setAttribute('data-face', "10");
-                setTimeout(()=>{
+                if (die) die.setAttribute('data-face', "10");
+                setTimeout(() => {
+                    PlaySoundMp3("rollResult")
                     setDice(10)
                 }, 500)
             }}>

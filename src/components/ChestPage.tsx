@@ -7,6 +7,7 @@ import { faArrowLeft, faCaretLeft, faCaretRight} from '@fortawesome/free-solid-s
 import ChestImg from "../assets/images/Chest.png"
 import RewardImg from "../assets/images/Reward.png"
 import Dice from './Dice'
+import PlaySoundMp3 from '../logic/playSound'
 
 type Props = {
     returnFromRoom: Function
@@ -37,6 +38,10 @@ export default function ChestPage({ reward,returnFromRoom, returnIndex, dropData
         setDrop(result)
     }
 
+    React.useEffect(()=>{
+        if(drop) PlaySoundMp3("inspect")
+    })
+
     return <>
         <button
             className='force-luck'
@@ -61,7 +66,7 @@ export default function ChestPage({ reward,returnFromRoom, returnIndex, dropData
                 </div>
                 <hr></hr>
                 {/*<p>{drop.description}</p>*/}
-                <button onClick={() => { pickItem(drop) }}>Pick</button>
+                <button onClick={() => { PlaySoundMp3("routerButton"); pickItem(drop) }}>Pick</button>
             </div>
                 :
                 !itemPicked && <Dice confirm={(val: string) => { generate(val) }} />

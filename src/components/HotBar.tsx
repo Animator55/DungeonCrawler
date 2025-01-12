@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBomb, faCoins, faKey } from '@fortawesome/free-solid-svg-icons';
 import { iconSelectorObj } from '../logic/iconSelectorObj';
 import { HotBarType } from '../vite-env';
+import PlaySoundMp3 from '../logic/playSound';
 
 type Props = {
     items: HotBarType
@@ -61,6 +62,7 @@ export default function HotBar({items, setItems, life}: Props) {
                                 else return item
                             })
                         })
+                        PlaySoundMp3("equip")
                     }
                     DragPhaseCancel()
                 }}>

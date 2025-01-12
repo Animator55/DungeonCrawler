@@ -1,67 +1,65 @@
-import React from 'react'
 import "../assets/dice.scss"
+import PlaySoundMp3 from '../logic/playSound'
 
 type Props = {
     confirm: Function
     overwriteCalc?: Function
     disabled?: boolean
 }
+let timeoutId: ReturnType<typeof setTimeout>;
+let lastFace: number | undefined;
+const animationDuration: number = 3000;
 
-export default function Dice({ overwriteCalc,confirm, disabled }: Props) {
-    // Variables globales con tipado
-    React.useEffect(() => {
+export default function Dice({ overwriteCalc, confirm, disabled }: Props) {
+    const sides: number = 20;
+    const initialSide: number = 1;
+
+    // Función para generar una cara aleatoria
+    function randomFace(): number {
+        const face = Math.floor(Math.random() * sides) + initialSide;
+        lastFace = face === lastFace ? randomFace() : face;
+        return face;
+    }
+
+    // Función para rodar hacia una cara específica
+    function rollTo(face: string): void {
+        clearTimeout(timeoutId);
         const die = document.querySelector<HTMLDivElement>('.die');
-        const sides: number = 20;
-        const initialSide: number = 1;
-        let lastFace: number | undefined;
-        let timeoutId: ReturnType<typeof setTimeout>;
-        const animationDuration: number = 3000;
 
-        // Función para generar una cara aleatoria
-        function randomFace(): number {
-            const face = Math.floor(Math.random() * sides) + initialSide;
-            lastFace = face === lastFace ? randomFace() : face;
-            return face;
+        if (die) {
+            die.setAttribute('data-face', face);
+            if (face === "20") PlaySoundMp3("roll20")
+            else PlaySoundMp3("rollResult")
+            if (overwriteCalc) overwriteCalc(parseInt(face))
+            setTimeout(() => {
+                confirm(face)
+            }, 1000)
         }
-
-        // Función para rodar hacia una cara específica
-        function rollTo(face: string): void {
-            clearTimeout(timeoutId);
-
-            if (die) {
-                die.setAttribute('data-face', face);
-                if(overwriteCalc) overwriteCalc(parseInt(face))
-                setTimeout(() => {
-                    confirm(face)
-                }, 1000)
-            }
-        }
-
-        // Manejar clics en el botón de aleatorización y el dado
-        let dieEl = document.querySelector<HTMLElement>('.die')
-        if(dieEl) dieEl.addEventListener('click', event => {
-            if (disabled) return
-            event.preventDefault();
-            document.querySelectorAll<HTMLButtonElement>('.dice-option-button').forEach(option => {
-               option.classList.add("fade-out")
-            });
-            if (die) {
-                die.classList.add('rolling');
-            }
-            clearTimeout(timeoutId);
-
-            timeoutId = setTimeout(() => {
-                if (die) {
-                    die.classList.remove('rolling');
-                }
-                rollTo(randomFace().toString());
-            }, animationDuration);
-        }, {once: true});
-    })
-
+    }
     return <>
-        <div className="content" style={disabled?{opacity: .6}: {}}>
-            <div className="die">
+        <div className="content" style={disabled ? { opacity: .6 } : {}}>
+            <div className="die" onClick={event => {
+                if (disabled) return
+                event.preventDefault();
+                document.querySelectorAll<HTMLButtonElement>('.dice-option-button').forEach(option => {
+                    option.classList.add("fade-out")
+                });
+                const die = document.querySelector<HTMLDivElement>('.die');
+                if (die) {
+                    die.classList.add('rolling');
+                }
+                clearTimeout(timeoutId);
+
+                setTimeout(() => {
+                    PlaySoundMp3("rollDice")
+                }, 1000)
+                timeoutId = setTimeout(() => {
+                    if (die) {
+                        die.classList.remove('rolling');
+                    }
+                    rollTo(randomFace().toString());
+                }, animationDuration);
+            }}>
                 <figure className="face face-1"></figure>
                 <figure className="face face-2"></figure>
                 <figure className="face face-3"></figure>

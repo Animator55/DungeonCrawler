@@ -1,5 +1,7 @@
+import React from "react"
 import { generateLifeColor } from "../logic/generateLifeColor"
 import { pickPuzzle } from "../logic/pickPuzzle"
+import PlaySoundMp3 from "../logic/playSound"
 
 type Props = {
     puzzle: {
@@ -38,6 +40,7 @@ export const Puzzle = ({ puzzle, floor, room, setLife, removePuzzle }: Props) =>
         }
         let currentRoom = room
         section.style.pointerEvents = bool ? "none" : "all"
+        PlaySoundMp3("rollResult")
         setTimeout(() => {
             section.style.opacity = bool ? "0" : "1"
             setTimeout(() => {
@@ -45,6 +48,10 @@ export const Puzzle = ({ puzzle, floor, room, setLife, removePuzzle }: Props) =>
             }, 300);
         },500)
     }
+
+    React.useEffect(()=>{
+        PlaySoundMp3("inspect")
+    },[])
 
     return <section id='event-show' className='puzzle-pop' style={{ opacity: 1 }}>
         <p>{puzzle.question}</p>
@@ -57,6 +64,7 @@ export const Puzzle = ({ puzzle, floor, room, setLife, removePuzzle }: Props) =>
                         let main = document.getElementById("main")
                         if (main) {
                             main.classList.add("damage")
+                            PlaySoundMp3("attackPlayer")
                             setTimeout(() => {
                                 if (main) main.classList.remove("damage")
                             }, 550)

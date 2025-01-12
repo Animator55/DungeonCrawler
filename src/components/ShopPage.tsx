@@ -5,6 +5,7 @@ import { iconSelectorObj } from '../logic/iconSelectorObj'
 import { faArrowLeft, faCoins, faDollarSign } from '@fortawesome/free-solid-svg-icons'
 import ShopImg from "../assets/images/Shop.png"
 import { router } from '../vite-env'
+import PlaySoundMp3 from '../logic/playSound'
 
 type Props = { returnFromRoom: Function, returnIndex: number, items: any[] | undefined, buy: Function }
 
@@ -43,7 +44,7 @@ export default function ShopPage({ returnFromRoom, returnIndex, items, buy }: Pr
         </button> */}
         <button
             className='force-luck'
-            onClick={() => { returnFromRoom({ roomToMoveIndex: returnIndex, direction: "Atras" })  }}
+            onClick={() => { returnFromRoom({ roomToMoveIndex: returnIndex, direction: "Atras" }) }}
             style={luck ? { background: "#295b28" } : {}}
         >
             <FontAwesomeIcon icon={faArrowLeft} />
@@ -56,7 +57,10 @@ export default function ShopPage({ returnFromRoom, returnIndex, items, buy }: Pr
                 return <div
                     className={bool ? 'enemy-show selected' : 'enemy-show'}
                     key={Math.random()}
-                    onClick={() => { setInspect(bool ? undefined : i) }}
+                    onClick={() => {
+                        PlaySoundMp3("inspect")
+                        setInspect(bool ? undefined : i)
+                    }}
                     style={inspect !== undefined ? { color: RankColorSelector[el.rank], animationDuration: "0ms" } :
                         {
                             color: RankColorSelector[el.rank],

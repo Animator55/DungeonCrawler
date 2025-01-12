@@ -16,6 +16,8 @@ import HotBar from './HotBar'
 import { defaultItems } from '../default/defaultItems'
 import { fullscreen } from '../functions/fullscreen'
 import Picked from './Picked'
+import PlaySoundMp3 from '../logic/playSound'
+import Tension from '../assets/sounds/tension.mp3'
 
 type Props = {
     theme: string
@@ -35,12 +37,23 @@ export default function DungeonPlay({ theme, setPage }: Props) {
     const [life, setLife] = React.useState(100)
     const [items, setItems] = React.useState<HotBarType>(defaultItems)
     const [specialRooms, setSpecials] = React.useState<{ index: number; room: string; }[] | undefined>()
+    const [music, setMusic] = React.useState(false)
     const calculateArtifactPower = () => {
         let total = 0
         for (let i = 0; i < items.artifacts.length; i++) if (items.artifacts[i] && items.artifacts[i].active) total += items.artifacts[i].power
         return total
     }
 
+    const BackgroundAudio = React.useRef(null)
+
+    const playBackground = () => {
+        if (music) return
+        let audio = new Audio(Tension)
+        audio.play()
+        audio.loop = true
+        BackgroundAudio.audio = audio
+        setMusic(true)
+    }
     const power = calculateXP(items.level).level + calculateArtifactPower()
     const endDungeon = () => {
         setDungeon(undefined)
@@ -48,6 +61,10 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         setCurrentRoom(0)
         setFloor(0)
         setPage("generate")
+        if (music && BackgroundAudio) {
+            setMusic(false)
+            BackgroundAudio.audio.pause()
+        }
         window.localStorage.setItem("Dungeon-Crawler-2", "")
     }
     const pickItem = (newItem: any) => setItems({ ...items, artifacts: [...items.artifacts, { ...newItem, active: true }] })
@@ -61,6 +78,7 @@ export default function DungeonPlay({ theme, setPage }: Props) {
             else setLife(100)
         }
         else newItems = { ...newItems, artifacts: [...newItems.artifacts, { ...item, active: true }] }
+        PlaySoundMp3("buy")
         setItems(newItems)
         removeItemFromShop(index)
     }
@@ -162,7 +180,7 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         {(dungeon && dungeon[room].puzzle) &&
             <Puzzle puzzle={dungeon[room].puzzle} floor={floor} room={room} removePuzzle={removePuzzle} setLife={() => { setLife(life - 10) }} />}
         {(dungeon && dungeon[room].enemys.length !== 0) &&
-            <Fight enemies={dungeon[room].enemys} player={power} killEnemy={killEnemy} hitEnemy={hitEnemy} setLife={(val: number) => { setLife(life - Math.round(10 * val)) }} />}
+            <Fight isBoss={dungeon[room].room === "Boss"} enemies={dungeon[room].enemys} player={power} killEnemy={killEnemy} hitEnemy={hitEnemy} setLife={(val: number) => { setLife(life - Math.round(10 * val)) }} />}
         <div className='buttons'>
             {dungeon[room].routes.map(button => {
                 let icon = checkIfRoomIsSpecial(button.roomToMoveIndex, specialRooms)
@@ -211,6 +229,7 @@ export default function DungeonPlay({ theme, setPage }: Props) {
 
     React.useEffect(() => {
         if (levelUpAlert) levelUpAlert = false
+        if (music) return
         if (lastAddedItems.length !== 0) lastAddedItems = []
     }, [items])
 
@@ -221,6 +240,7 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         window.localStorage.setItem("Dungeon-Crawler-2", storage)
         preventRoomAnimation = true
         lastAddedItems = []
+        if (dungeon[room].enemys.length !== 0) playBackground()
     }, [room])
 
     React.useEffect(() => {
@@ -233,7 +253,14 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         setSpecials(result)
     })
 
-    console.log(prevRoomDir)
+    React.useEffect(() => {
+        if (!dungeon || dungeon[room].enemys.length !== 0) return
+        if (music && BackgroundAudio) {
+            setMusic(false)
+            BackgroundAudio.audio.pause()
+        }
+    })
+
 
     const returnFromRoom = (button: {
         roomToMoveIndex: number
@@ -241,6 +268,8 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         moveFloor?: number
         direction: string
     }) => {
+        PlaySoundMp3("routerButton")
+        // PlaySoundMp3("steps")
         moveRoomAnimation(button)
         setTimeout(() => {
             if (button.moveFloor) {
@@ -256,7 +285,9 @@ export default function DungeonPlay({ theme, setPage }: Props) {
         }, 300)
     }
 
+
     return <section className='dungeon-play' key={Math.random()}>
+        <audio ref={BackgroundAudio}></audio>
         <button className='end-dungeon' onClick={endDungeon}><FontAwesomeIcon icon={faPersonWalkingArrowRight} /></button>
         <button className="fullscreen" onClick={fullscreen}><FontAwesomeIcon icon={faExpand} /></button>
         <h3>{dungeon && dungeon[room].room}</h3>
