@@ -22,7 +22,7 @@ export const ArtifactsPop = ({ setPop }: { setPop: Function }) => {
                     let unlockedItem = splited.includes(`${art.index}`)
                     amountTotal++
                     return <li key={Math.random()} className={unlockedItem ? "" : "shadow"} style={{ borderColor: RankColorSelector[rankArray[i - 1]] }}>
-                        <FontAwesomeIcon icon={iconSelectorObj[art.name.split(" ")[0]]} />
+                        {iconSelectorObj[art.name.split(" ")[0]]}
                         <p>{unlockedItem ? art.name : "???"}</p>
                     </li>
                 })}

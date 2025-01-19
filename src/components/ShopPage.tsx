@@ -74,7 +74,7 @@ export default function ShopPage({ returnFromRoom, returnIndex, items, buy, curr
                         }}
                 >
                     <div>
-                        <FontAwesomeIcon icon={iconSelectorObj[el.name.split(" ")[0]]} />
+                        {iconSelectorObj[el.name.split(" ")[0]]}
                         <p>{el.name}</p>
                         <p className='coins-item' style={discount !==0 ? { color: "red"}: {}}>
                             {prices[el.rank]}

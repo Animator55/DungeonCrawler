@@ -62,8 +62,8 @@ export default function HotBar({ items, setItems, life }: Props) {
                         PlaySoundMp3("equip")
                     }
                     DragPhaseCancel()
-                }}>
-                {el && <FontAwesomeIcon icon={iconSelectorObj[el.name.split(" ")[0]]} />}
+                }}> 
+                {el && iconSelectorObj[el.name.split(" ")[0]]}
                 {el && <p>{el.power}</p>}
                 {el && durabilityVision && <div className='durability-bar' style={{ width: (el.durability * 100) / el.totalDurability + "%" }}></div>}
             </button>

@@ -107,7 +107,7 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife, i
                     style={el.currentHealth! === 0 ? { opacity: 0.5 } : {}}
                 >
                     <FontAwesomeIcon icon={faUser} />
-                    {el.icon && <FontAwesomeIcon icon={iconSelectorObj[el.icon]} />}
+                    {el.icon && iconSelectorObj[el.icon]}
                     <p className='name'>
                         <i>Rank {el.rank}</i>
                         <b>{el.name}</b>

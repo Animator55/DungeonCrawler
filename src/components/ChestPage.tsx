@@ -56,7 +56,7 @@ export default function ChestPage({ floor,returnFromRoom, returnIndex, dropData,
                 style={{ color: RankColorSelector[drop.rank!] }}>
                 <p>Rank {drop.rank}</p>
                 <div className='icon'>
-                    <FontAwesomeIcon icon={iconSelectorObj[drop.name.split(" ")[0]]} />
+                    {iconSelectorObj[drop.name.split(" ")[0]]}
                 </div>
                 <div className='inspect-title'>
                     <FontAwesomeIcon icon={faCaretRight} />

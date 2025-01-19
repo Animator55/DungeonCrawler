@@ -30,7 +30,7 @@ export const EnemiesPop = ({ setPop }: { setPop: Function }) => {
                     let unlockedItem = splited.includes(`${art.index}`)
                     amountTotal++
                     return <li key={Math.random()} className={unlockedItem ? "" : "shadow"} style={{ borderColor: RankColorSelector[rankArray[i]] }}>
-                        <FontAwesomeIcon icon={iconSelectorObj[art.icon!]} />
+                        {iconSelectorObj[art.icon!]}
                         <p>{unlockedItem ? art.name : "???"}</p>
                     </li>
                 })}

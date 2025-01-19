@@ -65,7 +65,8 @@ export default function PlaySoundMp3(sound:
         "wandering": wandering,
     }
     let audio = new Audio(sounds[sound])
-    audio.volume = 0.2
+    if(sound === "goblin") audio.volume = 0.4
+    else if(sound === "boss") audio.volume = 0.4
     audio.play()
     return audio
 }

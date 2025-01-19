@@ -196,11 +196,12 @@ button:active {
     padding: .5rem;
 }
 .pop li >svg {
-    font-size: 3.5rem;
+    width: 3.5rem !important;
+    height: 3.5rem !important;
 }
 .pop li >p {
     margin: 0;
-    overflow: hidden;
+    word-break: break-word;
 }
 
 .dungeon-gen {
@@ -737,6 +738,7 @@ button:active {
     overflow: hidden;
     max-width: 3rem;
     min-width: 3rem;
+    padding: 0.5rem;
     height: 2.5rem;
     display: flex;
     align-items: center;
@@ -931,7 +933,8 @@ animation: fade-to-left 1.5s 0.6s infinite ease-in-out;
 .fight-show>svg:nth-child(2) {
     right: -1.5rem;
     top: 0rem;
-    font-size: 2rem;
+    width: 2rem !important;
+    height: 2rem !important;
     transform-origin: bottom left;
 }
 .fight-show>:not(svg:first-child) {
