@@ -5,21 +5,21 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { iconSelectorObj } from '../logic/iconSelectorObj'
 import { faArrowLeft, faCaretLeft, faCaretRight} from '@fortawesome/free-solid-svg-icons'
 import ChestImg from "../assets/images/Chest.png"
-import RewardImg from "../assets/images/Reward.png"
 import Dice from './Dice'
 import PlaySoundMp3 from '../logic/playSound'
 
 type Props = {
+    floor: number
     returnFromRoom: Function
     openChest: Function
     pickItem: Function
     returnIndex: number
-    reward: boolean
     itemPicked: boolean | undefined
     dropData: any | undefined
 }
 
-export default function ChestPage({ reward,returnFromRoom, returnIndex, dropData, itemPicked, pickItem,openChest }: Props) {
+let rankArray = ["E", "D", "C", "B", "A", "S"]
+export default function ChestPage({ floor,returnFromRoom, returnIndex, dropData, itemPicked, pickItem,openChest }: Props) {
     const [drop, setDrop] = React.useState<any | undefined>(dropData)
     // const [luck, forceLuck] = React.useState<boolean>(false)
     const luck = false
@@ -28,11 +28,10 @@ export default function ChestPage({ reward,returnFromRoom, returnIndex, dropData
     const generate = (val: string) => {
         let number: number = parseInt(val)
         let result = undefined
-        if (number === 1) result = generateArtifact("D")
-        else if (number === 20) result = generateArtifact("S")
-        else if(number >1 &&number < 9)result = generateArtifact("C")
-        else if(number >=9 &&number < 15)result = generateArtifact("B")
-        else if(number >=15 &&number < 20)result = generateArtifact("A")
+        if (number === 1) result = generateArtifact(floor === 0? "E" : rankArray[floor])
+        else if (number === 20) result = generateArtifact(rankArray[floor === 5 || floor === 4 ? 5:floor+2])
+        else if(number >1 &&number < 14)result = generateArtifact(rankArray[floor])
+        else if(number >14 &&number < 20)result = generateArtifact(rankArray[floor === 5 ? floor:floor+1])
 
         openChest(result)
         setDrop(result)
@@ -51,7 +50,7 @@ export default function ChestPage({ reward,returnFromRoom, returnIndex, dropData
             <FontAwesomeIcon icon={faArrowLeft} />
             Volver
         </button>
-        <img className='back-image' alt={"shop"} src={reward ? RewardImg : ChestImg} />
+        <img className='back-image' alt={"shop"} src={ ChestImg} />
         <div className='shop-content'>
             {drop ? <div className='inspect-div'
                 style={{ color: RankColorSelector[drop.rank!] }}>
@@ -65,7 +64,7 @@ export default function ChestPage({ reward,returnFromRoom, returnIndex, dropData
                     <FontAwesomeIcon icon={faCaretLeft} />
                 </div>
                 <hr></hr>
-                {/*<p>{drop.description}</p>*/}
+                <p>{drop.description}</p>
                 <button onClick={() => { PlaySoundMp3("routerButton"); pickItem(drop) }}>Pick</button>
             </div>
                 :

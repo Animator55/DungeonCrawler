@@ -65,6 +65,7 @@ export default function PlaySoundMp3(sound:
         "wandering": wandering,
     }
     let audio = new Audio(sounds[sound])
+    audio.volume = 0.2
     audio.play()
     return audio
 }

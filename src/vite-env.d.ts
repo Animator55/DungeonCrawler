@@ -5,6 +5,7 @@ export type router ={
 }
 
 type enemyType = {
+    index: number
     health: number
     currentHealth?: number
     icon?: string
@@ -35,7 +36,5 @@ export type DungeonRoom = {
 export type HotBarType = {
     artifacts: any[];
     coins: number;
-    keys: number;
-    bombs: number;
-    [key: string]: any
+    level:number
 }

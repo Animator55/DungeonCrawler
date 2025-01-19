@@ -21,8 +21,12 @@ body:has(.dying),
 body:has(.zoom-in-image-room),
 body:has(.zoom-in-left-image-room),
 body:has(.zoom-in-right-image-room),
-body:has(.zoom-out-image-room){
+body:has(.zoom-out-image-room),
+body:has(#inspecting) *{
     pointer-events: none;
+}
+#inspecting * {
+    pointer-events: all!important;
 }
 
 select {
@@ -51,6 +55,8 @@ select {
 main {
     height: 100dvh;
     max-height: 100dvh;
+    display: flex;
+    flex-direction: column;
 }
 main.damage::after {
     content: "";
@@ -127,26 +133,161 @@ button:active {
     }
 }
 
+.back-blur {
+    position: fixed;
+    z-index: 2;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #00000060;
+}
+.pop {
+    width: 90%;
+    height: 90dvh;
+    max-height: 90dvh;
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(32, 32, 32);
+    color: white;
+    padding: .5rem;
+    position: relative;
+    opacity: 0;
+    animation: fade-up 300ms forwards;
+}
+.pop>header {
+    display: flex;
+    padding: 0.5rem;
+    gap: 1rem;
+    align-items: center;
+}
+.pop>header >h4 {
+    margin-right: auto;
+}
+.pop>header>* {
+    margin: 0;
+    padding: .5rem;
+    background-color: transparent;
+}
+.pop>section {
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+.pop ul {
+    display: grid;
+    grid-template-columns: 33% 33% 33%;
+}
+.shadow {
+    color: black!important;
+    border-color: black!important;
+}
+.pop li{
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+    min-height: 6rem;
+    border: 3px solid transparent;
+    border-radius: 5px;
+    justify-content: space-around;
+    color: #cccbcb;
+    text-align: center;
+    padding: .5rem;
+}
+.pop li >svg {
+    font-size: 3.5rem;
+}
+.pop li >p {
+    margin: 0;
+    overflow: hidden;
+}
 
 .dungeon-gen {
     display: flex;
     flex-direction: column;
     height: 100%;
-    padding: 1rem;
-    align-items: center;
+    padding: .5rem;
+    text-align: center;
+}
+.menu-content {
+    display: flex;
+    width: 100%;
+    gap: 5px;
+    height: 100%;
 }
 
-.start-dungeon {
-    margin: 1rem 1rem 2rem;
-    width: 70%;
+.dungeon-options {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.dungeon-options > button {
+    padding: .5rem;
+    height: 100%;
+    font-size: 1.1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
+    gap: 1rem;
+    position: relative;
+    opacity: 0;
+    animation: fade-up 300ms forwards;
+}
+.dungeon-options > button > svg {
+    font-size: 2rem;
+}
+
+.main-dungeon-button::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    height: 30%;
+    width: 100%;
+    background: linear-gradient(0deg, black -11%, rgba(0, 0, 0, 0.4) 80%, transparent 90%);
+}
+.main-dungeon-button > p{
+    position: relative;
+    z-index: 1;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    font-size: 1.2rem;
 }
 
 .delete-dungeon,
 .main-dungeon-button {
-    justify-content: center;
-    width: 70%;
-    margin: auto 1rem 2rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    width: 100%;
+    height: 100%;
+    font-size: 1.2rem;
+    background-size: cover;
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+    background-position: center;
+    position: relative;
+    opacity: 0;
+    animation: fade-up 300ms .3s forwards;
+}
+
+.dungeon-start-animated {
+    opacity: 1;
+    animation-delay: 0;
+    animation: dungeon-start 200ms forwards;
+}
+@keyframes dungeon-start {
+    0% {
+        opacity: 1;
+        background-size: 100% 100%;
+    }
+    100% {
+        opacity: 0;
+        background-size: 150% 150%;
+    }
 }
 
 .dungeon-play {
@@ -161,7 +302,7 @@ button:active {
 .end-dungeon {
     position: absolute;
     z-index: 2;
-    right: .5rem;
+    right: .3rem;
     top: .5rem;
     background-color: transparent;
     font-size: 1.2rem;
@@ -169,8 +310,24 @@ button:active {
 .fullscreen {
     position: absolute;
     z-index: 2;
-    right: .5rem;
-    top: 3.5rem;
+    left: .3rem;
+    top: .5rem;
+    background-color: transparent;
+    font-size: 1.2rem;
+}
+.artifacts-button {
+    position: absolute;
+    z-index: 2;
+    left: .3rem;
+    top: 4rem;
+    background-color: transparent;
+    font-size: 1.2rem;
+}
+.enemies-button {
+    position: absolute;
+    z-index: 2;
+    left: .3rem;
+    top: 7.5rem;
     background-color: transparent;
     font-size: 1.2rem;
 }
@@ -479,6 +636,9 @@ button:active {
     list-style: none;
     opacity: 0;
     animation: fade-up 300ms forwards;
+    display: flex;
+    align-items: center;
+    gap: .7rem;
 }
 .top-hot-bar {
     display: flex;
@@ -531,12 +691,31 @@ button:active {
 .hot-bar ul button+.artifact-actions {
     position: absolute;
     background-color: black;
+    border: 1px solid rgb(94, 92, 92);
+    display: flex;
+    flex-direction: column;
+    gap: .7rem;
     padding: 0.5rem;
     border-radius: 5px;
     top: -5rem;
-    width: 100%;
     z-index: 5;
     scale: 0;
+}
+
+.artifact-actions li {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.inspect-action-zone {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    width: 100%;
+}
+.inspect-action-zone button {
+    width: 100%;
 }
 
 .hot-bar ul button.selected+.artifact-actions {
@@ -545,6 +724,7 @@ button:active {
 .hot-bar ul button.active {
     box-shadow: 0 0 5px rgb(236, 236, 230);
     color: black;
+    opacity: 1;
     border: 3px solid;
 }
 
@@ -553,6 +733,7 @@ button:active {
 }
 .hot-bar ul button {
     position: relative;
+    opacity: .7;
     overflow: hidden;
     max-width: 3rem;
     min-width: 3rem;

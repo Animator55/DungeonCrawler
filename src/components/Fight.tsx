@@ -34,7 +34,6 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife, i
         let calc = calculateTotal(enemies[enemySelected].power, player)
         let rand = Math.random()
         let list = document.querySelectorAll(".fight-show")
-        console.log(enemies)
         let enemy = list[enemySelected]
         console.log("fight", new Date().getTime())
         if (rand <= calc) {

@@ -7,6 +7,7 @@ export const iconSelectorObj: router = {
     Carta: faFile,
     Bomba: faBomb,
     Moneda: faCoins,
+    Rifle: faLocationArrow,
     Arco: faLocationArrow,
     Poción: faVial,
     Candado: faLock,

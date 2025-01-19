@@ -173,7 +173,7 @@ export default function generateDungeonStructure(theme: string, rankIndex: numbe
         else if (end === "Tienda") {
             result.push({
             ...RoomRouter[end](theme),
-            items: generateShop(false),
+            items: generateShop(false, rankIndex),
             routes: [{ roomToMoveIndex: result.length - 1, direction: "Atras" }]
         })}
         else if (end === "Cofre") {

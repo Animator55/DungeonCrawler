@@ -7,9 +7,9 @@ import ShopImg from "../assets/images/Shop.png"
 import { router } from '../vite-env'
 import PlaySoundMp3 from '../logic/playSound'
 
-type Props = { returnFromRoom: Function, returnIndex: number, items: any[] | undefined, buy: Function }
+type Props = { returnFromRoom: Function, returnIndex: number, currentItems: any[] | undefined, items: any[] | undefined, buy: Function }
 
-export default function ShopPage({ returnFromRoom, returnIndex, items, buy }: Props) {
+export default function ShopPage({ returnFromRoom, returnIndex, items, buy, currentItems }: Props) {
     // const [currentShop, setCurrentShop] = React.useState<any[] | undefined>(items)
     const [inspect, setInspect] = React.useState<number | undefined>(undefined)
     // const [luck, forceLuck] = React.useState<boolean>(false)
@@ -24,13 +24,19 @@ export default function ShopPage({ returnFromRoom, returnIndex, items, buy }: Pr
     //     setCurrentShop(parsed)
     // }, [])
 
+    let discount = 0 
+    if(currentItems) for(let i=0;i<currentItems.length; i++) {
+        if(currentItems[i].active && currentItems[i].cha !== undefined) discount += currentItems[i].cha
+    }
+
     const prices: router = {
-        "PickUps": "5",
-        "D": "5",
-        "C": "7",
-        "B": "12",
-        "A": "15",
-        "S": "20",
+        "PickUps": `${(5 - discount) < 0 ? 0 : (5-discount)}`,
+        "E": `${(5 - discount) < 0 ? 0 : (5-discount)}`,
+        "D": `${(7 - discount) < 0 ? 0 : (7-discount)}`,
+        "C": `${(10 - discount) < 0 ? 0 : (10-discount)}`,
+        "B": `${(14 - discount) < 0 ? 0 : (14-discount)}`,
+        "A": `${(20 - discount) < 0 ? 0 : (20-discount)}`,
+        "S": `${(25 - discount) < 0 ? 0 : (25-discount)}`,
     }
 
     return <>
@@ -70,7 +76,7 @@ export default function ShopPage({ returnFromRoom, returnIndex, items, buy }: Pr
                     <div>
                         <FontAwesomeIcon icon={iconSelectorObj[el.name.split(" ")[0]]} />
                         <p>{el.name}</p>
-                        <p className='coins-item'>
+                        <p className='coins-item' style={discount !==0 ? { color: "red"}: {}}>
                             {prices[el.rank]}
                             <FontAwesomeIcon icon={faCoins} />
                         </p>
