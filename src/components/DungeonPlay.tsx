@@ -2,7 +2,7 @@ import React from 'react'
 import generateDungeonStructure from '../logic/generateDungeonStructure'
 import { DungeonRoom, HotBarType } from '../vite-env'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBookAtlas, faBookDead, faExpand, faPersonWalkingArrowRight } from '@fortawesome/free-solid-svg-icons'
+import { faBookAtlas, faBookDead, faExpand, faPersonFalling, faPersonWalkingArrowRight } from '@fortawesome/free-solid-svg-icons'
 import ShopPage from './ShopPage'
 import ChestPage from './ChestPage'
 import Fight from './Fight'
@@ -21,6 +21,7 @@ import { saveEnemy, saveItem } from '../logic/saveItem'
 import { generateDefaultItems } from '../logic/generateDefaultItems'
 import { calculateArtifactPower } from '../logic/calculateArtifactPower'
 import RewardPage from './RewardPage'
+import { advises } from '../default/advises'
 
 type Props = {
     setPage: Function
@@ -144,14 +145,19 @@ export default function DungeonPlay({ setPage, setPop }: Props) {
                 }
             })
         }
+        let someBreak = false
         let val = {
             ...items, artifacts: items.artifacts.map(el => {
                 if (!el.active) return el
                 let newDur = el.durability - 1 <= 0 ? -1 : (el.durability - 1)
                 if (newDur !== -1) return { ...el, "durability": newDur }
-                else null
+                else {
+                    someBreak = true
+                    return null
+                }
             })
         }
+        if (someBreak) PlaySoundMp3("break")
         let filtered = { ...val, artifacts: val.artifacts.filter(el => { if (el !== null) return el }) }
         setItems(filtered)
         changeRoom(newObj, room)
@@ -224,20 +230,22 @@ export default function DungeonPlay({ setPage, setPop }: Props) {
             let dunge = JSON.parse(dun)
             setDungeon(dunge)
         }
-        else {
+        else setTimeout(() => {
             let dung = generateDungeonStructure(theme, floor)
             let dungeonStr = JSON.stringify(dung)
             window.localStorage.setItem("Dungeon-Crawler-2-Dungeon", dungeonStr)
             setDungeon(dung)
-        }
+        }, 2000)
+
         if (stor !== undefined && stor !== null && stor !== "") {
+            if (items) return
             let obj = JSON.parse(stor)
             setCurrentRoom(obj.room)
             setFloor(obj.floor)
             setItems(obj.items)
             setLife(obj.life)
         }
-        else setItems(generateDefaultItems())
+        else if (!items) setItems(generateDefaultItems())
     })
 
     React.useEffect(() => {
@@ -303,48 +311,59 @@ export default function DungeonPlay({ setPage, setPop }: Props) {
 
 
     return <section className='dungeon-play' key={Math.random()}>
-        <audio ref={BackgroundAudio}></audio>
-        <button className='end-dungeon' onClick={endDungeon}><FontAwesomeIcon icon={faPersonWalkingArrowRight} /></button>
-        <button className="fullscreen" onClick={fullscreen}><FontAwesomeIcon icon={faExpand} /></button>
-        <button className="artifacts-button" onClick={() => {
-            if (music && audio !== null) {
-                setMusic(false)
-                audio.pause()
-            }
-            setPop("artifacts")
-        }}><FontAwesomeIcon icon={faBookAtlas} /></button>
-        <button className="enemies-button" onClick={() => {
-            if (music && audio !== null) {
-                setMusic(false)
-                audio.pause()
-            }
-            setPop("enemies")
-        }}><FontAwesomeIcon icon={faBookDead} /></button>
-        <h3>{dungeon && dungeon[room].room}</h3>
-        {levelUpAlert && <i className='level-up'>Level Up!</i>}
-        {lastAddedItems.length !== 0 && <Picked loot={lastAddedItems} />}
-        {dungeon ? dungeon[room].room === "Shop" ?
-            <ShopPage currentItems={items?.artifacts} buy={buy} items={dungeon[room].items} returnFromRoom={returnFromRoom} returnIndex={room - 1} />
-            :
-            dungeon[room].room === "Chest" ?
-                <ChestPage
-                    floor={floor}
-                    itemPicked={dungeon[room].itemPicked}
-                    returnFromRoom={returnFromRoom} returnIndex={room - 1}
-                    dropData={dungeon[room].items ? dungeon[room].items[0] : undefined}
-                    openChest={openChest}
-                    pickItem={(item: any) => {
-                        if (!items) return
-                        if (items.artifacts.length === 5) return
-                        lootChest()
-                        pickItem(item)
-                    }} />
+        {dungeon ? <>
+            <audio ref={BackgroundAudio}></audio>
+            <button className='end-dungeon' onClick={endDungeon}><FontAwesomeIcon icon={faPersonWalkingArrowRight} /></button>
+            <button className="fullscreen" onClick={fullscreen}><FontAwesomeIcon icon={faExpand} /></button>
+            <button className="artifacts-button" onClick={() => {
+                if (music && audio !== null) {
+                    setMusic(false)
+                    audio.pause()
+                }
+                PlaySoundMp3("routerButton")
+                setPop("artifacts")
+            }}><FontAwesomeIcon icon={faBookAtlas} /></button>
+            <button className="enemies-button" onClick={() => {
+                if (music && audio !== null) {
+                    setMusic(false)
+                    audio.pause()
+                }
+                PlaySoundMp3("routerButton")
+                setPop("enemies")
+            }}><FontAwesomeIcon icon={faBookDead} /></button>
+            <h3>{dungeon && dungeon[room].room}</h3>
+            {levelUpAlert && <i className='level-up'>Subiste de Nivel!</i>}
+            {lastAddedItems.length !== 0 && <Picked loot={lastAddedItems} />}
+            {dungeon ? dungeon[room].room === "Shop" ?
+                <ShopPage currentItems={items?.artifacts} buy={buy} items={dungeon[room].items} returnFromRoom={returnFromRoom} returnIndex={room - 1} />
                 :
-                dungeon[room].room === "Reward" ?
-                    <RewardPage endDungeon={endDungeon} />
+                dungeon[room].room === "Chest" ?
+                    <ChestPage
+                        floor={floor}
+                        itemPicked={dungeon[room].itemPicked}
+                        returnFromRoom={returnFromRoom} returnIndex={room - 1}
+                        dropData={dungeon[room].items ? dungeon[room].items[0] : undefined}
+                        openChest={openChest}
+                        pickItem={(item: any) => {
+                            if (!items) return
+                            if (items.artifacts.length === 5) return
+                            lootChest()
+                            pickItem(item)
+                        }} />
                     :
-                    normalRoom
-            : null}
-        <HotBar items={items} setItems={setItems} life={life} />
+                    dungeon[room].room === "Reward" ?
+                        <RewardPage endDungeon={endDungeon} />
+                        :
+                        normalRoom
+                : null}
+            <HotBar items={items} setItems={setItems} life={life} />
+        </>
+            : <div className='loading-page'>
+                <FontAwesomeIcon icon={faPersonFalling} className='person' />
+                <p className='fade-image' style={{ animationDelay: "150ms" }}>
+                    {advises[Math.floor(Math.random() * advises.length)]}
+                </p>
+            </div>
+        }
     </section>
 }

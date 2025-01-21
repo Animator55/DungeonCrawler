@@ -34,12 +34,12 @@ export const Puzzle = ({ puzzle, floor, room, setLife, removePuzzle }: Props) =>
         let section = document.getElementById("event-show") as HTMLDivElement
         if (!section) return
         let bool = section.style.opacity === "1"
+        section.style.pointerEvents = bool ? "none" : "all"
         if (e) {
             let target = e.target as HTMLButtonElement
             if(target)target.style.borderColor = "#29ff00"
         }
         let currentRoom = room
-        section.style.pointerEvents = bool ? "none" : "all"
         PlaySoundMp3("rollResult")
         setTimeout(() => {
             section.style.opacity = bool ? "0" : "1"
@@ -61,6 +61,9 @@ export const Puzzle = ({ puzzle, floor, room, setLife, removePuzzle }: Props) =>
                 onClick={(e) => {
                     if (el === answ1) show(e)
                     else {
+                        let section = document.getElementById("event-show") as HTMLDivElement
+                        if (!section) return
+                        section.style.pointerEvents = "none"
                         let main = document.getElementById("main")
                         if (main) {
                             main.classList.add("damage")

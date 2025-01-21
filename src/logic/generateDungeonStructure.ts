@@ -1,6 +1,6 @@
 import { RoomRouter } from "../components/Rooms"
 import { dungeonEnemies } from "../default/dungeonEnemies"
-import { DungeonRoom, router } from "../vite-env"
+import { DungeonRoom, enemyType, router } from "../vite-env"
 import { generateShop } from "./generateShop"
 import { pickPuzzle } from "./pickPuzzle"
 
@@ -139,11 +139,7 @@ export default function generateDungeonStructure(theme: string, rankIndex: numbe
         }
         if (end === "Boss") {
             let enemy = dungeonEnemies[theme].Boss[rank]
-            let boss = theme === "FantasmasNoMuertos" ? [
-                {...dungeonEnemies["Fantasmas"].Boss[rank], rank: rank, currentHealth: dungeonEnemies["Fantasmas"].Boss[rank].health},
-                {...dungeonEnemies["NoMuertos"].Boss[rank], rank: rank,currentHealth: dungeonEnemies["NoMuertos"].Boss[rank].health}] 
-                : 
-            [{...enemy, rank: rank, currentHealth: enemy.health}]
+            let boss:enemyType[] = [{...enemy, rank: rank, currentHealth: enemy.health}]
             result.push({
                 ...RoomRouter["Puerta"](theme),
                 puzzle: pickPuzzle(Math.random() > 0.5 ? rank : rank === "E" ? "E" : rankArray[rankArray.indexOf(rank) - 1]),
@@ -164,7 +160,9 @@ export default function generateDungeonStructure(theme: string, rankIndex: numbe
                 })
                 result.push({
                     ...RoomRouter["Boss"](theme), routes: [{ roomToMoveIndex: result.length - 1, direction: "Atras" }, { roomToMoveIndex: result.length + 1, direction: "Adelante" }],
-                    enemys: [{...dungeonEnemies[theme].Boss[rank], rank: rank, currentHealth: dungeonEnemies[theme].Boss[rank].health}]
+                    enemys: [
+                        {...dungeonEnemies[theme].Boss[rank], rank: rank, currentHealth: dungeonEnemies[theme].Boss[rank].health}
+                    ]
                 })
                 result.push({ ...RoomRouter["Escaleras"](theme), routes: [{ roomToMoveIndex: result.length - 1, direction: "Atras" }, { moveFloor: +1, roomToMoveIndex: 0, direction: "Bajar" }] })
             // }

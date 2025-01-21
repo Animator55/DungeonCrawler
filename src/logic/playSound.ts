@@ -9,6 +9,7 @@ import steps from '../assets/sounds/footsteps.mp3'
 import inspect from '../assets/sounds/inspect.mp3'
 import equip from '../assets/sounds/item-equip.mp3'
 import loot from '../assets/sounds/loot-chest.mp3'
+import breakArtifact from "../assets/sounds/break.mp3"
 import roll20 from '../assets/sounds/roll-20.mp3'
 import rollDice from '../assets/sounds/roll-dice.mp3'
 import rollResult from '../assets/sounds/roll-result.mp3'
@@ -34,6 +35,7 @@ export default function PlaySoundMp3(sound:
     "equip" |
     "steps" |
     "loot" |
+    "break" |
     "roll20" |
     "rollDice" |
     "rollResult" |
@@ -55,6 +57,7 @@ export default function PlaySoundMp3(sound:
         "equip": equip,
         "steps": steps,
         "loot": loot,
+        "break": breakArtifact,
         "roll20": roll20,
         "rollDice": rollDice,
         "rollResult": rollResult,
