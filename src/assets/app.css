@@ -15,6 +15,10 @@ body {
     -webkit-tap-highlight-color: transparent;
 }
 
+svg {
+    height: 1rem;
+}
+
 body:has(.rolling), 
 body:has([data-face]), 
 body:has(.dying),
@@ -191,6 +195,7 @@ button:active {
     border: 3px solid transparent;
     border-radius: 5px;
     justify-content: space-around;
+    align-items: center;
     color: #cccbcb;
     text-align: center;
     padding: .5rem;
@@ -469,6 +474,10 @@ button:active {
     padding: 0 1rem;
 }
 
+.enemy-show svg {
+    height: 1rem!important;
+    width: 1rem!important;
+}
 .enemy-show p {
     margin: 0;
 }
@@ -852,8 +861,10 @@ button:active {
     justify-content: center;
     border: 4px solid white;
     border-radius: 5px;
-    font-size: 22vw;
+    width: 22vw;
+    height: 22vw;
     padding: .7rem;
+    margin: 0 auto;
 }
 
 .inspect-div .inspect-title {

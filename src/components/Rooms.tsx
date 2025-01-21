@@ -148,13 +148,13 @@ function BigRoomEnd() {
     const posilities: {question: string, answer: string}[] = [
         {question: "No parece haber nada por esta zona...", answer: "Poner explosivos."},
         {question: "No parece haber nada por esta zona...", answer: "No hay nada."},
-        "Estantería de Libros: Una librería con tomos antiguos y un mensaje grabado en una placa cercana que dice 'El conocimiento es poder'. Si se retira el libro correcto, un pequeño compartimento se abre dandote una llave de cofre.",
-        "Bodega de Vinos Polvorientos: Un barril tiene un mecanismo secreto; al girarlo, revela un pasadizo hacia una pequeña despensa secreta con una botella de vino antiguo que cura heridas a todos los jugadores.",
-        "Estantería de Libros: Una librería con tomos antiguos y un mensaje grabado en una placa cercana que dice 'El conocimiento es poder'. Si se retira el libro correcto, un pequeño compartimento se abre dandote una llave de cofre.",
-        "Pozo Profundo: Al fondo del callejón, hay un pozo oscuro del cual emana un frío antinatural. Al lanzar una moneda o un objeto dentro, el jugador recibe la informacion de un item aleatorio del rango de la dungeon.",
-        "Sarcófago Antiguo: Una vez que se intenta abrir, el sarcófago revela un pasadizo. En el interior, hay una momia inofensiva que sostiene un colgante de protección contra maldiciones. Sin embargo, si se toma, puede atraer a enemigos no-muertos.",
-        "Colonia de Hongos Luminosos: En el rincón, hay una serie de hongos brillantes que reaccionan al contacto. Si los tocas en el orden correcto, te dan una llave.",
-        "Lago Subterráneo: Cofre sumergido en el fondo, pequeños peces agresivos que lo muerden si permanece demasiado tiempo.",
+        // "Estantería de Libros: Una librería con tomos antiguos y un mensaje grabado en una placa cercana que dice 'El conocimiento es poder'. Si se retira el libro correcto, un pequeño compartimento se abre dandote una llave de cofre.",
+        // "Bodega de Vinos Polvorientos: Un barril tiene un mecanismo secreto; al girarlo, revela un pasadizo hacia una pequeña despensa secreta con una botella de vino antiguo que cura heridas a todos los jugadores.",
+        // "Estantería de Libros: Una librería con tomos antiguos y un mensaje grabado en una placa cercana que dice 'El conocimiento es poder'. Si se retira el libro correcto, un pequeño compartimento se abre dandote una llave de cofre.",
+        // "Pozo Profundo: Al fondo del callejón, hay un pozo oscuro del cual emana un frío antinatural. Al lanzar una moneda o un objeto dentro, el jugador recibe la informacion de un item aleatorio del rango de la dungeon.",
+        // "Sarcófago Antiguo: Una vez que se intenta abrir, el sarcófago revela un pasadizo. En el interior, hay una momia inofensiva que sostiene un colgante de protección contra maldiciones. Sin embargo, si se toma, puede atraer a enemigos no-muertos.",
+        // "Colonia de Hongos Luminosos: En el rincón, hay una serie de hongos brillantes que reaccionan al contacto. Si los tocas en el orden correcto, te dan una llave.",
+        // "Lago Subterráneo: Cofre sumergido en el fondo, pequeños peces agresivos que lo muerden si permanece demasiado tiempo.",
     ]
     let puzzle = Math.floor(Math.random() * posilities.length)
 
@@ -165,8 +165,8 @@ function BigRoomEnd() {
         enemys: [],
         routes: [],
         puzzle: {
-            question: posilities[puzzle],
-            answer: ""
+            question: posilities[puzzle].question,
+            answer: posilities[puzzle].answer
         },
     }
     return room

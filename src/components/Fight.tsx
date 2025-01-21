@@ -1,11 +1,12 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { enemyType } from "../vite-env"
-import { faCaretDown, faUser } from "@fortawesome/free-solid-svg-icons"
+import { faCaretDown } from "@fortawesome/free-solid-svg-icons"
 import { iconSelectorObj } from "../logic/iconSelectorObj"
 import Dice from "./Dice"
 import React from "react"
 import { generateLifeColor } from "../logic/generateLifeColor"
 import PlaySoundMp3 from "../logic/playSound"
+import { FaGoblin } from "../assets/svg/sword-svgrepo-com"
 
 type Props = {
     enemies: enemyType[]
@@ -106,7 +107,8 @@ export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife, i
                     onClick={() => (!dice && el.currentHealth! !== 0) && setSelectedEnemy(i)}
                     style={el.currentHealth! === 0 ? { opacity: 0.5 } : {}}
                 >
-                    <FontAwesomeIcon icon={faUser} />
+                    <FaGoblin />
+                    {/* <FontAwesomeIcon icon={faUser}/> */}
                     {el.icon && iconSelectorObj[el.icon]}
                     <p className='name'>
                         <i>Rank {el.rank}</i>

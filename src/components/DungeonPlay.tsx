@@ -75,7 +75,7 @@ export default function DungeonPlay({ setPage, setPop }: Props) {
         setItems({ ...items, artifacts: [...items.artifacts, { ...newItem, active: true }] })
     }
 
-    const buy = (item: { _id: "heart-1" | "heart-2" | "heart-3", rank: string, index:number }, price: string, index: number) => {
+    const buy = (item: { _id: "heart-1" | "heart-2" | "heart-3", rank: string, index: number }, price: string, index: number) => {
         let priceNum = parseInt(price)
         if (!items) return
         if (items.coins < priceNum || (item.rank !== "PickUps" && items.artifacts.length === 5)) return
@@ -181,9 +181,9 @@ export default function DungeonPlay({ setPage, setPop }: Props) {
     else if (prevRoomDir === "Atras") ImgclassResult = "fade-image"
     if (preventRoomAnimation) ImgclassResult = ""
 
-    let mapBoolean=false
-    if(items && items.artifacts.length !== 0) for(let i=0; i<items.artifacts.length;i++){
-        if(items.artifacts[i].map && items.artifacts[i].active) mapBoolean = true
+    let mapBoolean = false
+    if (items && items.artifacts.length !== 0) for (let i = 0; i < items.artifacts.length; i++) {
+        if (items.artifacts[i].map && items.artifacts[i].active) mapBoolean = true
     }
 
     const normalRoom = dungeon && <>
@@ -285,7 +285,6 @@ export default function DungeonPlay({ setPage, setPop }: Props) {
         direction: string
     }) => {
         PlaySoundMp3("routerButton")
-        // PlaySoundMp3("steps")
         moveRoomAnimation(button)
         setTimeout(() => {
             if (button.moveFloor) {
@@ -307,8 +306,20 @@ export default function DungeonPlay({ setPage, setPop }: Props) {
         <audio ref={BackgroundAudio}></audio>
         <button className='end-dungeon' onClick={endDungeon}><FontAwesomeIcon icon={faPersonWalkingArrowRight} /></button>
         <button className="fullscreen" onClick={fullscreen}><FontAwesomeIcon icon={faExpand} /></button>
-        <button className="artifacts-button" onClick={()=>{setPop("artifacts")}}><FontAwesomeIcon icon={faBookAtlas} /></button>
-        <button className="enemies-button" onClick={()=>{setPop("enemies")}}><FontAwesomeIcon icon={faBookDead} /></button>
+        <button className="artifacts-button" onClick={() => {
+            if (music && audio !== null) {
+                setMusic(false)
+                audio.pause()
+            }
+            setPop("artifacts")
+        }}><FontAwesomeIcon icon={faBookAtlas} /></button>
+        <button className="enemies-button" onClick={() => {
+            if (music && audio !== null) {
+                setMusic(false)
+                audio.pause()
+            }
+            setPop("enemies")
+        }}><FontAwesomeIcon icon={faBookDead} /></button>
         <h3>{dungeon && dungeon[room].room}</h3>
         {levelUpAlert && <i className='level-up'>Level Up!</i>}
         {lastAddedItems.length !== 0 && <Picked loot={lastAddedItems} />}
@@ -329,10 +340,10 @@ export default function DungeonPlay({ setPage, setPop }: Props) {
                         pickItem(item)
                     }} />
                 :
-                dungeon[room].room === "Reward" ? 
-                <RewardPage endDungeon={endDungeon}/>
-                :
-                normalRoom
+                dungeon[room].room === "Reward" ?
+                    <RewardPage endDungeon={endDungeon} />
+                    :
+                    normalRoom
             : null}
         <HotBar items={items} setItems={setItems} life={life} />
     </section>

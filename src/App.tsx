@@ -26,7 +26,7 @@ export default function App() {
 
 
     const pops: router = {
-        "artifacts": <ArtifactsPop setPop={setPop}/>,
+        "artifacts": <ArtifactsPop setPop={setPop} />,
         "enemies": <EnemiesPop setPop={setPop} />,
     }
 
@@ -34,26 +34,26 @@ export default function App() {
         return <section className='dungeon-gen'
         // style={{ background: "linear-gradient(0deg," + RankColorSelector["Elementales"] + ", transparent)" }}
         >
-                <header>
-                    <h3>Dungeon Crawler</h3>
-                </header>
-                <section className='menu-content'>
+            <header>
+                <h3>Dungeon Crawler</h3>
+            </header>
+            <section className='menu-content'>
 
-                    <div className='dungeon-options'>
-                        <button onClick={() => { PlaySoundMp3("routerButton"); setPop("enemies") }}>
-                            <FontAwesomeIcon icon={faBookDead} />
-                            Enemigos
-                        </button>
-                        <button style={{ animationDelay: ".1s" }} onClick={() => { PlaySoundMp3("routerButton"); setPop("artifacts") }}>
-                            <FontAwesomeIcon icon={faBookAtlas} />
-                            Artefactos
-                        </button>
-                        <button style={{ animationDelay: ".2s" }} onClick={() => { PlaySoundMp3("routerButton"); window.close() }}>
-                            <FontAwesomeIcon icon={faPersonRunning} />
-                            Salir
-                        </button>
-                    </div>
-                    {/* <select value={theme} onChange={(e) => { setTheme(e.target.value) }}>
+                <div className='dungeon-options'>
+                    <button onClick={() => { PlaySoundMp3("routerButton"); setPop("enemies") }}>
+                        <FontAwesomeIcon icon={faBookDead} />
+                        Enemigos
+                    </button>
+                    <button style={{ animationDelay: ".1s" }} onClick={() => { PlaySoundMp3("routerButton"); setPop("artifacts") }}>
+                        <FontAwesomeIcon icon={faBookAtlas} />
+                        Artefactos
+                    </button>
+                    <button style={{ animationDelay: ".2s" }} onClick={() => { PlaySoundMp3("routerButton"); window.close() }}>
+                        <FontAwesomeIcon icon={faPersonRunning} />
+                        Salir
+                    </button>
+                </div>
+                {/* <select value={theme} onChange={(e) => { setTheme(e.target.value) }}>
                 {themeSelector.map(el => {
                     return <option key={Math.random()}>
                         {el}
@@ -61,25 +61,25 @@ export default function App() {
                 })}
             </select> */}
 
-                    <button
-                        style={{ backgroundImage: "url(" + Door + ")" }}
-                        className='start-dungeon main-dungeon-button' onClick={() => {
-                            PlaySoundMp3("routerButton");
-                            let button = document.querySelector<HTMLButtonElement>(".start-dungeon.main-dungeon-button")
-                            if(button) {
-                                button.offsetTop
-                                button.classList.add("dungeon-start-animated")
-                                button.offsetTop
-                            }
-                            
-                            setTimeout(()=>{
-                                setPage("dungeon")
-                            }, 200)
-                        }}>
-                        <p>
+                <button
+                    style={{ backgroundImage: "url(" + Door + ")" }}
+                    className='start-dungeon main-dungeon-button' onClick={() => {
+                        PlaySoundMp3("routerButton");
+                        let button = document.querySelector<HTMLButtonElement>(".start-dungeon.main-dungeon-button")
+                        if (button) {
+                            button.offsetTop
+                            button.classList.add("dungeon-start-animated")
+                            button.offsetTop
+                        }
+
+                        setTimeout(() => {
+                            setPage("dungeon")
+                        }, 200)
+                    }}>
+                    <p>
                         <FontAwesomeIcon icon={faDungeon} /> Entrar a la Dungeon</p>
-                    </button>
-                </section>
+                </button>
+            </section>
         </section>
     }
     const pages: router = {
