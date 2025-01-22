@@ -90,7 +90,7 @@ export default function HotBar({ items, setItems, life }: Props) {
                 style={{ color: RankColorSelector[items.artifacts[inspect].rank!] }}>
                 <p>Rank {items.artifacts[inspect].rank}</p>
                 <div className='icon'>
-                    <FontAwesomeIcon icon={iconSelectorObj[items.artifacts[inspect].name.split(" ")[0]]} />
+                    {iconSelectorObj[items.artifacts[inspect].name.split(" ")[0]]}
                 </div>
                 <div className='inspect-title'>
                     <FontAwesomeIcon icon={faCaretRight} />

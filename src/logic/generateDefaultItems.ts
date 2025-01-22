@@ -26,9 +26,9 @@ export const generateDefaultItems = () => {
         artifactResult.push({ ...artifactArray[parseInt(artifactIndex)], active: true })
     }
     let result = {
-        level: Math.floor(Math.random() * 30),
+        level: Math.floor(Math.random() * 30) * artifactAmount,
         artifacts: artifactResult,
-        coins: Math.floor(Math.random() * 12)
+        coins: Math.floor(Math.random() * 12) * artifactAmount
     }
     return result
 }
