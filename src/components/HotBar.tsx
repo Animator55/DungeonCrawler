@@ -48,9 +48,11 @@ export default function HotBar({ items, setItems, life }: Props) {
                 className={className}
                 style={el ? { borderColor: RankColorSelector[el.rank], color: RankColorSelector[el.rank] } : {}}
                 onTouchStart={() => {
+                    if(!el)return
                     DragPhase(i)
                 }}
                 onTouchEnd={() => {
+                    if(!el)return
                     if (!draggingPhase) {
                         if (!el || !items) return
                         setItems({

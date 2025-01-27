@@ -142,7 +142,7 @@ export default function generateDungeonStructure(theme: string, rankIndex: numbe
             let boss:enemyType[] = [{...enemy, rank: rank, currentHealth: enemy.health}]
             result.push({
                 ...RoomRouter["Puerta"](theme),
-                puzzle: pickPuzzle(Math.random() > 0.5 ? rank : rank === "E" ? "E" : rankArray[rankArray.indexOf(rank) - 1]),
+                puzzle: pickPuzzle(rank),
                 routes: [{ roomToMoveIndex: result.length - 1, direction: "Atras" }, { roomToMoveIndex: result.length + 1, direction: "Adelante" }]
             })
             result.push({

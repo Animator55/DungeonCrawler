@@ -1,33 +1,24 @@
 import React from "react"
 import { generateLifeColor } from "../logic/generateLifeColor"
-import { pickPuzzle } from "../logic/pickPuzzle"
 import PlaySoundMp3 from "../logic/playSound"
 
 type Props = {
     puzzle: {
         question: string
         answer: string
+        otherAnswers: string[]
     }
     floor: number
     room: number
     setLife: Function
     removePuzzle: Function
 }
-let rankArray = ["E", "D", "C", "B", "A", "S"]
 
-export const Puzzle = ({ puzzle, floor, room, setLife, removePuzzle }: Props) => {
+export const Puzzle = ({ puzzle, room, setLife, removePuzzle }: Props) => {
     if (puzzle === undefined) return
     let answ1 = puzzle.answer
-    let answ2 = ""
-    let answ3 = ""
-    if (answ1 !== "") {
-        while (answ2 === "" || answ2 === answ1) {
-            answ2 = pickPuzzle(rankArray[floor]).answer
-        }
-        while (answ3 === "" || answ3 === answ1 || answ3 === answ2) {
-            answ3 = pickPuzzle(rankArray[floor]).answer
-        }
-    }
+    let answ2 = puzzle.otherAnswers[0]
+    let answ3 = puzzle.otherAnswers[1]
     let answers = [answ1, answ2, answ3].sort(() => Math.random() - 0.5)
 
     const show = (e?: React.MouseEvent) => {

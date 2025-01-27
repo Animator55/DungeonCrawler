@@ -20,7 +20,7 @@ export type DungeonRoom = {
     _id: string
     image: string
     room: string
-    puzzle?: {question: string, answer: string}
+    puzzle?: {question: string, answer: string, otherAnswers: string[]}
     items?: any[]
     itemPicked?: boolean
     enemys: enemyType[] 
