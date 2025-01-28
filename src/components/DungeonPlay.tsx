@@ -22,6 +22,7 @@ import { generateDefaultItems } from '../logic/generateDefaultItems'
 import { calculateArtifactPower } from '../logic/calculateArtifactPower'
 import RewardPage from './RewardPage'
 import { advises } from '../default/advises'
+import { checkIfRoomIsUnlocked } from '../logic/checkIfRoomIsUnlocked'
 
 type Props = {
     setPage: Function
@@ -31,7 +32,7 @@ let prevRoom = 0
 let preventRoomAnimation = false
 let levelUpAlert = false
 let lastAddedItems: any[] = []
-const specialRoomsArray = ["Puerta", "Shop", "Chest", "Chest Especial", "Escaleras", "Escaleras de Subida"]
+const specialRoomsArray = ["Puerta", "Tienda", "Cofre", "Chest Especial", "Escaleras", "Escaleras de Subida"]
 
 let audio: HTMLAudioElement | null = null
 
@@ -43,7 +44,7 @@ export default function DungeonPlay({ setPage, setPop }: Props) {
     const [inspect, setInspect] = React.useState<number | undefined>()
     const [life, setLife] = React.useState(100)
     const [items, setItems] = React.useState<HotBarType | undefined>(undefined)
-    const [specialRooms, setSpecials] = React.useState<{ index: number; room: string; }[] | undefined>()
+    const [specialRooms, setSpecials] = React.useState<{ index: number; room: string, unlocked: boolean; }[] | undefined>()
     const [music, setMusic] = React.useState(false)
 
     const BackgroundAudio = React.useRef(null)
@@ -69,6 +70,16 @@ export default function DungeonPlay({ setPage, setPop }: Props) {
         }
         window.localStorage.setItem("Dungeon-Crawler-2", "")
         window.localStorage.setItem("Dungeon-Crawler-2-Dungeon", "")
+    }
+
+    const unlockSpecialRoom = (tag:string)=>{
+        if(!specialRooms)return 
+        let result = []
+        for (let i = 0; i < specialRooms.length; i++) {
+            let curr = specialRooms[i]
+            result.push({ ...curr, unlocked: curr.unlocked === true ? true : (curr.room === tag) })
+        }
+        setSpecials(result)
     }
     const pickItem = (newItem: any) => {
         if (!items) return
@@ -204,11 +215,13 @@ export default function DungeonPlay({ setPage, setPop }: Props) {
 
                 return <button
                     key={Math.random()}
-                    onClick={() => { returnFromRoom(button) }}
+                    onClick={() => { 
+                        returnFromRoom(button, icon); 
+                    }}
                 >
                     {icon.value && <FontAwesomeIcon icon={RouterSelector[icon.icon]} />}
                     {button.direction}
-                    {mapBoolean && button.tag && button.tag.length !== 0 && button.tag.map(tag => {
+                    {button.tag && button.tag.length !== 0 && (mapBoolean || checkIfRoomIsUnlocked(button.tag[0], specialRooms)) && button.tag.map(tag => {
                         return <React.Fragment key={Math.random()}>
                             <FontAwesomeIcon icon={RouterSelector[tag]} />
                         </React.Fragment>
@@ -272,7 +285,7 @@ export default function DungeonPlay({ setPage, setPop }: Props) {
         let result = []
         for (let i = 0; i < dungeon.length; i++) {
             let curr = dungeon[i]
-            if (specialRoomsArray.includes(curr.room)) result.push({ index: i, room: curr.room })
+            if (specialRoomsArray.includes(curr.room)) result.push({ index: i, room: curr.room, unlocked: false })
         }
         setSpecials(result)
     })
@@ -291,10 +304,11 @@ export default function DungeonPlay({ setPage, setPop }: Props) {
         tag?: string[]
         moveFloor?: number
         direction: string
-    }) => {
+    }, icon: {value:boolean}) => {
         PlaySoundMp3("routerButton")
         moveRoomAnimation(button)
         setTimeout(() => {
+            if(icon.value && button.tag && button.tag.length !== 0) unlockSpecialRoom(button.tag[0]) 
             if (button.moveFloor) {
                 window.localStorage.removeItem("Dungeon-Crawler-2-Dungeon")
                 setSpecials(undefined)
@@ -334,10 +348,10 @@ export default function DungeonPlay({ setPage, setPop }: Props) {
             <h3>{dungeon && dungeon[room].room}</h3>
             {levelUpAlert && <i className='level-up'>Subiste de Nivel!</i>}
             {lastAddedItems.length !== 0 && <Picked loot={lastAddedItems} />}
-            {dungeon ? dungeon[room].room === "Shop" ?
+            {dungeon ? dungeon[room].room === "Tienda" ?
                 <ShopPage currentItems={items?.artifacts} buy={buy} items={dungeon[room].items} returnFromRoom={returnFromRoom} returnIndex={room - 1} />
                 :
-                dungeon[room].room === "Chest" ?
+                dungeon[room].room === "Cofre" ?
                     <ChestPage
                         floor={floor}
                         itemPicked={dungeon[room].itemPicked}

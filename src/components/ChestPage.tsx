@@ -44,7 +44,7 @@ export default function ChestPage({ floor,returnFromRoom, returnIndex, dropData,
     return <>
         <button
             className='force-luck'
-            onClick={() => { returnFromRoom({ roomToMoveIndex: returnIndex, direction: "Atras" }) }}
+            onClick={() => { returnFromRoom({ roomToMoveIndex: returnIndex, direction: "Atras" }, {value: false}) }}
             style={luck ? { background: "#295b28" } : {}}
         >
             <FontAwesomeIcon icon={faArrowLeft} />

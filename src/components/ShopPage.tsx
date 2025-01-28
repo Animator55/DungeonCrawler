@@ -50,7 +50,7 @@ export default function ShopPage({ returnFromRoom, returnIndex, items, buy, curr
         </button> */}
         <button
             className='force-luck'
-            onClick={() => { returnFromRoom({ roomToMoveIndex: returnIndex, direction: "Atras" }) }}
+            onClick={() => { returnFromRoom({ roomToMoveIndex: returnIndex, direction: "Atras" }, {value: false}) }}
             style={luck ? { background: "#295b28" } : {}}
         >
             <FontAwesomeIcon icon={faArrowLeft} />

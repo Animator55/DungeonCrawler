@@ -204,7 +204,7 @@ function Chest() {
     let room: DungeonRoom = {
         _id: `${Math.random() * Math.random()}`,
         image: ChestImg,
-        room: "Chest",
+        room: "Cofre",
         enemys: [],
         routes: []
     }
@@ -225,7 +225,7 @@ function Shop() {
     let room: DungeonRoom = {
         image: "",
         _id: `${Math.random() * Math.random()}`,
-        room: "Shop",
+        room: "Tienda",
         enemys: [],
         routes: []
     }

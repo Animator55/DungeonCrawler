@@ -192,7 +192,7 @@ export default function generateDungeonStructure(theme: string, rankIndex: numbe
         let fi = 0
         ///main
         let begginng = fi === 0 ? "Entrada" : "EscalerasSubida"
-        let end = "Escaleras"
+        let end = rankIndex === 5 ? "Boss":"Escaleras" 
         let prevEnd = floorLength + 1 +1 + 1+1
         floorResult = generateMainRoute(begginng, floorLength, end, floorResult, fi !== 0 ? result.length !== 0 ? prevEnd : undefined : undefined)
 
