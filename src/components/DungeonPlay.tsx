@@ -214,7 +214,7 @@ export default function DungeonPlay({ setPage, setPop }: Props) {
     }
 
     const normalRoom = dungeon && <>
-        <img className={'back-image ' + ImgclassResult} alt={dungeon[room].room} src={dungeon[room].image} />
+        <img style={{filter: "saturate("+life/100+")"}} className={'back-image ' + ImgclassResult} alt={dungeon[room].room} src={dungeon[room].image} />
         {(dungeon && dungeon[room].puzzle) &&
             <Puzzle puzzle={dungeon[room].puzzle} floor={floor} room={room} removePuzzle={removePuzzle} setLife={() => { setLife(life - 10) }} />}
         {(dungeon && dungeon[room].enemys.length !== 0) &&
@@ -361,11 +361,12 @@ export default function DungeonPlay({ setPage, setPop }: Props) {
             {levelUpAlert && <i className='level-up'>Subiste de Nivel!</i>}
             {lastAddedItems.length !== 0 && <Picked loot={lastAddedItems} />}
             {dungeon ? dungeon[room].room === "Tienda" ?
-                <ShopPage currentItems={items?.artifacts} buy={buy} items={dungeon[room].items} returnFromRoom={returnFromRoom} returnIndex={room - 1} />
+                <ShopPage life={life} currentItems={items?.artifacts} buy={buy} items={dungeon[room].items} returnFromRoom={returnFromRoom} returnIndex={room - 1} />
                 :
                 dungeon[room].room === "Cofre" ?
                     <ChestPage
                         floor={floor}
+                        life={life}
                         itemPicked={dungeon[room].itemPicked}
                         returnFromRoom={returnFromRoom} returnIndex={room - 1}
                         dropData={dungeon[room].items ? dungeon[room].items[0] : undefined}

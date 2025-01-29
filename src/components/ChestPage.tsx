@@ -16,10 +16,11 @@ type Props = {
     returnIndex: number
     itemPicked: boolean | undefined
     dropData: any | undefined
+    life: number
 }
 
 let rankArray = ["E", "D", "C", "B", "A", "S"]
-export default function ChestPage({ floor,returnFromRoom, returnIndex, dropData, itemPicked, pickItem,openChest }: Props) {
+export default function ChestPage({ floor, life,returnFromRoom, returnIndex, dropData, itemPicked, pickItem,openChest }: Props) {
     const [drop, setDrop] = React.useState<any | undefined>(dropData)
     // const [luck, forceLuck] = React.useState<boolean>(false)
     const luck = false
@@ -50,7 +51,7 @@ export default function ChestPage({ floor,returnFromRoom, returnIndex, dropData,
             <FontAwesomeIcon icon={faArrowLeft} />
             Volver
         </button>
-        <img className='back-image' alt={"shop"} src={ ChestImg} />
+        <img style={{filter: "saturate("+life/100+")"}}  className='back-image' alt={"shop"} src={ ChestImg} />
         <div className='shop-content'>
             {drop ? <div className='inspect-div'
                 style={{ color: RankColorSelector[drop.rank!] }}>

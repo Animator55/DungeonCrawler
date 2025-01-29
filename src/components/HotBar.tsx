@@ -51,6 +51,24 @@ export default function HotBar({ items, setItems, life }: Props) {
                     if(!el)return
                     DragPhase(i)
                 }}
+                onMouseDown={() => {
+                    if(!el)return
+                    DragPhase(i)
+                }}
+                onMouseUp={() => {
+                    if(!el)return
+                    if (!draggingPhase) {
+                        if (!el || !items) return
+                        setItems({
+                            ...items, artifacts: items.artifacts.map((item, j) => {
+                                if (i === j) return { ...item, active: !item.active }
+                                else return item
+                            })
+                        })
+                        PlaySoundMp3("equip")
+                    }
+                    DragPhaseCancel()
+                }}
                 onTouchEnd={() => {
                     if(!el)return
                     if (!draggingPhase) {

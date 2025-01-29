@@ -421,7 +421,9 @@ button:active {
     margin-top: 5rem;
     position: relative;
     /* opacity: 0; */
+    max-width: 500px;
     width: 100dvw;
+    height: 100dvh;
     /* animation: fade-up 300ms .2s forwards; */
     image-rendering: pixelated;
 }

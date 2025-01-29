@@ -7,9 +7,9 @@ import ShopImg from "../assets/images/Shop.png"
 import { router } from '../vite-env'
 import PlaySoundMp3 from '../logic/playSound'
 
-type Props = { returnFromRoom: Function, returnIndex: number, currentItems: any[] | undefined, items: any[] | undefined, buy: Function }
+type Props = { returnFromRoom: Function, returnIndex: number, currentItems: any[] | undefined, life:number, items: any[] | undefined, buy: Function }
 
-export default function ShopPage({ returnFromRoom, returnIndex, items, buy, currentItems }: Props) {
+export default function ShopPage({ returnFromRoom, returnIndex, items, life, buy, currentItems }: Props) {
     // const [currentShop, setCurrentShop] = React.useState<any[] | undefined>(items)
     const [inspect, setInspect] = React.useState<number | undefined>(undefined)
     // const [luck, forceLuck] = React.useState<boolean>(false)
@@ -56,7 +56,7 @@ export default function ShopPage({ returnFromRoom, returnIndex, items, buy, curr
             <FontAwesomeIcon icon={faArrowLeft} />
             Volver
         </button>
-        <img className='back-image' alt={"shop"} src={ShopImg} />
+        <img style={{filter: "saturate("+life/100+")"}} className='back-image' alt={"shop"} src={ShopImg} />
         <div className='shop-content'>
             {items && items.map((el, i) => {
                 let bool = inspect === i
