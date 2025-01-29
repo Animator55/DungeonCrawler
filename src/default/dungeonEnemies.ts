@@ -178,13 +178,13 @@ export const dungeonEnemies: router = {
         ],
         "B": [
             {
-                index: 29,health: 15,power:20,
+                index: 29,health: 15,power:22,
                 name: "Goblin Overlord",
                 description: "Líder de clanes goblin, armado con una espada ceremonial y un escudo adornado con trofeos de guerra.",
                 icon: "Espada"
             },
             {
-                index: 30,health: 12,power:18,
+                index: 30,health: 12,power:19,
                 name: "Goblin Warlord",
                 description: "Guerrero experimentado que lleva una maza pesada y una armadura de placas. Inspira miedo en sus seguidores.",
                 icon: "Martillo"
@@ -228,7 +228,7 @@ export const dungeonEnemies: router = {
                 icon: "Espada"
             },
             {
-                index: 40,health: 32,power:19,
+                index: 40,health: 32,power:20,
                 name: "Goblin Warmaster",
                 description: "Maestro táctico en la guerra, empuña un hacha de batalla y lleva una armadura completa imbuida con magia.",
                 icon: "Hacha"
@@ -240,19 +240,19 @@ export const dungeonEnemies: router = {
                 icon: "Bastón"
             },
             {
-                index: 42,health: 12,power:18,
+                index: 42,health: 12,power:19,
                 name: "Kobold Dragon Rider",
                 description: "Kobold que cabalga sobre un pequeño dragón, armado con una lanza encantada.",
                 icon: "Lanza"
             },
             {
-                index: 43,health: 2,power:17,
+                index: 43,health: 2,power:18,
                 name: "Goblin Shadowlord",
                 description: "Goblin que controla las sombras, capaz de volverse invisible y atacar con cuchillas de sombra.",
                 icon: "Daga"
             },
             {
-                index: 44,health: 8,power:20,
+                index: 44,health: 8,power:25,
                 name: "Goblin Deathmaster",
                 description: "Hechicero que manipula la muerte, capaz de lanzar maldiciones letales. Lleva un grimorio oscuro.",
                 icon: "Libro"
@@ -278,19 +278,19 @@ export const dungeonEnemies: router = {
         ],
         "S": [
             {
-                index: 48,health: 20,power:40,
+                index: 48,health: 22,power:42,
                 name: "Goblin Demolisher",
                 description: "Goblin especializado en demoliciones masivas, armado con un martillo gigante y explosivos mágicos, suele golpear el piso y aturdir.",
                 icon: "Martillo"
             },
             {
-                index: 49,health: 32,power:45,
+                index: 49,health: 30,power:50,
                 name: "Goblin High Chieftain",
                 description: "El líder máximo de todos los clanes goblin, armado con una espada legendaria y una armadura impenetrable, puede usar el destello y usar magia silenciosa simple.",
                 icon: "Espada"
             },
             {
-                index: 50,health: 10,power: 30,
+                index: 50,health: 10,power: 32,
                 name: "Goblin Warlock King",
                 description: "Goblin que ha dominado la magia oscura, capaz de invocar 5 demonios mayores y lanzar maldiciones devastadoras.",
                 icon: "Libro"
@@ -302,7 +302,7 @@ export const dungeonEnemies: router = {
             //     icon: "Bastón"
             // },
             {
-                index: 51,health: 20,power:43,
+                index: 51,health: 20,power:46,
                 name: "Goblin Ultra Supreme Mage",
                 description: "Ultra Mago Supremo de la magia, con capacidades fisicas y magicas de altisimo nivel. Porta una espada mágica y es ultra ofensivo.",
                 icon: "Espada"
@@ -314,7 +314,7 @@ export const dungeonEnemies: router = {
                 icon: "Daga"
             },
             {
-                index: 53,health: 17,power:38,
+                index: 53,health: 15,power:40,
                 name: "Goblin Necromancer King",
                 description: "Goblin que gobierna sobre la muerte, capaz de levantar un grupo de 3 no-muertos a su voluntad. Ademas de esto, posee magia silenciosa simple.",
                 icon: "Libro"
@@ -322,14 +322,14 @@ export const dungeonEnemies: router = {
         ],
         "Boss": {
             "E": {
-                index: 54,health: 8,power:9,
+                index: 54,health: 10,power:10,
                 name: "Goblin Boss",
                 description: "El líder de un pequeño grupo de goblins, armado con una espada básica y un escudo. Es más fuerte que los goblins comunes, pero aún es bastante débil comparado con sus superiores.",
                 icon: "Espada"
             },
             "D":
             {
-                index: 55,health: 12,power:18,
+                index: 55,health: 15,power:22,
                 name: "Goblin War Chief",
                 description: "Jefe de guerra goblin. Está armado con una maza pesada y lleva una armadura ligera. Es formidable en combate.",
                 icon: "Martillo"
@@ -337,7 +337,7 @@ export const dungeonEnemies: router = {
             ,
             "C":
             {
-                index: 56,health: 19,power:23,
+                index: 56,health: 23,power:27,
                 name: "Goblin Battle Lord",
                 description: "Señor de la batalla goblin que lidera escuadrones de combate. Empuña una espada larga mágica y lleva una armadura reforzada.",
                 icon: "Espada"
@@ -345,7 +345,7 @@ export const dungeonEnemies: router = {
             ,
             "B":
             {
-                index: 57,health: 22,power:32,
+                index: 57,health: 24,power:38,
                 name: "Goblin War Master",
                 description: "Maestro de guerra goblin que dirige grandes ofensivas. Armado con una gran hacha de guerra y una armadura completa encantada, tiene una gran influencia y es extremadamente peligroso en combate.",
                 icon: "Hacha"
@@ -353,7 +353,7 @@ export const dungeonEnemies: router = {
             ,
             "A":
             {
-                index: 58,health: 28,power:42,
+                index: 58,health: 35,power:50,
                 name: "Goblin Overlord",
                 description: "Goblin que domina sobre múltiples clanes, armado con una espada legendaria y una armadura mágica. Sus habilidades mágicas y de combate son de las mayores.",
                 icon: "Espada"
@@ -361,7 +361,7 @@ export const dungeonEnemies: router = {
             ,
             "S":
             {
-                index: 59,health: 40,power:70,
+                index: 59,health: 50,power:100,
                 name: "Goblin Chaman",
                 description: "Goblin de gran vejez, combatiente a distancia, manejando todo tipo de magias elementales, maldiciones e invocaciones. Poseedor de 3 escudos y una pocion de rejuvenecimiento como ultimo recurso. Siendo joven, se vuelve agresivo y extremadamente ágil.",
                 icon: "Espada"

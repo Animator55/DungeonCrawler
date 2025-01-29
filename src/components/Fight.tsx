@@ -9,6 +9,8 @@ import PlaySoundMp3 from "../logic/playSound"
 import { FaGoblin } from "../assets/svg/sword-svgrepo-com"
 
 type Props = {
+    enemySelected: number
+    setSelectedEnemy: Function
     enemies: enemyType[]
     player: number
     killEnemy: Function
@@ -18,8 +20,7 @@ type Props = {
 }
 let fightActive = false
 
-export default function Fight({ enemies, player, killEnemy, hitEnemy, setLife, isBoss }: Props) {
-    const [enemySelected, setSelectedEnemy] = React.useState(0)
+export default function Fight({ enemySelected, setSelectedEnemy, enemies, player, killEnemy, hitEnemy, setLife, isBoss }: Props) {
     const [dice, setDice] = React.useState<number | undefined>(undefined)
 
     const calculateTotal = (enemyPower: number, playerPower: number, diceParameter?: number) => {

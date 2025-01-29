@@ -46,6 +46,7 @@ export default function DungeonPlay({ setPage, setPop }: Props) {
     const [items, setItems] = React.useState<HotBarType | undefined>(undefined)
     const [specialRooms, setSpecials] = React.useState<{ index: number; room: string, unlocked: boolean; }[] | undefined>()
     const [music, setMusic] = React.useState(false)
+    const [enemySelected, setSelectedEnemy] = React.useState(0)
 
     const BackgroundAudio = React.useRef(null)
 
@@ -72,8 +73,8 @@ export default function DungeonPlay({ setPage, setPop }: Props) {
         window.localStorage.setItem("Dungeon-Crawler-2-Dungeon", "")
     }
 
-    const unlockSpecialRoom = (tag:string)=>{
-        if(!specialRooms)return 
+    const unlockSpecialRoom = (tag: string) => {
+        if (!specialRooms) return
         let result = []
         for (let i = 0; i < specialRooms.length; i++) {
             let curr = specialRooms[i]
@@ -92,25 +93,33 @@ export default function DungeonPlay({ setPage, setPop }: Props) {
         if (!items) return
         if (items.coins < priceNum || (item.rank !== "PickUps" && items.artifacts.length === 5)) return
         let newItems = { ...items, coins: items.coins - priceNum }
-        if (item._id) setLife(checkHealing(life, item._id.split("-")[1]))
+        let newLife = life
+        if (item._id) {
+            newLife = checkHealing(life, item._id.split("-")[1])
+            setLife(newLife)
+        }
         else {
             newItems = { ...newItems, artifacts: [...newItems.artifacts, { ...item, active: true }] }
             saveItem(item)
         }
         PlaySoundMp3("buy")
+        let storage = JSON.stringify({ room, floor, items: newItems, life: newLife })
+        window.localStorage.setItem("Dungeon-Crawler-2", storage)
         setItems(newItems)
         removeItemFromShop(index)
     }
 
-    const changeRoom = (newObj: DungeonRoom, currentRoom: number) => {
+    const changeRoom = (newObj: DungeonRoom, currentRoom: number, preventItemChange?: boolean) => {
         if (!dungeon) return
         let newFloor = dungeon.map((el, i) => {
             if (i === currentRoom) return newObj
             else return el
         })
-        let storage = JSON.stringify({ room: currentRoom, floor, items, life })
         let dungeonStr = JSON.stringify(newFloor)
-        window.localStorage.setItem("Dungeon-Crawler-2", storage)
+        if (!preventItemChange) {
+            let storage = JSON.stringify({ room: currentRoom, floor, items, life })
+            window.localStorage.setItem("Dungeon-Crawler-2", storage)
+        }
         window.localStorage.setItem("Dungeon-Crawler-2-Dungeon", dungeonStr)
         setDungeon(newFloor)
     }
@@ -142,6 +151,7 @@ export default function DungeonPlay({ setPage, setPop }: Props) {
             }]
             data.coins += amountPick
         }
+        setSelectedEnemy(0)
         setItems(data)
     }
     const hitEnemy = (index: number) => {
@@ -176,10 +186,10 @@ export default function DungeonPlay({ setPage, setPop }: Props) {
     const removeItemFromShop = (index: number) => {
         if (!dungeon || !dungeon[room].items || dungeon[room].items.length === 0) return
         changeRoom({
-            ...dungeon[room], itemPicked: true, items: dungeon[room].items?.filter((el, i) => {
+            ...dungeon[room], items: dungeon[room].items?.filter((el, i) => {
                 if (index !== i) return el
             })
-        }, room)
+        }, room, true)
     }
     const removePuzzle = (currentRoom: number) => {
         if (!dungeon || !dungeon[currentRoom].puzzle) return
@@ -208,15 +218,17 @@ export default function DungeonPlay({ setPage, setPop }: Props) {
         {(dungeon && dungeon[room].puzzle) &&
             <Puzzle puzzle={dungeon[room].puzzle} floor={floor} room={room} removePuzzle={removePuzzle} setLife={() => { setLife(life - 10) }} />}
         {(dungeon && dungeon[room].enemys.length !== 0) &&
-            <Fight isBoss={dungeon[room].room === "Boss"} enemies={dungeon[room].enemys} player={power} killEnemy={killEnemy} hitEnemy={hitEnemy} setLife={(val: number) => { setLife(life - Math.round(10 * val)) }} />}
+            <Fight 
+            enemySelected={enemySelected} setSelectedEnemy={setSelectedEnemy}
+            isBoss={dungeon[room].room === "Boss"} enemies={dungeon[room].enemys} player={power} killEnemy={killEnemy} hitEnemy={hitEnemy} setLife={(val: number) => { setLife(life - Math.round(10 * val)) }} />}
         <div className='buttons'>
             {dungeon[room].routes.map(button => {
                 let icon = checkIfRoomIsSpecial(button.roomToMoveIndex, specialRooms)
 
                 return <button
                     key={Math.random()}
-                    onClick={() => { 
-                        returnFromRoom(button, icon); 
+                    onClick={() => {
+                        returnFromRoom(button, icon);
                     }}
                 >
                     {icon.value && <FontAwesomeIcon icon={RouterSelector[icon.icon]} />}
@@ -304,11 +316,11 @@ export default function DungeonPlay({ setPage, setPop }: Props) {
         tag?: string[]
         moveFloor?: number
         direction: string
-    }, icon: {value:boolean}) => {
+    }, icon: { value: boolean }) => {
         PlaySoundMp3("routerButton")
         moveRoomAnimation(button)
         setTimeout(() => {
-            if(icon.value && button.tag && button.tag.length !== 0) unlockSpecialRoom(button.tag[0]) 
+            if (icon.value && button.tag && button.tag.length !== 0) unlockSpecialRoom(button.tag[0])
             if (button.moveFloor) {
                 window.localStorage.removeItem("Dungeon-Crawler-2-Dungeon")
                 setSpecials(undefined)

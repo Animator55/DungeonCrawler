@@ -8,7 +8,7 @@ export const generateShop = (luck: boolean, currentFloor: number) => {
     ]
     while (amount > 0) {
         amount--
-        let rank = Math.random() > 0.6 && currentFloor < 5 ? (currentFloor+1): currentFloor
+        let rank = Math.random() > 0.85 && currentFloor < 5 ? (currentFloor+1): currentFloor
         // Math.floor(Math.random()*5)
         list.push(generateArtifact(ranks[rank]))
     }
