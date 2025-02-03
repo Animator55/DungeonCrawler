@@ -1,50 +1,45 @@
-# React + TypeScript + Vite
+# DungeonCrawler
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Descripción  
+DungeonCrawler es un juego de exploración de mazmorras con elementos roguelike, donde los jugadores enfrentan enemigos, recolectan tesoros y buscan sobrevivir el mayor tiempo posible en entornos generados proceduralmente.
 
-Currently, two official plugins are available:
+## Características principales  
+- 🔹 Mazmorras generadas aleatoriamente para una experiencia única en cada partida.  
+- ⚔️ Sistema de combate dinámico contra una variedad de enemigos.  
+- 🏆 Recolección de ítems y mejoras para el personaje.  
+- 🎮 Controles intuitivos y mecánicas desafiantes.  
+- 🎨 Estética retro inspirada en los clásicos juegos de mazmorras.  
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tecnologías utilizadas  
+- **Lenguaje de programación**: TypeScript  
+- **Frameworks/Bibliotecas**: React 
 
-## Expanding the ESLint configuration
+## Instalación y ejecución  
+### Requisitos previos  
+- URL: Nada
+- Clonando: npm
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### Juega desde la URL
+  -  https://dungeon-crawler.nahuelibarra.com
 
-- Configure the top-level `parserOptions` property like this:
+### Instalación  
+1. Clona este repositorio:  
+   ```bash
+   git clone https://github.com/Animator55/DungeonCrawler.git
+   cd DungeonCrawler
+2. Instala las dependencias necesarias:
+   ```bash
+    npm install
+3. Ejecuta el juego:
+  ```bash
+    npm run dev
+### Cómo jugar
+  - Movimiento: Muévete con los botones de dirección a través de la Dungeon!
+  - Ataque: Los combates se deciden por chances de éxito, tirar el D20 puede ayudarte a aumentarlas... o reducirlas. Utiliza con inteligencia tus artefactos, podrían romperse!
+  - Objetivo: Llega hasta el último suelo, el rango S y derrota al jefe final!.
+  - Objetivo Secundario: Mata a todos los enemigos y consigue todos los 201 artefactos!.
+### Licencia
+  - Este proyecto está bajo la licencia **MIT**. Puedes ver más detalles en el archivo [LICENSE](./LICENSE).
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+### Contacto
+  - 📩 Para cualquier duda o sugerencia, puedes contactarme en nahuelibarra04webdev@gmail.com.
