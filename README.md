@@ -33,6 +33,7 @@ DungeonCrawler es un juego de exploración de mazmorras con elementos roguelike,
 3. Ejecuta el juego:
   ```bash
     npm run dev
+
 ### Cómo jugar
   - Movimiento: Muévete con los botones de dirección a través de la Dungeon!
   - Ataque: Los combates se deciden por chances de éxito, tirar el D20 puede ayudarte a aumentarlas... o reducirlas. Utiliza con inteligencia tus artefactos, podrían romperse!
